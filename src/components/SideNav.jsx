@@ -23,6 +23,8 @@ export default function SideNav() {
             <div key={item.to} className="relative group">
               <Link
                 to={item.to}
+                aria-label={item.label}
+                aria-current={isActive ? "page" : undefined}
                 onMouseEnter={() => setHovered(item.id)}
                 onMouseLeave={() => setHovered(null)}
                 className={`

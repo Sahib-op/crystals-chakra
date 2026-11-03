@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ZodiacWheel from './ZodiacWheel';
 import { WHATSAPP_NUMBER } from '../constants';
@@ -9,9 +9,9 @@ const reveal = {
 };
 
 const LOADING_TEXTS = [
-  "Calculating planetary longitudes...",
-  "Plotting geometric alignments...",
-  "Decoding karmic patterns...",
+  "Preparing your zodiac sign...",
+  "Calculating your life path...",
+  "Preparing your snapshot...",
 ];
 
 export default function ReadingOverlay({ 
@@ -25,32 +25,41 @@ export default function ReadingOverlay({
   const [formData, setFormData] = useState({ name: '', dob: '' });
   const [loadingStep, setLoadingStep] = useState(0);
 
-  // Reset state when closed
+  const timers = useRef([]);
+
   useEffect(() => {
     if (!isOpen) {
-      setTimeout(() => {
-        setStep('input');
-        setFormData({ name: '', dob: '' });
-      }, 300);
+      timers.current.forEach(clearTimeout);
+      timers.current = [];
+      setStep('input');
+      setFormData({ name: '', dob: '' });
     }
+    return () => {
+      timers.current.forEach(clearTimeout);
+      timers.current = [];
+    };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (event) => { if (event.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, onClose]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setStep('calculating');
     setLoadingStep(0);
 
-    // Sequence loading texts
-    const interval = setInterval(() => {
-      setLoadingStep(prev => Math.min(prev + 1, 2));
-    }, 600);
-
-    // After 2 seconds, trigger generation and move to reading
-    setTimeout(() => {
-      clearInterval(interval);
-      onGenerate(formData);
-      setStep('reading');
-    }, 2000);
+    timers.current = [
+      setTimeout(() => setLoadingStep(1), 600),
+      setTimeout(() => setLoadingStep(2), 1200),
+      setTimeout(() => {
+        onGenerate(formData);
+        setStep('reading');
+      }, 2000),
+    ];
   };
 
   const handleClose = () => {
@@ -62,7 +71,7 @@ export default function ReadingOverlay({
       {isOpen && (
         <>
           <motion.div
-            className="fixed inset-0 z-30 bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -70,7 +79,10 @@ export default function ReadingOverlay({
             onClick={handleClose}
           />
           <motion.div
-            className={`fixed bottom-0 left-0 right-0 z-40 rounded-t-3xl bg-chakra-bg border-t border-chakra-ring px-5 pt-4 pb-6 max-w-2xl mx-auto shadow-[0_-10px_40px_rgba(37,169,186,0.15)] flex flex-col ${step === 'calculating' ? 'items-center justify-center min-h-[400px]' : ''} ${step === 'reading' ? 'max-h-[90vh]' : ''}`}
+            className={`fixed bottom-0 left-0 right-0 z-[70] max-h-[90dvh] overflow-y-auto rounded-t-3xl bg-chakra-bg border-t border-chakra-ring px-5 pt-4 pb-6 max-w-2xl mx-auto shadow-[0_-10px_40px_rgba(37,169,186,0.15)] flex flex-col ${step === 'calculating' ? 'items-center justify-center min-h-[400px]' : ''} ${step === 'reading' ? 'max-h-[90vh]' : ''}`}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Cosmic Snapshot"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -98,14 +110,16 @@ export default function ReadingOverlay({
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <p className="text-chakra-muted text-sm mb-6">Enter your birth details. We use this exact data to mathematically calculate your personal planetary alignments.</p>
+                  <p className="text-chakra-muted text-sm mb-6">Enter your name and date of birth to explore a zodiac and numerology snapshot.</p>
                   
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <input type="text" placeholder="First Name" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-chakra-surface border border-white/10 rounded-xl px-4 py-3 text-white placeholder-chakra-muted focus:outline-none focus:border-chakra-cyan transition-colors" />
+                      <label htmlFor="snapshot-name" className="block text-sm text-chakra-muted mb-1">First name</label>
+                      <input id="snapshot-name" type="text" placeholder="First Name" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-chakra-surface border border-white/10 rounded-xl px-4 py-3 text-white placeholder-chakra-muted focus:outline-none focus:border-chakra-cyan transition-colors" />
                     </div>
                     <div>
-                      <input type="date" required value={formData.dob} onChange={(e) => setFormData({...formData, dob: e.target.value})} className="w-full bg-chakra-surface border border-white/10 rounded-xl px-4 py-3 text-white placeholder-chakra-muted focus:outline-none focus:border-chakra-cyan transition-colors" />
+                      <label htmlFor="snapshot-dob" className="block text-sm text-chakra-muted mb-1">Date of birth</label>
+                      <input id="snapshot-dob" type="date" required value={formData.dob} onChange={(e) => setFormData({...formData, dob: e.target.value})} className="w-full bg-chakra-surface border border-white/10 rounded-xl px-4 py-3 text-white placeholder-chakra-muted focus:outline-none focus:border-chakra-cyan transition-colors" />
                     </div>
                     
                     <button type="submit" className="w-full bg-chakra-cyan hover:bg-chakra-blue text-chakra-bg font-bold py-4 rounded-xl mt-4 transition-transform active:scale-[0.98]">

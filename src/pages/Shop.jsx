@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Sparkles, Mail, Bell } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import { WHATSAPP_NUMBER } from '../constants';
 import PageMeta from '../components/PageMeta';
 import CosmicBackground from '../components/CosmicBackground';
 import ZodiacWheel from '../components/ZodiacWheel';
@@ -24,25 +24,11 @@ const TEASER_PRODUCTS = [
 ];
 
 export default function Shop() {
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!email) return;
-    // Store to localStorage for now
-    const existing = JSON.parse(localStorage.getItem('cc_waitlist') || '[]');
-    existing.push({ email, timestamp: new Date().toISOString() });
-    localStorage.setItem('cc_waitlist', JSON.stringify(existing));
-    setSubmitted(true);
-    setEmail('');
-  };
-
   return (
     <div className="relative min-h-screen bg-chakra-bg overflow-x-hidden flex flex-col">
       <PageMeta
         title="Crystal Shop"
-        description="Coming soon: high-vibration crystal wristbands matched to your planetary alignments. Join the waitlist."
+        description="Coming soon: high-vibration crystal wristbands matched to your planetary alignments. Ask about the collection on WhatsApp."
         path="/shop"
       />
 
@@ -75,35 +61,10 @@ export default function Shop() {
         </div>
 
         <div className="animate-fade-in-up" style={{ animationDelay: '0.9s', animationFillMode: 'both' }}>
-          {/* Waitlist Form */}
-          <div className="max-w-lg mx-auto">
-            {submitted ? (
-              <div className="glass-panel rounded-2xl p-6 sm:p-8 text-center">
-                <Bell className="w-8 h-8 text-chakra-gold mx-auto mb-3" />
-                <p className="text-chakra-gold font-bold mb-1">You're on the list!</p>
-                <p className="text-chakra-muted text-sm">We'll notify you the moment our crystal collection goes live.</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-                <div className="relative flex-1">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-chakra-muted" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                    className="w-full pl-12 pr-4 py-4 rounded-full bg-chakra-surface border border-white/10 text-white placeholder:text-chakra-muted/50 focus:outline-none focus:border-chakra-cyan focus:ring-1 focus:ring-chakra-cyan/30 transition-colors"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="bg-chakra-cyan hover:bg-chakra-blue text-chakra-bg font-bold py-4 px-8 rounded-full transition-all hover:scale-105 whitespace-nowrap"
-                >
-                  Join Waitlist
-                </button>
-              </form>
-            )}
+          <div className="max-w-lg mx-auto text-center">
+            <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi! I'd like to hear when the crystal collection launches.")}`} target="_blank" rel="noopener noreferrer" className="inline-block bg-chakra-cyan hover:bg-chakra-blue text-chakra-bg font-bold py-4 px-8 rounded-full transition-colors">
+              Ask about the collection on WhatsApp
+            </a>
           </div>
 
           {/* Teaser Product Cards */}
@@ -116,18 +77,14 @@ export default function Shop() {
                 <h3 className="text-lg font-bold mb-2">{product.name}</h3>
                 <p className="text-chakra-muted text-sm mb-4 flex-1">{product.description}</p>
                 <span className="text-chakra-gold font-bold text-lg mb-4">{product.price}</span>
-                <button
-                  onClick={() => {
-                    // Also store interest to localStorage
-                    const interests = JSON.parse(localStorage.getItem('cc_product_interest') || '[]');
-                    interests.push({ product: product.name, timestamp: new Date().toISOString() });
-                    localStorage.setItem('cc_product_interest', JSON.stringify(interests));
-                    alert(`We'll notify you when ${product.name} is available!`);
-                  }}
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi! I'm interested in the ${product.name}. Please let me know when it is available.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-xs border border-chakra-cyan text-chakra-cyan hover:bg-chakra-cyan hover:text-chakra-bg px-6 py-2 rounded-full font-bold transition-all"
                 >
-                  Notify Me
-                </button>
+                  Ask about availability
+                </a>
               </div>
             ))}
           </div>

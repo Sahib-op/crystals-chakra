@@ -30,6 +30,9 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isOpen}
+              aria-controls="mobile-navigation"
               className="text-chakra-text hover:text-chakra-cyan p-2"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -40,7 +43,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden glass-panel border-t border-white/10">
+        <div id="mobile-navigation" className="md:hidden glass-panel border-t border-white/10">
           <div className="px-4 pt-3 pb-4 space-y-2">
             {NAV_LINKS.map((link) => (
               <Link
