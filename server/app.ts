@@ -210,7 +210,9 @@ export async function createApp(options: AppOptions = {}) {
           createCommerce({
             domain: config.shopify.domain ?? '',
             token: config.shopify.token ?? '',
+            checkoutHost: config.shopify.checkoutHost ?? '',
           }),
+        config.shopify,
       ),
     );
     app.get(

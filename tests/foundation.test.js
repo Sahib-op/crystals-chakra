@@ -120,7 +120,11 @@ test('API contract and server-generated request identity stay consistent', async
 test('checkout rejects extra fields and coercion before touching the provider', async () => {
   let calls = 0;
   const app = await createApp({
-    config: config(),
+    config: loadConfig({
+      NODE_ENV: 'test',
+      SHOPIFY_STORE_DOMAIN: 'example.myshopify.com',
+      SHOPIFY_STOREFRONT_TOKEN: 'test-token',
+    }),
     logging: false,
     commerce: {
       products: async () => ({}),
@@ -212,7 +216,7 @@ test('request logs exclude bodies, headers, query strings, raw paths and provide
   });
   try {
     await app.inject({
-      url: '/api/products?email=' + secret,
+      url: '/api/products?after=' + secret,
       headers: {
         authorization: 'Bearer ' + secret,
         cookie: 'session=' + secret,

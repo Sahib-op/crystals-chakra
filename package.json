@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:local": "pwsh -NoProfile -File scripts/start-local.ps1",
     "build": "vite build",
     "preview": "vite preview",
     "dev:api": "node --watch --env-file-if-exists=work/database/api.env --env-file-if-exists=.env server/index.js",

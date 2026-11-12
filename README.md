@@ -22,6 +22,10 @@ No booking, message delivery or payment is inferred from clicking a link. Existi
 
 Requires Node 24.12 or later in the Node 24 line.
 
+On Windows with PowerShell 7.4+ and the [portable PostgreSQL setup](docs/DATABASE.md), run `npm ci` and then `npm run dev:local`. The launcher starts the isolated PostgreSQL database, local Studio sign-in fixture, API and frontend. It prints the preview URLs after verifying the site and API.
+
+For manual startup:
+
 ```sh
 npm ci
 npm run dev:api
@@ -77,14 +81,14 @@ The API and first frontend render share the public reading catalogue. The strict
 
 ## Current API
 
-| Route                | Behaviour                                                                     |
-| -------------------- | ----------------------------------------------------------------------------- |
-| `GET /api/health`    | Process liveness only; does not certify provider or database readiness        |
-| `GET /api/services`  | Published reading packages from the active catalogue                          |
-| `GET /api/products`  | Shopify products when configured; explicit preview otherwise                  |
-| `POST /api/checkout` | Validates a variant and creates one hosted-checkout cart; disabled in preview |
-| `POST /api/bookings` | Retired: HTTP 410 with studio contact links; no payload collection or write   |
-| `POST /api/readings` | Retired: HTTP 410; the public free calculation stays browser-local            |
+| Route                | Behaviour                                                                    |
+| -------------------- | ---------------------------------------------------------------------------- |
+| `GET /api/health`    | Process liveness only; does not certify provider or database readiness       |
+| `GET /api/services`  | Published reading packages from the active catalogue                         |
+| `GET /api/products`  | Paginated Shopify products and variants, or an illustrated preview           |
+| `POST /api/checkout` | Validates basket lines and creates a Shopify-hosted checkout when configured |
+| `POST /api/bookings` | Retired: HTTP 410 with studio contact links; no payload collection or write  |
+| `POST /api/readings` | Retired: HTTP 410; the public free calculation stays browser-local           |
 
 The Fastify boundary includes exact-origin handling, strict JSON/UTF-8 byte limits, schema validation, server-generated request IDs, controlled errors and logs that exclude customer data. `GET /api/openapi.json` documents registered public routes. Product and checkout rate limiting is bounded but instance-local and groups by the socket address. Hosted owner sign-in, production proxy limits, caching and observability still need deployment verification. CORS is not authentication.
 
@@ -98,7 +102,11 @@ The studio must review retained records, establish access and retention/deletion
 
 `server/commerce.js` uses Shopify Storefront API version 2026-10. Configure `SHOPIFY_STORE_DOMAIN` as the exact `name.myshopify.com` host and `SHOPIFY_STOREFRONT_TOKEN` as a Storefront access token stored server-side. Do not substitute an Admin token. No account is linked automatically.
 
-The current adapter fetches up to 24 products and their first variant. Buy now creates a one-item cart and redirects to hosted checkout. Multi-item carts, variant selection, webhook verification and owner-visible order state are subsequent milestones. Shopify owns stock, checkout totals and payment collection. Provider failures do not become fabricated live inventory. Adapter tests use a fake upstream transport; a real merchant sandbox is still required.
+The catalogue loads products a page at a time. Customers can choose variants and change quantities in the basket before continuing to Shopify. The API sends variant IDs and quantities, checks whether Shopify accepted the requested basket, and returns a hosted checkout URL from the configured store host. Set `SHOPIFY_CHECKOUT_HOST` to the exact hostname if the merchant uses a separate checkout domain. Shopify determines the final total, shipping, payment options and stock availability.
+
+A Shopify merchant sandbox is required to verify payment, shipping, order confirmation and cancellation. The site currently hands customers over to Shopify, with order reconciliation and an owner order view still in development. See [Shopify’s cart documentation](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/cart/manage).
+
+Checkout destinations fail closed when no merchant host is configured. Provider responses must be JSON and stay within a 2 MiB decoded-byte limit, including chunked responses and misleading Content-Length headers. The reader cancels oversized streams before parsing, while the existing six-second fetch timeout bounds network waits. Transport and parsing failures return recoverable, uncacheable errors without provider details. `tests/commerce.test.js` covers these boundaries alongside pagination, stock changes, variant selection and cart quantities. These local tests do not establish that a real merchant checkout works.
 
 ## Deployment status
 

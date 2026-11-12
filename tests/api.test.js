@@ -94,9 +94,13 @@ test('checkout failures are safe and preview checkout cannot claim success', asy
   const app = await createApp({
     logging: false,
     commerce: {
-      products: async () => ({ mode: 'preview', products: [] }),
-      checkout: async (id) => {
-        if (id.endsWith('/1')) return null;
+      products: async () => ({
+        mode: 'preview',
+        products: [],
+        nextCursor: null,
+      }),
+      checkout: async ([line]) => {
+        if (line.variantId.endsWith('/1')) return null;
         throw new Error('private provider detail');
       },
     },
@@ -117,7 +121,15 @@ test('checkout failures are safe and preview checkout cannot claim success', asy
         }),
       });
       assert.equal(r.status, 503);
-      assert.equal((await r.text()).includes('private provider detail'), false);
+      const error = await r.json();
+      assert.equal(
+        error.code,
+        id === '1' ? 'CHECKOUT_DISABLED' : 'CHECKOUT_UNAVAILABLE',
+      );
+      assert.equal(
+        JSON.stringify(error).includes('private provider detail'),
+        false,
+      );
     }
   } finally {
     await app.close();

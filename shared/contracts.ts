@@ -49,17 +49,101 @@ export const RetiredReadingSchema = Type.Object(
   },
   objectOptions,
 );
-export const CheckoutRequestSchema = Type.Object(
+export const SHOP_PAGE_SIZE = 24;
+export const SHOP_VARIANTS_PER_PRODUCT = 20;
+export const SHOP_CART_MAX_LINES = 20;
+export const SHOP_CART_MAX_QUANTITY = 10;
+
+const VariantIdSchema = Type.String({
+  pattern: '^gid://shopify/ProductVariant/[0-9]+$',
+  maxLength: 120,
+});
+const ShopifyCursor = Type.String({
+  pattern: '^[A-Za-z0-9_+/=-]+$',
+  maxLength: 512,
+});
+const PriceFields = {
+  amount: Type.String({ pattern: '^[0-9]{1,12}(\\.[0-9]{1,8})?$' }),
+  currency: Type.String({ pattern: '^[A-Z]{3}$' }),
+};
+const HttpsUrl = Type.String({ pattern: '^https://', maxLength: 2048 });
+const ProductVariantSchema = Type.Object(
   {
-    variantId: Type.String({
-      pattern: '^gid://shopify/ProductVariant/[0-9]+$',
-      maxLength: 120,
-    }),
+    id: VariantIdSchema,
+    title: plain(255),
+    available: Type.Boolean(),
+    ...PriceFields,
   },
   objectOptions,
 );
+const ProductSchema = Type.Object(
+  {
+    id: plain(120),
+    title: plain(255),
+    description: Type.String({ maxLength: 240 }),
+    category: plain(255),
+    image: Type.Union([
+      Type.Null(),
+      Type.Object(
+        {
+          url: HttpsUrl,
+          altText: Type.Union([Type.Null(), Type.String({ maxLength: 512 })]),
+        },
+        objectOptions,
+      ),
+    ]),
+    tone: Type.Optional(
+      Type.Union([
+        Type.Literal('tiger'),
+        Type.Literal('rose'),
+        Type.Literal('amethyst'),
+      ]),
+    ),
+    variantId: Type.Union([Type.Null(), VariantIdSchema]),
+    variantTitle: Type.Optional(plain(255)),
+    available: Type.Boolean(),
+    ...PriceFields,
+    variants: Type.Array(ProductVariantSchema, {
+      maxItems: SHOP_VARIANTS_PER_PRODUCT,
+    }),
+    hasMoreVariants: Type.Boolean(),
+  },
+  objectOptions,
+);
+export const ProductQuerySchema = Type.Object(
+  { after: Type.Optional(ShopifyCursor) },
+  objectOptions,
+);
+export const ProductCatalogueSchema = Type.Object(
+  {
+    mode: Type.Union([Type.Literal('live'), Type.Literal('preview')]),
+    products: Type.Array(ProductSchema, { maxItems: SHOP_PAGE_SIZE }),
+    nextCursor: Type.Union([Type.Null(), ShopifyCursor]),
+  },
+  objectOptions,
+);
+const CheckoutLineSchema = Type.Object(
+  {
+    variantId: VariantIdSchema,
+    quantity: Type.Integer({ minimum: 1, maximum: SHOP_CART_MAX_QUANTITY }),
+  },
+  objectOptions,
+);
+export type CheckoutLine = Static<typeof CheckoutLineSchema>;
+export const CheckoutRequestSchema = Type.Union([
+  Type.Object({ variantId: VariantIdSchema }, objectOptions),
+  Type.Object(
+    {
+      lines: Type.Array(CheckoutLineSchema, {
+        minItems: 1,
+        maxItems: SHOP_CART_MAX_LINES,
+      }),
+    },
+    objectOptions,
+  ),
+]);
 export const CheckoutResponseSchema = Type.Object(
-  { checkoutUrl: Type.String({ pattern: '^https://', maxLength: 2048 }) },
+  { checkoutUrl: HttpsUrl },
   objectOptions,
 );
 export const HealthSchema = Type.Object(

@@ -9,7 +9,7 @@ export interface ApiConfig {
   port: number;
   frontendOrigin: string;
   logLevel: 'silent' | 'fatal' | 'error' | 'warn' | 'info' | 'debug';
-  shopify: { domain?: string; token?: string };
+  shopify: { domain?: string; token?: string; checkoutHost?: string };
   database: DatabaseSettings | null;
   auth: AuthSettings | null;
 }
@@ -49,17 +49,33 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     throw new Error('LOG_LEVEL is invalid');
   const domain = env.SHOPIFY_STORE_DOMAIN?.trim();
   const token = env.SHOPIFY_STOREFRONT_TOKEN?.trim();
+  const checkoutHost = env.SHOPIFY_CHECKOUT_HOST?.trim().toLowerCase();
   if (Boolean(domain) !== Boolean(token))
     throw new Error('Both Shopify settings are required');
   if (domain && !/^[a-z0-9][a-z0-9-]*\.myshopify\.com$/.test(domain))
     throw new Error('SHOPIFY_STORE_DOMAIN is invalid');
+  if (
+    checkoutHost &&
+    (!domain ||
+      checkoutHost.length > 253 ||
+      !/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/.test(
+        checkoutHost,
+      ))
+  )
+    throw new Error(
+      'SHOPIFY_CHECKOUT_HOST must be an exact hostname for the configured shop',
+    );
   return {
     nodeEnv: nodeEnv as ApiConfig['nodeEnv'],
     host,
     port,
     frontendOrigin: url.origin,
     logLevel: logLevel as ApiConfig['logLevel'],
-    shopify: { ...(domain ? { domain } : {}), ...(token ? { token } : {}) },
+    shopify: {
+      ...(domain ? { domain } : {}),
+      ...(token ? { token } : {}),
+      ...(checkoutHost ? { checkoutHost } : {}),
+    },
     database: databaseSettings(env),
     auth: authSettings(env),
   };

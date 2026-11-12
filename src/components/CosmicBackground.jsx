@@ -76,6 +76,8 @@ const CosmicBackground = memo(function CosmicBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d', { alpha: false });
+    if (!ctx) return;
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
 
     let w = 0,
       h = 0;
@@ -88,42 +90,38 @@ const CosmicBackground = memo(function CosmicBackground() {
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      sync();
     };
-    resize();
     window.addEventListener('resize', resize, { passive: true });
 
-    let scrollTicking = false;
     const onScroll = () => {
-      if (!scrollTicking) {
-        scrollTicking = true;
-        requestAnimationFrame(() => {
-          scrollYRef.current = window.scrollY;
-          scrollTicking = false;
-        });
-      }
+      if (!motion.matches) scrollYRef.current = window.scrollY;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
     const onMouseMove = (e) => {
+      if (motion.matches) return;
       cursorPos.x = e.clientX / w;
       cursorPos.y = e.clientY / h;
     };
     window.addEventListener('mousemove', onMouseMove, { passive: true });
 
     const render = (timestamp) => {
+      rafRef.current = null;
+      if (document.hidden) return;
       const dt = lastFrameRef.current
         ? Math.min((timestamp - lastFrameRef.current) / 1000, 0.05)
         : 0.016;
       lastFrameRef.current = timestamp;
-      timeRef.current += dt;
+      if (!motion.matches) timeRef.current += dt;
 
       const cLerp = 1 - Math.pow(0.05, dt);
       smoothCursor.current.x += (cursorPos.x - smoothCursor.current.x) * cLerp;
       smoothCursor.current.y += (cursorPos.y - smoothCursor.current.y) * cLerp;
 
-      const cx = smoothCursor.current.x - 0.5;
-      const cy = smoothCursor.current.y - 0.5;
-      const scrollOffset = scrollYRef.current * 0.06;
+      const cx = motion.matches ? 0 : smoothCursor.current.x - 0.5;
+      const cy = motion.matches ? 0 : smoothCursor.current.y - 0.5;
+      const scrollOffset = motion.matches ? 0 : scrollYRef.current * 0.06;
       const t = timeRef.current;
 
       // Very dark icy night sky
@@ -168,15 +166,25 @@ const CosmicBackground = memo(function CosmicBackground() {
       }
 
       ctx.globalAlpha = 1;
-      rafRef.current = requestAnimationFrame(render);
+      if (!motion.matches) rafRef.current = requestAnimationFrame(render);
     };
 
-    rafRef.current = requestAnimationFrame(render);
+    function sync() {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      lastFrameRef.current = 0;
+      if (!document.hidden) rafRef.current = requestAnimationFrame(render);
+    }
+    resize();
+    motion.addEventListener('change', sync);
+    document.addEventListener('visibilitychange', sync);
 
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('mousemove', onMouseMove);
+      motion.removeEventListener('change', sync);
+      document.removeEventListener('visibilitychange', sync);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);

@@ -26,7 +26,7 @@ if (-not (Test-Path -LiteralPath (Join-Path $clusterPath 'PG_VERSION'))) {
 & (Join-Path $binaryRoot 'pg_ctl.exe') status -D $clusterPath | Out-Null
 if ($LASTEXITCODE -ne 0) {
   $logPath = Join-Path $databaseRoot 'postgres.log'
-  $startup = Start-Process -FilePath (Join-Path $binaryRoot 'pg_ctl.exe') -WindowStyle Hidden -Wait -PassThru -ArgumentList @('-D',"`"$clusterPath`"",'-l',"`"$logPath`"",'-o',"`"-h 127.0.0.1 -p $Port`"",'-w','start') -RedirectStandardOutput (Join-Path $databaseRoot 'startup.log') -RedirectStandardError (Join-Path $databaseRoot 'startup-error.log')
-  if ($startup.ExitCode -ne 0) { throw 'Local PostgreSQL did not start; inspect the ignored database log' }
+  $startup = Start-Process -FilePath (Join-Path $binaryRoot 'pg_ctl.exe') -WindowStyle Hidden -PassThru -ArgumentList @('-D',"`"$clusterPath`"",'-l',"`"$logPath`"",'-o',"`"-h 127.0.0.1 -p $Port`"",'-w','-t','30','start') -RedirectStandardOutput (Join-Path $databaseRoot 'startup.log') -RedirectStandardError (Join-Path $databaseRoot 'startup-error.log')
+  if (-not $startup.WaitForExit(45000) -or $startup.ExitCode -ne 0) { throw 'Local PostgreSQL did not start; inspect the ignored database log' }
 }
 Write-Output "Local PostgreSQL is ready on 127.0.0.1:$Port. Credentials remain in ignored work/database/.env."

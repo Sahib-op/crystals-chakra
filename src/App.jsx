@@ -13,8 +13,8 @@ import RoyalMotion from './components/RoyalMotion';
 import SideNav from './components/SideNav';
 import Footer from './components/Footer';
 import Home from './pages/Home';
-import Shop from './pages/Shop';
 import NotFound from './pages/NotFound';
+const Shop = lazy(() => import('./pages/Shop'));
 const StudioPage = lazy(() => import('./features/studio/StudioPage.tsx'));
 function NavigationEffects() {
   const { pathname, hash } = useLocation();
@@ -65,7 +65,20 @@ export default function App() {
         <main id="main">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/shop" element={<Shop />} />
+            <Route
+              path="/shop"
+              element={
+                <Suspense
+                  fallback={
+                    <p className="px-8 py-28" role="status">
+                      Opening the shop…
+                    </p>
+                  }
+                >
+                  <Shop />
+                </Suspense>
+              }
+            />
             <Route
               path="/studio"
               element={
