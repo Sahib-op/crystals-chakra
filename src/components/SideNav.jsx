@@ -1,61 +1,138 @@
+import { useEffect, useRef, useState } from 'react';
+import { useJourney } from './JourneyContext';
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
-import { Home, Sparkles, BookOpen, ShoppingBag } from 'lucide-react';
-
-const NAV_ITEMS = [
-  { to: '/', label: 'Home', id: 'home', icon: Home },
-  { to: '/services', label: 'Services', id: 'services', icon: Sparkles },
-  { to: '/science', label: 'Science', id: 'science', icon: BookOpen },
-  { to: '/shop', label: 'Shop', id: 'shop', icon: ShoppingBag },
+import { motion, useReducedMotion } from 'framer-motion';
+import {
+  Home,
+  Sparkles,
+  BookOpen,
+  Moon,
+  CalendarDays,
+  HelpCircle,
+  ShoppingBag,
+} from 'lucide-react';
+const SECTIONS = [
+  ['home', 'Welcome', Home],
+  ['tarot', 'Tarot Readings', Moon],
+  ['services', 'Kundli Services', Sparkles],
+  ['collection', 'Shop', ShoppingBag],
+  ['information', 'The Science', BookOpen],
+  ['booking', 'Contact the Studio', CalendarDays],
+  ['questions', 'Questions', HelpCircle],
 ];
-
 export default function SideNav() {
-  const location = useLocation();
-  const [hovered, setHovered] = useState(null);
-
+  const [ready, setReady] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { activeSection: active } = useJourney();
+  const { pathname, search } = useLocation();
+  const root = useRef(null),
+    trigger = useRef(null);
+  const reduced = useReducedMotion();
+  useEffect(() => {
+    const outside = (e) => {
+      if (!root.current?.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('pointerdown', outside);
+    return () => document.removeEventListener('pointerdown', outside);
+  }, []);
+  function go(id) {
+    setReady(false);
+    setOpen(false);
+    if (pathname === '/' && id !== 'collection')
+      document
+        .getElementById(id)
+        ?.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' });
+  }
   return (
-    <nav className="fixed left-5 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-center">
-      <div className="bg-chakra-surface/50 backdrop-blur-xl border border-white/10 rounded-full py-2.5 px-1.5 flex flex-col items-center gap-1.5 shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
-        {NAV_ITEMS.map((item) => {
-          const isActive = location.pathname === item.to;
-          const Icon = item.icon;
-          return (
-            <div key={item.to} className="relative group">
+    <aside
+      ref={root}
+      className={`morph-sidebar ${open ? 'is-expanded' : ''}`}
+      onPointerEnter={(e) => {
+        if (e.pointerType === 'mouse') setOpen(true);
+      }}
+      onPointerLeave={(e) => {
+        if (
+          e.pointerType === 'mouse' &&
+          !root.current?.contains(document.activeElement)
+        )
+          setOpen(false);
+      }}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          setOpen(false);
+          trigger.current?.focus();
+        }
+      }}
+    >
+      <motion.div
+        className="morph-surface"
+        onAnimationComplete={() => setReady(open)}
+        initial={false}
+        animate={{
+          width: open ? 48 : 4,
+          height: open ? 320 : 128,
+          borderRadius: open ? 28 : 4,
+          backgroundColor: open ? '#082b45' : '#b58a38',
+          borderColor: open ? '#bf984d' : '#d9b66c',
+        }}
+        transition={
+          reduced
+            ? { duration: 0 }
+            : { type: 'spring', stiffness: 330, damping: 29 }
+        }
+      >
+        <button
+          ref={trigger}
+          className="morph-trigger"
+          aria-label="Open section navigation"
+          aria-expanded={open}
+          aria-controls="section-icons"
+          onClick={() => setOpen(true)}
+          tabIndex={open ? -1 : 0}
+        />
+        <nav
+          id="section-icons"
+          aria-label="Page sections"
+          className="morph-icons"
+          inert={!(open && ready) ? '' : undefined}
+          aria-hidden={!(open && ready)}
+        >
+          {SECTIONS.map(([id, label, Icon], i) => (
+            <motion.div
+              key={id}
+              className="morph-item"
+              initial={false}
+              animate={{ opacity: open ? 1 : 0, scale: open ? 1 : 0.5 }}
+              transition={
+                reduced
+                  ? { duration: 0 }
+                  : { duration: 0.16, delay: open ? 0.07 + i * 0.018 : 0 }
+              }
+            >
               <Link
-                to={item.to}
-                aria-label={item.label}
-                aria-current={isActive ? "page" : undefined}
-                onMouseEnter={() => setHovered(item.id)}
-                onMouseLeave={() => setHovered(null)}
-                className={`
-                  w-8 h-8 rounded-full flex items-center justify-center
-                  transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
-                  ${isActive
-                    ? 'bg-chakra-cyan text-chakra-bg shadow-[0_0_14px_rgba(37,169,186,0.5)]'
-                    : 'text-chakra-muted hover:text-white hover:bg-white/10'
-                  }
-                `}
+                to={id === 'collection' ? `/shop${search}` : `/${search}#${id}`}
+                aria-label={label}
+                aria-current={
+                  id === 'collection' && pathname === '/shop'
+                    ? 'page'
+                    : pathname === '/' && active === id
+                      ? 'location'
+                      : undefined
+                }
+                onClick={() => go(id)}
               >
-                <Icon className="w-4 h-4" />
+                <Icon size={17} strokeWidth={1.6} />
+                <span className="icon-tooltip" aria-hidden="true">
+                  {label}
+                </span>
               </Link>
-
-              {/* Tooltip */}
-              <div
-                className={`
-                  absolute left-full top-1/2 -translate-y-1/2 ml-3 
-                  px-3 py-1.5 rounded-lg whitespace-nowrap
-                  bg-chakra-surface/80 backdrop-blur-md border border-white/10
-                  text-xs font-medium text-white shadow-lg
-                  transition-all duration-200 pointer-events-none
-                  ${hovered === item.id ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'}
-                `}
-              >
-                {item.label}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </nav>
+            </motion.div>
+          ))}
+        </nav>
+      </motion.div>
+    </aside>
   );
 }

@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "types": ["vite/client", "react", "react-dom"]
+  },
+  "include": [
+    "src/features/studio/**/*.ts",
+    "src/features/studio/**/*.tsx",
+    "src/lib/catalogue.ts"
+  ],
+  "exclude": []
+}

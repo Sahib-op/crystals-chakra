@@ -1,0 +1,820 @@
+@font-face {
+  font-family: 'Studio Devanagari';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/noto-serif-devanagari-500.woff2') format('woff2');
+  unicode-range:
+    U+0900-097F, U+1CD0-1CF4, U+1CF7-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0,
+    U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B0A;
+}
+
+/* Compact masthead. Direct reading enquiries remain available throughout. */
+:root {
+  --scroll-header-height: 60px;
+}
+.journey-section,
+#understand,
+#privacy {
+  scroll-margin-top: calc(
+    var(--scroll-header-height) + env(safe-area-inset-top, 0px) + 16px
+  );
+}
+.scroll-header {
+  --header-morph: 0;
+  --header-open-left: 76px;
+  --header-open-right: 40px;
+  --header-pill-edge: 20px;
+  --header-open-height: 78px;
+  position: fixed;
+  left: calc(
+    var(--header-open-left) +
+      (var(--header-pill-edge) - var(--header-open-left)) * var(--header-morph)
+  );
+  right: calc(
+    var(--header-open-right) +
+      (var(--header-pill-edge) - var(--header-open-right)) * var(--header-morph)
+  );
+  top: calc(10px * var(--header-morph));
+  z-index: 45;
+  padding-top: env(safe-area-inset-top, 0px);
+  border: 1px solid rgb(181 141 70 / calc(0.35 * var(--header-morph)));
+  border-bottom-color: rgb(151 116 50 / calc(0.2 + 0.15 * var(--header-morph)));
+  border-radius: calc(36px * var(--header-morph));
+  background: rgb(6 36 59 / var(--header-morph));
+  box-shadow: 0 5px 18px rgb(0 0 0 / calc(0.13 * var(--header-morph)));
+}
+.scroll-header-inner {
+  height: calc(
+    var(--header-open-height) +
+      (var(--scroll-header-height) - var(--header-open-height)) *
+      var(--header-morph)
+  );
+  max-width: 1320px;
+  margin: auto;
+  padding-inline: calc(16px * var(--header-morph));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.scroll-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.scroll-header-brand > div {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  filter: none !important;
+}
+.scroll-header-brand > span {
+  font:
+    600 20px/1.1 'Playfair Display',
+    Georgia,
+    serif;
+  white-space: nowrap;
+  color: color-mix(in srgb, #123852, #f1dfb9 calc(100% * var(--header-morph)));
+}
+.scroll-header-brand b {
+  font-weight: inherit;
+}
+.scroll-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.header-whatsapp,
+.header-reading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 13px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.header-whatsapp {
+  color: color-mix(in srgb, #1a5b48, #c0e0c8 calc(100% * var(--header-morph)));
+  border: 1px solid rgb(86 141 112 / 0.45);
+  background: color-mix(
+    in srgb,
+    #ffffff30,
+    #a9d7b408 calc(100% * var(--header-morph))
+  );
+}
+.header-whatsapp:hover {
+  background: #78a88822;
+  border-color: #67947a;
+}
+.header-reading {
+  border: 1px solid #b79248;
+  color: #102d46;
+  background: linear-gradient(115deg, #e8c77c, #f3e0ac, #d9af58);
+}
+.header-reading:hover {
+  background: #f1d69c;
+}
+.header-reading-short {
+  display: none;
+}
+.scroll-header-progress {
+  position: absolute;
+  bottom: 0;
+  left: 30px;
+  right: 30px;
+  height: 1px;
+  background: #e8c77c;
+  transform-origin: left;
+  opacity: calc(0.7 * var(--header-morph));
+}
+.scroll-header :focus-visible {
+  outline: 2px solid #b18b42;
+  outline-offset: 3px;
+}
+
+/* Both opening actions share the same edges and centre line. */
+#home.opening-section {
+  padding-top: 106px;
+}
+.opening-section .journey-actions {
+  width: min(100%, 330px);
+  gap: 10px;
+  margin-top: 24px;
+}
+.opening-section .cosmic-reading-primary,
+.opening-section .cosmic-reading-secondary {
+  width: 100%;
+  max-width: none;
+  min-height: 52px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 7px;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 600;
+  text-align: center;
+}
+.opening-section .cosmic-reading-secondary {
+  border: 1px solid #a27a3766;
+  background: #fff7e344;
+}
+.opening-section .cosmic-reading-secondary:hover {
+  background: #ecd8ad55;
+  border-color: #a27a37;
+}
+.opening-section .cosmic-reading-secondary svg {
+  flex-shrink: 0;
+}
+
+/* A single colour field carries tarot into Kundli readings. */
+.readings-flow {
+  background:
+    radial-gradient(ellipse at 8% 8%, #65313e66, transparent 60%),
+    linear-gradient(165deg, #1d2b3d, #082c4b 74%);
+}
+.readings-flow > .journey-section {
+  background: transparent;
+}
+.readings-flow > .journey-section:after {
+  content: none;
+}
+.readings-flow .section-atmosphere {
+  background-image: radial-gradient(
+    circle,
+    #f7d58b44 0.65px,
+    transparent 0.9px
+  );
+  background-size: 137px 151px;
+}
+.services-section > .royal-ornament {
+  display: none;
+}
+.tarot-section {
+  padding-bottom: 20px;
+}
+.services-section {
+  padding-top: 24px;
+}
+.tarot-section .tarot-layout {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 6%;
+  align-items: center;
+}
+.tarot-section .royal-services {
+  margin-top: 24px;
+}
+.tarot-layout .tarot-copy {
+  padding-block: 14px;
+}
+.tarot-layout h2 {
+  margin: 0 0 14px;
+}
+.tarot-layout .tarot-byline {
+  font-size: clamp(20px, 2.2vw, 27px);
+  margin-bottom: 18px;
+}
+.tarot-layout p:not(.tarot-byline) {
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 390px;
+  margin-bottom: 24px;
+}
+.tarot-copy h3 {
+  margin-bottom: 8px;
+}
+.services-section .journey-error {
+  margin-bottom: 16px;
+}
+.tarot-portrait {
+  margin: 0 -40px 0 0;
+  justify-self: end;
+  width: calc(100% + 40px);
+  max-width: 560px;
+  height: clamp(340px, 35vw, 460px);
+  border-radius: 240px 0 0 0;
+  overflow: hidden;
+  border-left: 1px solid #c6a36466;
+  mask-image: linear-gradient(#000 88%, transparent);
+}
+.tarot-portrait img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 30%;
+}
+.services-section .royal-section-heading {
+  text-align: left;
+  margin-bottom: 26px;
+}
+.services-section .royal-section-heading:after {
+  content: none;
+}
+.services-section .royal-section-heading h2 {
+  margin: 0;
+}
+.services-section .royal-service h3 {
+  margin-top: 2px;
+  margin-bottom: 16px;
+}
+.services-section .royal-service > p {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.services-section .service-price {
+  margin-top: 6px;
+}
+.services-section .service-price > span {
+  font-size: 11px;
+}
+.collection-invitation h2 {
+  margin-top: 0;
+}
+.collection-invitation .collection-art {
+  height: 240px;
+}
+
+/* The science section keeps the useful content, without repeated labels. */
+.embedded-science .science-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.65fr);
+  margin-bottom: 26px;
+  gap: 28px;
+}
+.embedded-science .science-title {
+  margin: 0;
+}
+.embedded-science .chart-art {
+  min-height: 0;
+  width: 100%;
+  height: 270px;
+}
+.embedded-science .chart-art > div:not(.chart-halo) {
+  width: min(100%, 265px);
+  max-width: 100%;
+}
+.embedded-science .chapter-tabs button {
+  padding: 16px 6px;
+  font-size: 14px;
+}
+.embedded-science .chapter-panel {
+  grid-template-columns: 120px minmax(0, 1fr);
+  padding: 24px;
+  gap: 28px;
+}
+.embedded-science .chapter-visual {
+  min-height: 110px;
+  border: 0;
+  background: none;
+}
+.embedded-science .chapter-panel h3 {
+  font-size: 27px;
+  margin: 0 0 14px;
+  line-height: 1.25;
+}
+.embedded-science .chapter-panel p {
+  font-size: 15px;
+  line-height: 1.8;
+}
+.embedded-science .birth-details-section {
+  padding: 28px 0;
+  gap: 5%;
+  align-items: center;
+}
+.embedded-science .birth-details-section h3 {
+  font-size: 28px;
+  margin: 0;
+}
+.embedded-science .birth-details-list > div {
+  padding: 12px 0;
+  gap: 16px;
+}
+.embedded-science .birth-details-list h4 {
+  font:
+    500 17px 'Playfair Display',
+    Georgia,
+    serif;
+}
+.embedded-science .parchment-note {
+  padding: 24px 28px;
+}
+.embedded-science .parchment-note h3 {
+  font-size: 25px;
+  margin: 0 0 14px;
+  line-height: 1.25;
+}
+.embedded-science .parchment-note p {
+  font-size: 15px;
+  line-height: 1.8;
+}
+.booking-page > div > h2 {
+  margin-top: 0;
+}
+.royal-shop .cosmic-page {
+  padding-top: 98px;
+}
+.royal-shop .shop-return {
+  margin-bottom: 22px;
+}
+.royal-shop .shop-heading {
+  padding-top: 10px;
+}
+.royal-footer {
+  font-size: 12px;
+}
+
+/* Hindi is part of the title artwork, not another row of small captions. */
+.reading-heading {
+  position: relative;
+  isolation: isolate;
+  padding-top: 8px;
+}
+.reading-hindi-title,
+.package-hindi-title {
+  font-family: 'Studio Devanagari', 'Nirmala UI', serif;
+  font-weight: 500;
+  letter-spacing: 0;
+  pointer-events: none;
+  user-select: none;
+}
+.reading-hindi-title {
+  position: absolute;
+  top: -26px;
+  left: -8px;
+  z-index: -1;
+  font-size: clamp(48px, 6vw, 82px);
+  line-height: 1.6;
+  color: #e6c88b;
+  opacity: 0.13;
+  white-space: nowrap;
+}
+.package-hindi-title {
+  position: absolute;
+  top: 7px;
+  right: 12px;
+  left: 12px;
+  font-size: clamp(25px, 2.7vw, 35px);
+  line-height: 1.7;
+  text-align: right;
+  color: #f3d89d;
+  opacity: 0.14;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.royal-services .royal-service > h3 {
+  position: relative;
+  margin-top: 14px;
+}
+.royal-services .service-price > span {
+  display: block;
+  margin: 5px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.services-section .royal-button {
+  min-height: 46px;
+}
+
+/* Contact replaces the old personal-data form. Every action is a real link. */
+.contact-hub .page-intro {
+  font-size: 16px;
+  line-height: 1.8;
+}
+.contact-panel {
+  color: #f5e8cb;
+}
+.contact-panel label:not(.consent) {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 0 12px;
+}
+.contact-panel select {
+  width: 100%;
+  min-height: 50px;
+  font-size: 16px;
+  color-scheme: dark;
+}
+.contact-hub-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 22px;
+}
+.contact-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.contact-action > svg {
+  flex-shrink: 0;
+}
+.contact-whatsapp {
+  border: 1px solid #c7a153;
+  background: linear-gradient(115deg, #e9ca81, #f6e4b7 48%, #dfb65f);
+  color: #12314e;
+}
+.contact-whatsapp:hover {
+  background: #f3dfa8;
+}
+.contact-call {
+  border: 1px solid #d3b06c77;
+  color: #f1dfb9;
+}
+.contact-call:hover {
+  background: #ffffff0a;
+  border-color: #dfc488;
+}
+.contact-phone-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid #d1b16b33;
+}
+.contact-phone-row > a {
+  font-size: clamp(16px, 1.6vw, 19px);
+  font-variant-numeric: tabular-nums;
+  color: #f1dfb9;
+  white-space: nowrap;
+}
+.contact-phone-row > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  gap: 7px;
+  padding: 6px 8px;
+  border: 1px solid #d3b06c55;
+  border-radius: 5px;
+  color: #e7d1a0;
+  font-size: 13px;
+}
+.contact-phone-row > button:hover {
+  background: #ffffff0a;
+}
+.contact-panel .contact-copy-status {
+  color: #e7d1a0;
+  margin-top: 10px;
+  font-size: 14px;
+}
+.contact-hub :focus-visible {
+  outline: 2px solid #bd9449;
+  outline-offset: 4px;
+}
+@media (max-width: 400px) {
+  .contact-action {
+    gap: 7px;
+    padding-inline: 10px;
+    font-size: 14px;
+  }
+  .contact-whatsapp > svg:last-child {
+    display: none;
+  }
+  .contact-phone-row > button span {
+    display: none;
+  }
+}
+
+/* Gold light moves slowly, with a few pixels of pointer and scroll parallax. */
+.theme-ivory > .section-atmosphere,
+.theme-parchment > .section-atmosphere {
+  inset: -24px;
+  transform: translate3d(
+    calc(var(--pointer-shift-x, 0px) * 0.25),
+    calc(var(--scroll-shift, 0px) * 0.35),
+    0
+  );
+}
+.cream-wash {
+  position: absolute;
+  inset: -30px;
+  pointer-events: none;
+  transform: translate3d(
+    var(--pointer-shift-x, 0px),
+    calc(var(--pointer-shift-y, 0px) + var(--scroll-shift, 0px)),
+    0
+  );
+}
+.cream-wash > span {
+  position: absolute;
+  inset: 0;
+  animation: cream-drift 24s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+.cream-wash > span:first-child {
+  background:
+    radial-gradient(ellipse at 24% 38%, #ac7e2520, transparent 46%),
+    radial-gradient(ellipse at 77% 68%, #fffdf4aa, transparent 48%);
+}
+.cream-wash > span:last-child {
+  background-image: radial-gradient(circle, #b98a3e66 0.7px, transparent 1px);
+  background-size: 107px 131px;
+  opacity: 0.3;
+  animation-duration: 32s;
+  animation-direction: alternate-reverse;
+}
+.is-inview .cream-wash > span {
+  animation-play-state: running;
+}
+@keyframes cream-drift {
+  from {
+    transform: translate3d(-8px, -5px, 0) scale(1);
+    opacity: 0.55;
+  }
+  to {
+    transform: translate3d(10px, 8px, 0) scale(1.035);
+    opacity: 0.85;
+  }
+}
+
+/* Keep the native pointer; a fine gold orbit supplies the interaction feedback. */
+.royal-cursor {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s;
+}
+.royal-cursor span {
+  position: absolute;
+  left: -13px;
+  top: -13px;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #b7954ca6;
+  border-radius: 50%;
+  transition:
+    transform 0.22s,
+    background 0.22s,
+    border-color 0.22s;
+}
+.royal-cursor i {
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  width: 4px;
+  height: 4px;
+  background: #b99548;
+  transform: rotate(45deg);
+  transition: transform 0.25s;
+}
+.royal-cursor[data-hover='true'] span {
+  transform: scale(1.6);
+  background: #d9b86a0a;
+  border-color: #d0ae66;
+}
+.royal-cursor[data-hover='true'] i {
+  transform: rotate(135deg);
+}
+.royal-cursor[data-pressed='true'] span {
+  transform: scale(0.75);
+}
+.royal-cursor[data-pressed='true'] i {
+  transform: rotate(225deg);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .royal-cursor {
+    display: block;
+  }
+}
+
+@media (max-width: 900px) {
+  .scroll-header {
+    --header-open-left: 66px;
+    --header-open-right: 28px;
+  }
+  .header-reading-long {
+    display: none;
+  }
+  .header-reading-short {
+    display: inline;
+  }
+  .tarot-section .tarot-layout {
+    gap: 24px;
+  }
+  .tarot-portrait {
+    height: 360px;
+  }
+}
+@media (max-width: 760px) {
+  :root {
+    --scroll-header-height: 56px;
+  }
+  .scroll-header {
+    --header-open-left: 36px;
+    --header-open-right: 14px;
+    --header-pill-edge: 10px;
+    --header-open-height: 68px;
+  }
+  .scroll-header-inner {
+    padding-inline: calc(8px * var(--header-morph));
+    gap: 8px;
+  }
+  .scroll-header-brand {
+    gap: 6px;
+  }
+  .scroll-header-brand > div {
+    width: 30px;
+    height: 30px;
+  }
+  .scroll-header-brand > span {
+    font-size: 15px;
+    white-space: normal;
+    max-width: 74px;
+  }
+  .scroll-header-brand b {
+    display: block;
+  }
+  .scroll-header-actions {
+    gap: 6px;
+  }
+  .header-whatsapp,
+  .header-reading {
+    min-height: 40px;
+    padding-inline: 8px;
+    gap: 4px;
+    font-size: 12px;
+  }
+  .header-whatsapp > svg {
+    width: 17px;
+    height: 17px;
+  }
+  #home.opening-section {
+    padding-top: 90px;
+  }
+  .opening-section .journey-actions {
+    margin-top: 22px;
+    gap: 10px;
+  }
+  .opening-section .cosmic-reading-primary,
+  .opening-section .cosmic-reading-secondary {
+    font-size: 13px;
+    min-height: 50px;
+    padding-inline: 10px;
+    gap: 10px;
+  }
+  .tarot-section .tarot-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .tarot-section {
+    padding-bottom: 8px;
+  }
+  .tarot-layout .tarot-copy {
+    padding-top: 0;
+  }
+  .tarot-layout .tarot-byline {
+    font-size: 22px;
+  }
+  .tarot-layout p:not(.tarot-byline) {
+    font-size: 15px;
+    max-width: 390px;
+  }
+  .tarot-portrait {
+    margin-right: -20px;
+    width: calc(100% + 20px);
+    max-width: 420px;
+    height: 330px;
+    border-radius: 160px 0 0 0;
+  }
+  .services-section {
+    padding-top: 22px;
+  }
+  .services-section .royal-section-heading {
+    margin-bottom: 22px;
+  }
+  .services-section .royal-service > p {
+    font-size: 14px;
+  }
+  .embedded-science .science-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+  .embedded-science .chart-art {
+    width: 240px;
+    height: 240px;
+    max-width: 100%;
+    justify-self: center;
+  }
+  .embedded-science .chapter-tabs {
+    gap: 6px;
+  }
+  .embedded-science .chapter-tabs button {
+    font-size: 12px;
+    padding: 14px 3px;
+    line-height: 1.5;
+  }
+  .embedded-science .chapter-panel {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 22px;
+    gap: 0;
+  }
+  .embedded-science .chapter-visual {
+    display: none;
+  }
+  .embedded-science .chapter-panel h3 {
+    font-size: 25px;
+  }
+  .embedded-science .birth-details-section {
+    gap: 18px;
+    padding: 26px 0;
+  }
+  .embedded-science .parchment-note {
+    padding: 22px;
+  }
+  .embedded-science .parchment-note h3 {
+    font-size: 24px;
+  }
+  .royal-shop .cosmic-page {
+    padding-top: 88px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cream-wash > span {
+    animation: none;
+  }
+  .cream-wash,
+  .theme-ivory > .section-atmosphere,
+  .theme-parchment > .section-atmosphere {
+    transform: none;
+  }
+  .royal-cursor {
+    display: none;
+  }
+  .scroll-header * {
+    transition: none;
+  }
+}

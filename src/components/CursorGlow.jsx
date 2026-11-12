@@ -15,7 +15,9 @@ const CursorGlow = memo(function CursorGlow() {
 
   // Single RAF loop — framerate-independent for 120hz smoothness
   const tick = useCallback((timestamp) => {
-    const dt = lastTime.current ? Math.min((timestamp - lastTime.current) / 1000, 0.05) : 0.016;
+    const dt = lastTime.current
+      ? Math.min((timestamp - lastTime.current) / 1000, 0.05)
+      : 0.016;
     lastTime.current = timestamp;
 
     // Framerate-independent lerp — very tight follow
@@ -33,7 +35,9 @@ const CursorGlow = memo(function CursorGlow() {
       ringRef.current.style.transform = `translate(${ringPos.current.x - size / 2}px, ${ringPos.current.y - size / 2}px)`;
       ringRef.current.style.width = `${size}px`;
       ringRef.current.style.height = `${size}px`;
-      ringRef.current.style.backgroundColor = hovering.current ? 'rgba(37, 169, 186, 0.1)' : 'transparent';
+      ringRef.current.style.backgroundColor = hovering.current
+        ? 'rgba(37, 169, 186, 0.1)'
+        : 'transparent';
     }
 
     if (dotRef.current) {
@@ -58,7 +62,9 @@ const CursorGlow = memo(function CursorGlow() {
     };
 
     const handleMouseOver = (e) => {
-      hovering.current = !!e.target.closest('a, button, input, [role="button"], .group');
+      hovering.current = !!e.target.closest(
+        'a, button, input, [role="button"], .group',
+      );
     };
 
     const handleMouseLeave = () => {

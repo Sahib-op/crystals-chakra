@@ -6,21 +6,55 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:api": "node --watch --env-file-if-exists=work/database/api.env --env-file-if-exists=.env server/index.js",
+    "start:api": "node --env-file-if-exists=.env server/index.js",
+    "test": "node --test tests/*.test.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.client.json --noEmit",
+    "contracts:generate": "node scripts/generate-contracts.ts",
+    "contracts:check": "node scripts/generate-contracts.ts --check",
+    "test:db": "node --env-file-if-exists=work/database/.env --test tests/database/*.test.js",
+    "db:migrate": "node --env-file-if-exists=.env scripts/migrate.ts",
+    "db:import-legacy": "node --env-file-if-exists=.env scripts/import-legacy.ts",
+    "db:local:setup": "node --env-file=work/database/.env scripts/provision-local-db.ts",
+    "dev:studio-auth": "node --env-file=work/database/.env scripts/fixtures/studio-auth.ts"
   },
   "dependencies": {
+    "@fastify/cors": "11.4.1",
+    "@fastify/rate-limit": "11.2.2",
+    "@fastify/swagger": "9.9.3",
+    "@fastify/type-provider-typebox": "6.3.0",
+    "@supabase/supabase-js": "2.119.0",
+    "@tanstack/react-query": "5.107.1",
+    "fastify": "5.12.8",
     "framer-motion": "^11.3.0",
+    "jose": "6.2.15",
     "lucide-react": "^1.19.0",
+    "pg": "8.23.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^3.0.0",
-    "react-router-dom": "^7.17.0"
+    "react-router-dom": "^7.17.0",
+    "three": "^0.187.0",
+    "typebox": "1.4.5"
   },
   "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/pg": "8.23.1",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
     "@vitejs/plugin-react": "^4.7.0",
+    "ajv": "8.18.0",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.40",
+    "prettier": "^3.9.10",
     "tailwindcss": "^3.4.7",
+    "typescript": "7.0.2",
     "vite": "^6.4.5"
+  },
+  "engines": {
+    "node": ">=24.12.0 <25"
   }
 }

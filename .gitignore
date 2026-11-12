@@ -5,3 +5,9 @@ dist/
 *.log
 .DS_Store
 dsadsa
+
+data/
+.env.*
+!.env.example
+
+work/

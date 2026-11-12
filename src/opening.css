@@ -1,0 +1,494 @@
+/* Opening review: original editorial type, royal palette and a real 3D scene. */
+#home.opening-section {
+  padding-top: 128px;
+  padding-bottom: 38px;
+}
+.opening-section .welcome-grid {
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 24px;
+  padding: 0;
+  align-items: center;
+}
+.opening-section .welcome-copy h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(48px, 5.5vw, 76px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  margin: 0 0 24px;
+}
+.opening-section .welcome-copy h1 > span {
+  color: #99722c;
+  font-style: italic;
+  font-weight: 400;
+}
+.opening-section .welcome-copy > p {
+  font-size: 18px;
+  line-height: 1.65;
+  color: #173750;
+  max-width: 410px;
+  margin: 0;
+}
+.opening-section .journey-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+  margin-top: 28px;
+}
+.cosmic-reading-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  max-width: 100%;
+  padding: 17px 22px;
+  background: #0a3050;
+  border: 1px solid #947036;
+  box-shadow:
+    inset 0 0 0 3px #0a3050,
+    inset 0 0 0 4px #c19b5155;
+  color: #f9e5b8;
+  border-radius: 7px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.cosmic-reading-primary:hover {
+  background: #124264;
+  transform: translateY(-2px);
+}
+.cosmic-reading-primary svg {
+  flex-shrink: 0;
+}
+.cosmic-reading-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  color: #163b59;
+  padding: 5px 0;
+  border-bottom: 1px solid #a27a374d;
+}
+.opening-section .royal-ornament {
+  opacity: 0.45;
+}
+.opening-section .section-atmosphere {
+  opacity: 0.55;
+}
+.celestial-explorer {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  max-width: 470px;
+  justify-self: center;
+}
+.celestial-webgl {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: radial-gradient(ellipse, #f9e0a44d, transparent 70%);
+}
+.celestial-webgl canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.celestial-status {
+  position: absolute;
+  top: 40%;
+  left: 15%;
+  right: 15%;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #25485e;
+  pointer-events: none;
+}
+.celestial-selector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+.celestial-selector select {
+  max-width: 100%;
+  min-height: 44px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #a27a3755;
+  color: #163b59;
+  font-size: 14px;
+  padding: 8px 5px;
+  cursor: pointer;
+}
+.celestial-hover {
+  position: absolute;
+  right: 0;
+  font-size: 13px;
+  color: #6b501f;
+}
+.celestial-description {
+  position: absolute;
+  bottom: 54px;
+  left: 3%;
+  right: 3%;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 19px 20px;
+  border: 1px solid #b28c45;
+  border-radius: 8px;
+  background: #fbf4e3;
+  box-shadow: 0 8px 25px #15375222;
+  z-index: 5;
+  animation: reading-arrive 0.18s ease-out;
+}
+.opening-section .celestial-description h2 {
+  font-size: 23px;
+  letter-spacing: 0;
+  margin-bottom: 7px;
+  line-height: 1.3;
+}
+.celestial-description p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #18374e;
+}
+.celestial-description > button {
+  margin-left: auto;
+  color: #27445b;
+  flex-shrink: 0;
+  padding: 3px;
+}
+.celestial-selector select:focus-visible,
+.celestial-description button:focus-visible {
+  outline: 2px solid #99722c;
+  outline-offset: 3px;
+}
+
+/* All frame dimensions share one scroll-driven value; the logo never scales. */
+
+/* Restore the dark, stacked reading presentation, with native dialog access. */
+.cosmic-reading-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(680px, calc(100% - 32px));
+  max-height: calc(100dvh - 40px);
+  padding: 0;
+  border: 1px solid #b38c4d88;
+  border-radius: 16px;
+  background: #0a192e;
+  color: #f3eee3;
+  font-family: Inter, system-ui, sans-serif;
+  box-shadow: 0 24px 80px #0006;
+  overflow-y: auto;
+  color-scheme: dark;
+}
+.cosmic-reading-dialog::backdrop {
+  background: #061323b8;
+  backdrop-filter: blur(5px);
+}
+.cosmic-reading-dialog[open] {
+  animation: reading-arrive 0.2s ease-out;
+}
+.reading-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 26px;
+  border-bottom: 1px solid #b28c4533;
+  color: #dcc38f;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.reading-dialog-head button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: #efddb7;
+}
+.reading-dialog-head button:hover {
+  background: #ffffff0c;
+}
+.reading-dialog-body {
+  padding: 27px 32px 30px;
+  animation: reading-arrive 0.18s ease-out;
+}
+.reading-dialog-body h2 {
+  font:
+    400 32px/1.25 'Playfair Display',
+    Georgia,
+    serif;
+  color: #e9ce92;
+  letter-spacing: -0.025em;
+  margin-bottom: 18px;
+}
+.reading-lead {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #e0dfdc;
+  margin-bottom: 22px;
+}
+.reading-dialog-body label {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  margin: 18px 0 9px;
+}
+.reading-dialog-body input {
+  background: #11243a;
+  border: 1px solid #bca16b88;
+  border-radius: 7px;
+  padding: 13px 14px;
+  width: 100%;
+  font:
+    400 16px Inter,
+    system-ui,
+    sans-serif;
+  color: #f5eddc;
+  min-width: 0;
+}
+.reading-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  border: 1px solid #d5ad65;
+  border-radius: 7px;
+  padding: 15px 19px;
+  background: linear-gradient(115deg, #e9ca81, #f6e4b7 48%, #dfb65f);
+  color: #102d46;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 24px;
+  line-height: 1.5;
+}
+.reading-submit:hover {
+  filter: brightness(1.07);
+}
+.reading-dialog-body form .reading-submit {
+  width: 100%;
+}
+.reading-privacy {
+  font-size: 14px;
+  line-height: 1.65;
+  margin-top: 16px;
+  color: #d5d9dc;
+}
+.reading-error {
+  font-size: 14px;
+  color: #ffbda4;
+  margin-top: 15px;
+}
+.cosmic-results {
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+}
+.cosmic-results article {
+  padding: 18px 0 28px;
+}
+.cosmic-results article + article {
+  border-top: 1px solid #b594564d;
+  padding-top: 30px;
+}
+.result-heading > span {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  color: #d5bc88;
+}
+.result-heading h3 {
+  font:
+    400 44px/1.15 'Playfair Display',
+    Georgia,
+    serif;
+  color: #efd28d;
+  letter-spacing: -0.03em;
+  margin: 10px 0;
+}
+.result-heading p {
+  font-size: 15px;
+  color: #d7dce0;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.cosmic-results article > p {
+  font-size: 16px;
+  line-height: 1.75;
+  margin: 12px 0;
+  color: #f0eade;
+}
+.reading-traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 19px;
+  list-style: none;
+  padding: 0;
+}
+.reading-traits li {
+  font-size: 13px;
+  color: #edd6a6;
+  line-height: 1.6;
+  border: 1px solid #b5945644;
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+.reading-method {
+  border-block: 1px solid #b5945633;
+  padding: 16px 0;
+  font-size: 14px;
+}
+.reading-method summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: #e6ce9d;
+}
+.reading-method p {
+  margin-top: 12px;
+  color: #d7dce0;
+  line-height: 1.75;
+}
+.reading-result-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+}
+.reading-result-actions .reading-submit {
+  margin: 0;
+}
+.reading-restart {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  color: #ebd5a8;
+}
+.cosmic-reading-dialog :focus-visible {
+  outline: 2px solid #dbb86e;
+  outline-offset: 4px;
+}
+@keyframes reading-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 900px) {
+  .opening-section .welcome-copy h1 {
+    font-size: 54px;
+  }
+  .opening-section .welcome-copy > p {
+    font-size: 16px;
+  }
+  .cosmic-reading-primary {
+    font-size: 14px;
+    padding: 15px 16px;
+    gap: 12px;
+  }
+  .celestial-explorer {
+    max-width: 390px;
+  }
+}
+@media (max-width: 760px) {
+  #home.opening-section {
+    padding-top: 112px;
+    padding-bottom: 32px;
+  }
+  .opening-section .welcome-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .opening-section .welcome-copy h1 {
+    font-size: clamp(45px, 11vw, 64px);
+    margin-bottom: 18px;
+  }
+  .opening-section .welcome-copy > p {
+    font-size: 16px;
+    line-height: 1.65;
+    max-width: 390px;
+  }
+  .opening-section .journey-actions {
+    margin-top: 22px;
+    gap: 14px;
+  }
+  .cosmic-reading-primary {
+    font-size: 14px;
+    width: 100%;
+    max-width: 350px;
+    white-space: normal;
+    text-align: left;
+  }
+  .cosmic-reading-secondary {
+    font-size: 14px;
+  }
+  .celestial-explorer {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  .celestial-hover {
+    display: none;
+  }
+  .celestial-description {
+    padding: 16px;
+    left: 0;
+    right: 0;
+  }
+  .cosmic-reading-dialog {
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 24px);
+    border-radius: 13px;
+  }
+  .reading-dialog-head {
+    padding: 12px 18px;
+    font-size: 13px;
+  }
+  .reading-dialog-body {
+    padding: 23px 20px;
+  }
+  .reading-dialog-body h2 {
+    font-size: 28px;
+  }
+  .reading-lead {
+    font-size: 15px;
+  }
+  .cosmic-results {
+    margin-top: 16px;
+  }
+  .result-heading h3 {
+    font-size: 38px;
+  }
+  .reading-result-actions {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .reading-restart {
+    justify-content: center;
+    min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-reading-dialog,
+  .reading-dialog-body,
+  .celestial-description {
+    animation: none !important;
+  }
+}

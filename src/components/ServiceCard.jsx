@@ -2,7 +2,13 @@ import { useRef, useState, useCallback } from 'react';
 import { CheckCircle } from 'lucide-react';
 import WhatsAppCTA from './WhatsAppCTA';
 
-export default function ServiceCard({ title, price, features, isPopular, oldPrice }) {
+export default function ServiceCard({
+  title,
+  price,
+  features,
+  isPopular,
+  oldPrice,
+}) {
   const cardRef = useRef(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
@@ -21,7 +27,7 @@ export default function ServiceCard({ title, price, features, isPopular, oldPric
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`relative glass-panel bg-chakra-surface/30 backdrop-blur-xl rounded-2xl p-6 sm:p-8 flex flex-col h-full transition-transform duration-200 ease-out ${isPopular ? 'border-chakra-gold ring-1 ring-chakra-gold/50' : 'border-white/10'}`}
+      className={`service-card-polished relative glass-panel bg-chakra-surface/30 backdrop-blur-xl rounded-2xl p-6 sm:p-8 flex flex-col h-full transition-transform duration-200 ease-out ${isPopular ? 'border-chakra-gold ring-1 ring-chakra-gold/50' : 'border-white/10'}`}
       style={{
         transform: `perspective(600px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
         willChange: 'transform',
@@ -32,12 +38,20 @@ export default function ServiceCard({ title, price, features, isPopular, oldPric
           MOST POPULAR
         </div>
       )}
-      
-      <h3 className="text-xl sm:text-2xl font-serif font-bold text-center mb-2 gold-gradient-text">{title}</h3>
-      
+
+      <h3 className="text-xl sm:text-2xl font-serif font-bold text-center mb-2 gold-gradient-text">
+        {title}
+      </h3>
+
       <div className="text-center mb-6">
-        <span className="text-3xl sm:text-4xl font-bold text-white">₹{price}</span>
-        {oldPrice && <span className="text-chakra-gold/70 line-through ml-2 text-lg">₹{oldPrice}</span>}
+        <span className="text-3xl sm:text-4xl font-bold text-white">
+          ₹{price}
+        </span>
+        {oldPrice && (
+          <span className="text-chakra-gold/70 line-through ml-2 text-lg">
+            ₹{oldPrice}
+          </span>
+        )}
       </div>
 
       <div className="flex-1 space-y-3 sm:space-y-4 mb-8">
@@ -49,10 +63,11 @@ export default function ServiceCard({ title, price, features, isPopular, oldPric
         ))}
       </div>
 
-      <div className="flex justify-center mt-auto">
-        <WhatsAppCTA message={`Hi! I'm interested in the ${title} (₹${price}). Please provide more details.`} />
+      <div className="flex flex-col items-center gap-4 justify-center mt-auto">
+        <WhatsAppCTA
+          message={`Hi! I'm interested in the ${title} (₹${price}). Please provide more details.`}
+        />
       </div>
     </div>
   );
 }
-

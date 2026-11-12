@@ -1,11 +1,16 @@
 import { Helmet } from 'react-helmet-async';
-import { DEFAULT_TITLE, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_URL } from '../constants';
+import {
+  DEFAULT_TITLE,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+  SITE_URL,
+} from '../constants';
 
-export default function PageMeta({ 
-  title, 
-  description = DEFAULT_DESCRIPTION, 
+export default function PageMeta({
+  title,
+  description = DEFAULT_DESCRIPTION,
   ogImage = DEFAULT_OG_IMAGE,
-  path = '' 
+  path = '',
 }) {
   const fullTitle = title ? `${title} — Crystals Chakra` : DEFAULT_TITLE;
   const canonicalUrl = `${SITE_URL}${path}`;

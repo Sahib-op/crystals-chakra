@@ -1,63 +1,81 @@
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { Menu, X, ArrowUpRight } from 'lucide-react';
 import BrandLogo from './BrandLogo';
-
-const NAV_LINKS = [
-  { to: '/services', label: 'Kundli Services' },
-  { to: '/science', label: 'Science of Astrology' },
-  { to: '/shop', label: 'Shop' },
+const LINKS = [
+  ['/services', 'Kundli Services'],
+  ['/science', 'Science of Astrology'],
+  ['/shop', 'Shop'],
 ];
-
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
-
+  const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+  useEffect(() => {
+    const key = (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', key);
+    return () => window.removeEventListener('keydown', key);
+  }, []);
   return (
-    <nav className="fixed top-0 w-full z-50 glass-panel border-b border-white/10">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <Link to="/" className="flex items-center gap-1 sm:gap-2">
-              <BrandLogo size="sm" className="!w-10 !h-10 sm:!w-12 sm:!h-12" />
-              <div className="flex flex-col">
-                <span className="text-xl sm:text-2xl font-serif font-bold text-chakra-cyan leading-none tracking-wide">CRYSTALS <span className="text-white">CHAKRA</span></span>
-              </div>
-            </Link>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
-              aria-expanded={isOpen}
-              aria-controls="mobile-navigation"
-              className="text-chakra-text hover:text-chakra-cyan p-2"
+    <header className="site-header">
+      <nav className="header-inner" aria-label="Main navigation">
+        <Link to="/" className="site-brand" aria-label="Crystals Chakra home">
+          <BrandLogo size="sm" />
+          <span>
+            CRYSTALS <b>CHAKRA</b>
+            <small>UNLOCK YOUR DESTINY</small>
+          </span>
+        </Link>
+        <div className="desktop-links">
+          {LINKS.map(([to, label]) => (
+            <Link
+              key={to}
+              to={to}
+              aria-current={pathname === to ? 'page' : undefined}
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
+              {label}
+            </Link>
+          ))}
         </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div id="mobile-navigation" className="md:hidden glass-panel border-t border-white/10">
-          <div className="px-4 pt-3 pb-4 space-y-2">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setIsOpen(false)}
-                className={`block text-center py-3 px-4 rounded-xl text-sm font-medium transition-colors ${location.pathname === link.to ? 'text-chakra-cyan bg-chakra-cyan/10' : 'text-chakra-muted hover:text-white'}`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </div>
+        <Link to="/book" className="header-book">
+          Book a Reading <ArrowUpRight size={15} />
+        </Link>
+        <button
+          className="mobile-toggle"
+          aria-label={open ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={open}
+          aria-controls="mobile-navigation"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <X /> : <Menu />}
+        </button>
+      </nav>
+      {open && (
+        <nav
+          id="mobile-navigation"
+          className="mobile-links"
+          aria-label="Mobile navigation"
+        >
+          <Link to="/">Home</Link>
+          {LINKS.map(([to, label]) => (
+            <Link
+              key={to}
+              to={to}
+              aria-current={pathname === to ? 'page' : undefined}
+            >
+              {label}
+              <ArrowUpRight size={16} />
+            </Link>
+          ))}
+          <Link to="/book">
+            Book a Reading <ArrowUpRight size={16} />
+          </Link>
+        </nav>
       )}
-    </nav>
+    </header>
   );
 }

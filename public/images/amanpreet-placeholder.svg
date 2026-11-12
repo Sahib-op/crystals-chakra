@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 720" role="img" aria-labelledby="title">
+<title id="title">Portrait placeholder for Amanpreet Kaur</title>
+<defs>
+  <linearGradient id="back" x2="1" y2="1"><stop stop-color="#163d55"/><stop offset=".55" stop-color="#0a283f"/><stop offset="1" stop-color="#3c2035"/></linearGradient>
+  <linearGradient id="robe" x1="0" x2="1" y2="1"><stop stop-color="#c7a566" stop-opacity=".42"/><stop offset="1" stop-color="#7d603c" stop-opacity=".2"/></linearGradient>
+  <radialGradient id="halo"><stop stop-color="#ddc18b" stop-opacity=".2"/><stop offset="1" stop-color="#ddc18b" stop-opacity="0"/></radialGradient>
+  <pattern id="stars" width="90" height="95" patternUnits="userSpaceOnUse"><path d="m45 17 2 7 7 2-7 2-2 7-2-7-7-2 7-2Z" fill="#d0b274" opacity=".16"/></pattern>
+</defs>
+<path fill="url(#back)" d="M0 0h600v720H0z"/>
+<path fill="url(#stars)" d="M0 0h600v720H0z"/>
+<circle cx="305" cy="284" r="250" fill="url(#halo)"/>
+<g fill="none" stroke="#c7a369" opacity=".4">
+  <path d="M50 720V281a250 250 0 0 1 500 0v439"/><path d="M66 720V282a234 234 0 0 1 468 0v438" stroke-width=".6"/>
+  <circle cx="302" cy="270" r="126" stroke-dasharray="2 7"/>
+</g>
+<g fill="url(#robe)" stroke="#c8aa76" stroke-opacity=".4" stroke-width="1.4">
+  <path d="M226 323c-26-42-35-94-16-137 16-36 49-55 89-55 45 0 77 23 92 60 17 43 11 87-12 129l-26 46H252Z"/>
+  <path d="M251 325c7 39-2 61-30 75L115 459C68 493 54 574 35 720h530c-19-147-32-226-81-262l-105-59c-25-15-35-35-29-74Z"/>
+  <path d="M200 415c37 73 114 151 215 202M402 415c-42 66-108 127-211 196" fill="none" stroke-opacity=".35"/>
+</g>
+<path d="m300 55 4 13 13 4-13 4-4 13-4-13-13-4 13-4Z" fill="#d4b47a" opacity=".8"/>
+<path d="M0 682c143-27 392 28 600-14v52H0Z" fill="#0a283f" opacity=".45"/>
+</svg>
