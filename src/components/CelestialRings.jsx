@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { SYMBOLS } from './celestial/symbols';
+import { canAutoLoad3D } from './celestial/capability.js';
+
 export default function CelestialRings() {
   const host = useRef(null);
   const [requested, setRequested] = useState(false);
@@ -47,15 +49,23 @@ export default function CelestialRings() {
     function schedule() {
       cancelScheduled();
       if (started) return;
-      if (!requested && (reduced.matches || connection?.saveData)) {
+      if (!requested && !canAutoLoad3D(window)) {
         setStatus('static');
         return;
       }
       setStatus('waiting');
       if (!visible || document.hidden) return;
+      // Wait for the page to finish loading so the scene never competes with
+      // the first render; an explicit request loads straight away.
+      if (!requested && document.readyState !== 'complete') {
+        window.addEventListener('load', schedule, { once: true });
+        return;
+      }
       scheduled =
         'requestIdleCallback' in window
-          ? window.requestIdleCallback(load, { timeout: 1500 })
+          ? window.requestIdleCallback(load, {
+              timeout: requested ? 200 : 3000,
+            })
           : window.setTimeout(load, 200);
     }
     const observer = new IntersectionObserver(([entry]) => {
@@ -72,6 +82,7 @@ export default function CelestialRings() {
       cancelScheduled();
       observer.disconnect();
       document.removeEventListener('visibilitychange', schedule);
+      window.removeEventListener('load', schedule);
       reduced.removeEventListener('change', schedule);
       connection?.removeEventListener('change', schedule);
       scene?.dispose();
@@ -96,27 +107,33 @@ export default function CelestialRings() {
             aria-hidden="true"
           >
             <g fill="none" stroke="#ba8c37" strokeWidth="2">
-              <ellipse
-                cx="200"
-                cy="200"
-                rx="155"
-                ry="90"
-                transform="rotate(-30 200 200)"
-              />
-              <ellipse
-                cx="200"
-                cy="200"
-                rx="120"
-                ry="75"
-                transform="rotate(55 200 200)"
-              />
-              <ellipse
-                cx="200"
-                cy="200"
-                rx="80"
-                ry="53"
-                transform="rotate(-65 200 200)"
-              />
+              <g className="still-orbit still-orbit-a">
+                <ellipse
+                  cx="200"
+                  cy="200"
+                  rx="155"
+                  ry="90"
+                  transform="rotate(-30 200 200)"
+                />
+              </g>
+              <g className="still-orbit still-orbit-b">
+                <ellipse
+                  cx="200"
+                  cy="200"
+                  rx="120"
+                  ry="75"
+                  transform="rotate(55 200 200)"
+                />
+              </g>
+              <g className="still-orbit still-orbit-c">
+                <ellipse
+                  cx="200"
+                  cy="200"
+                  rx="80"
+                  ry="53"
+                  transform="rotate(-65 200 200)"
+                />
+              </g>
             </g>
             <g fill="#092d48" stroke="#ba8c37" strokeWidth="2">
               <rect

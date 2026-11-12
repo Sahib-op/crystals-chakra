@@ -3,11 +3,14 @@ import { ArrowUpRight, Check, Copy, Phone } from 'lucide-react';
 import { useJourney } from '../components/JourneyContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { readingContact } from '../../shared/contact.js';
+import { fact } from '../../shared/business.js';
 
 export default function Booking({ embedded = false }) {
   const Heading = embedded ? 'h2' : 'h1';
   const { services, selectedId, selectedService, selectService } = useJourney();
   const contact = readingContact(selectedService);
+  const hours = fact('hours'),
+    responseTime = fact('responseTime');
   const [copyStatus, setCopyStatus] = useState('');
   const copyTimer = useRef(null);
   useEffect(() => () => clearTimeout(copyTimer.current), []);
@@ -30,12 +33,43 @@ export default function Booking({ embedded = false }) {
     >
       <div>
         <Heading id="booking-heading">
-          Request Your <span className="gold-gradient-text">Reading</span>
+          Book Your <span className="gold-gradient-text">Reading</span>
         </Heading>
         <p className="page-intro">
-          Speak directly with the studio. Discuss your questions, timing and
-          price on WhatsApp or by phone.
+          Speak directly with the studio on WhatsApp or by phone. There is no
+          form to fill in and nothing to pay on this website.
         </p>
+        <h3 className="booking-steps-title">How booking works</h3>
+        <ol className="booking-steps">
+          <li>
+            <strong>Choose a reading</strong>
+            <span>Or pick “I’m not sure yet” and tell us your question.</span>
+          </li>
+          <li>
+            <strong>Send the WhatsApp message</strong>
+            <span>
+              It opens ready to send, and you can edit it first. Prefer to talk?
+              Call the studio.
+            </span>
+          </li>
+          <li>
+            <strong>The studio confirms the details</strong>
+            <span>
+              Date, time, price and how to pay. Your reading is booked only once
+              the studio confirms.
+            </span>
+          </li>
+          <li>
+            <strong>Have your reading</strong>
+            <span>At the time you agreed together.</span>
+          </li>
+        </ol>
+        {(hours || responseTime) && (
+          <p className="booking-hours">
+            {hours && <>Studio hours: {hours}. </>}
+            {responseTime}
+          </p>
+        )}
       </div>
       <div className="booking-panel contact-panel">
         <label htmlFor="contact-reading">Which reading interests you?</label>

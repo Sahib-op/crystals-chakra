@@ -14,6 +14,10 @@ export default function PageMeta({
 }) {
   const fullTitle = title ? `${title} — Crystals Chakra` : DEFAULT_TITLE;
   const canonicalUrl = `${SITE_URL}${path}`;
+  // Link-preview crawlers (WhatsApp, Facebook, X) need an absolute image URL.
+  const imageUrl = /^https:\/\//.test(ogImage)
+    ? ogImage
+    : `${SITE_URL}${ogImage}`;
 
   return (
     <Helmet>
@@ -25,7 +29,13 @@ export default function PageMeta({
       <meta property="og:type" content="website" />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content={ogImage} />
+      <meta property="og:image" content={imageUrl} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta
+        property="og:image:alt"
+        content="Crystals Chakra logo with the words Unlock Your Destiny"
+      />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:site_name" content="Crystals Chakra" />
 
@@ -33,7 +43,7 @@ export default function PageMeta({
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:image" content={imageUrl} />
     </Helmet>
   );
 }

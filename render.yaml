@@ -1,20 +1,59 @@
+# Render Blueprint for the production API. Applying it creates resources on the
+# owner's Render account; nothing here deploys automatically from this repo.
+# See docs/DEPLOYMENT.md for the order of operations and every variable.
 services:
   - type: web
     name: crystals-chakra-api
     runtime: node
+    # Closest Render region to India. A service's region cannot be changed later.
+    region: singapore
+    # Paid instances stay on; free instances sleep after 15 idle minutes and
+    # take about a minute to wake, which customers would see as a broken shop.
+    plan: starter
+    # NODE_ENV=production makes npm omit devDependencies; the API needs none.
     buildCommand: npm ci
+    # Applies versioned migrations through the separate privileged connection
+    # before the new version receives traffic. Failure stops the deploy.
+    preDeployCommand: npm run db:migrate
     startCommand: npm run start:api
+    # Liveness. /api/ready additionally checks the database; point an external
+    # uptime monitor at it rather than restarting instances on a database blip.
     healthCheckPath: /api/health
+    autoDeploy: false
     envVars:
       - key: NODE_VERSION
-        value: 24.13.1
+        value: 24.22.3
       - key: NODE_ENV
         value: production
       - key: HOST
         value: 0.0.0.0
+      - key: LOG_LEVEL
+        value: info
+      # Exact frontend origin, e.g. https://crystalschakra.com (no trailing slash).
       - key: FRONTEND_URL
         sync: false
+      # Restricted runtime login (member of chakra_runtime), Supabase session pooler.
       - key: DATABASE_URL
         sync: false
       - key: DATABASE_POOL_MAX
         value: 4
+      # Supabase CA certificate uploaded as a Render secret file.
+      - key: DATABASE_CA_CERT_FILE
+        value: /etc/secrets/supabase-ca.crt
+      # Privileged migration login; used only by preDeployCommand.
+      - key: MIGRATION_DATABASE_URL
+        sync: false
+      # Owner studio sign-in (public values; never the service-role key).
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      # Shop. Leave all unset to keep the labelled preview with checkout disabled.
+      - key: SHOPIFY_STORE_DOMAIN
+        sync: false
+      - key: SHOPIFY_STOREFRONT_TOKEN
+        sync: false
+      - key: SHOPIFY_CHECKOUT_HOST
+        sync: false
+      - key: SHOPIFY_WEBHOOK_SECRET
+        sync: false

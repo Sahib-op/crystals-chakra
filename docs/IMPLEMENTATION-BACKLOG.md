@@ -29,8 +29,8 @@ Done: a visitor can identify a reading and reach the correct studio conversation
 - [x] E03: introduce the modular Fastify boundary, validated environment settings, request IDs, redacted logs and graceful shutdown.
 - [x] E04: introduce local PostgreSQL/Supabase development parity and migrations. Preserve any existing consultation records; do not silently discard the SQLite database.
 - [x] E05: add public catalogue and private operations schemas, foreign keys, status constraints, exact money types and query-driven indexes.
-- [ ] E06: migrations, validation, repository transactions and RLS/grants have 12 passing native PostgreSQL tests; the pinned CI database job is prepared. Verify its first remote run.
-- [ ] E07: minimum CI permissions, pinned actions, reproducible installs, contract/type/test/build checks, npm audit and CodeQL are configured. Verify the remote workflow/scanner results and repository controls.
+- [x] E06: migrations, validation, repository transactions and RLS/grants run against native PostgreSQL locally and in the pinned CI service; remote Verify runs pass on `main` (checked 12 November 2026).
+- [x] E07: minimum CI permissions, pinned actions, reproducible installs, contract/type/test/build checks, npm audit and CodeQL pass remotely. Branch protection remains a repository-owner setting.
 
 Done: one catalogue feature has end-to-end typed contracts and a tested production-like data path. Tests do not validate only a fake SQLite substitute for PostgreSQL behaviour.
 
@@ -51,7 +51,7 @@ Done: the owner can run a real daily workflow; public visitors cannot list custo
 - [ ] C01: paginate real Shopify products, expose variants and validate provider responses and external destinations.
 - [ ] C02: implement cart creation, multiple items, quantity update, removal and expiry recovery using provider cart identities safely.
 - [ ] C03: implement hosted checkout with authoritative prices, stock, shipping and payment methods configured in the merchant account.
-- [ ] C04: implement verified Shopify webhook intake, atomic deduplication, minimal local order state and reconciliation.
+- [x] C04: verified Shopify webhook intake (raw-body HMAC, shop check), delivery-ID deduplication, out-of-order-safe PII-free order projection under a dedicated least-privilege role. Periodic reconciliation against the Admin API remains for when a store exists.
 - [ ] C05: display approved fulfilment/return information and useful payment/cancellation outcomes; never infer paid status from a URL.
 - [ ] C06: test out-of-stock variants, altered prices/quantities, stale carts, upstream errors, duplicate/out-of-order events, completed and cancelled sandbox purchases.
 
@@ -59,8 +59,8 @@ Done: a sandbox order can move from multi-item cart through provider checkout to
 
 ## M5–M6: reliability, advertising and release
 
-- [ ] P01: prerender public content, page-specific metadata and contact links; supply genuine social preview images, sitemap and robots configuration.
-- [ ] P02: remove duplicate font loading, isolate the WebGL path, add a static fallback, and measure the essential mobile experience.
+- [x] P01: `/`, `/shop` and `/policies` are prerendered with page metadata and contact links; Open Graph image, sitemap and robots.txt added.
+- [x] P02: self-hosted fonts, WebGL only on capable desktops after load, animated still fallback, reserved layout. Mobile lab performance 49 → 92–94. Physical-device measurement remains.
 - [ ] P03: consolidate design tokens and scoped components while preserving appearance; remove unused legacy routes/components after coverage confirms they are unused.
 - [ ] P04: implement bounded public caching, invalidation and graceful degradation. Private responses remain uncacheable.
 - [ ] P05: add only justified durable jobs, retry/backoff, dead-letter inspection and reconciliation to real integrations.
@@ -79,6 +79,10 @@ Done: launch claims are supported by staging and production evidence, not by moc
 - [ ] G02: add a demo setup with explicit fixtures and no real customer records or secrets.
 - [ ] G03: publish measured before/after performance and meaningful failure/security test evidence.
 - [ ] G04: explain the WhatsApp business decision, provider ownership boundaries, idempotency, authorization and data minimization in an interview-ready case study.
+
+## 12 November 2026 update
+
+See [LAUNCH-PLAN.md](LAUNCH-PLAN.md) for the fresh audit, research, results and the decision register, and [DEPLOYMENT.md](DEPLOYMENT.md) for the production runbook. Also delivered: welcome screen, booking steps, policy pages driven by confirmed business facts with a `launch:check` gate, persistent cart, `/api/ready`, hardened `vercel.json`/`render.yaml`, browser tests and a bundle budget in CI.
 
 ## Continuing work
 

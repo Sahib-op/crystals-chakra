@@ -12,7 +12,7 @@ body {
   margin: 0;
   background: #0a0514;
   color: #f8fafc;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -83,7 +83,7 @@ body {
 }
 .booking-page h1,
 .privacy-page h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display Variable', 'Playfair Display', serif;
   font-weight: 700;
   font-size: clamp(2.3rem, 4vw, 3.5rem);
   line-height: 1.15;
@@ -476,7 +476,7 @@ textarea,
 .chart-caption {
   position: absolute;
   bottom: 0;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.25em;
   color: #9eacbc;
 }
@@ -505,7 +505,7 @@ textarea,
   gap: 20px;
 }
 .section-overline > span {
-  font-size: 11px;
+  font-size: 14px;
   color: #748297;
 }
 .chapter-tabs {
@@ -739,7 +739,7 @@ textarea,
   background: #d4af3706;
   padding: 15px 20px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.8;
   color: #99a7bb;
 }
@@ -767,7 +767,7 @@ textarea,
   gap: 16px;
 }
 .product-count {
-  font-size: 10px;
+  font-size: 13px;
   color: #8490a1;
 }
 .shop-controls {
@@ -781,7 +781,7 @@ textarea,
   border-radius: 6px;
   padding: 11px 12px;
   color: #b7c2cf;
-  font-size: 11px;
+  font-size: 14px;
   min-width: 0;
   color-scheme: dark;
 }
@@ -842,7 +842,7 @@ textarea,
   position: absolute;
   top: 25px;
   left: 25px;
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.15em;
   color: #d7c99f;
   background: #0b1428aa;
@@ -854,7 +854,7 @@ textarea,
   padding: 24px;
 }
 .product-content .chapter-label {
-  font-size: 8px;
+  font-size: 12px;
 }
 .product-content h2 {
   font:
@@ -888,14 +888,14 @@ textarea,
   align-items: center;
   gap: 8px;
   color: #25a9ba;
-  font-size: 11px;
+  font-size: 14px;
   padding: 8px 0;
 }
 .product-purchase button:disabled {
   opacity: 0.45;
 }
 .variant-caption {
-  font-size: 10px;
+  font-size: 13px;
   color: #94a3b8;
 }
 .shop-care {
@@ -1020,13 +1020,13 @@ textarea,
     gap: 18px;
   }
   .desktop-links a {
-    font-size: 11px;
+    font-size: 14px;
   }
   .site-brand > span {
     font-size: 17px;
   }
   .header-book {
-    font-size: 11px;
+    font-size: 14px;
     gap: 8px;
   }
   .science-hero {
@@ -1102,7 +1102,7 @@ textarea,
   }
   .tarot-bridge a {
     padding: 13px;
-    font-size: 11px;
+    font-size: 14px;
   }
 }
 @media (max-width: 640px) {
@@ -1118,7 +1118,7 @@ textarea,
     font-size: 15px;
   }
   .site-brand small {
-    font-size: 6px;
+    font-size: 12px;
     letter-spacing: 0.23em;
   }
   .site-brand > div {
@@ -1163,7 +1163,7 @@ textarea,
   }
   .chart-caption {
     bottom: 0;
-    font-size: 7px;
+    font-size: 12px;
   }
   .star-top {
     right: 10px;
@@ -1180,14 +1180,14 @@ textarea,
     display: none;
   }
   .chapter-label {
-    font-size: 9px;
+    font-size: 12px;
     letter-spacing: 0.13em;
   }
   .chapter-tabs {
     gap: 5px;
   }
   .chapter-tabs button {
-    font-size: 11px;
+    font-size: 14px;
     padding: 14px 0;
     display: flex;
     flex-direction: column;
@@ -1222,7 +1222,7 @@ textarea,
     font-size: 13px;
   }
   .chapter-note {
-    font-size: 11px;
+    font-size: 14px;
   }
   .birth-details-section {
     grid-template-columns: 1fr;
@@ -1265,7 +1265,7 @@ textarea,
   }
   .shop-preview-note {
     padding: 14px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .shop-grid {
     grid-template-columns: 1fr;
@@ -1285,7 +1285,7 @@ textarea,
     font-size: 13px;
   }
   .product-badge {
-    font-size: 8px;
+    font-size: 12px;
   }
   .shop-toolbar {
     margin-top: 30px;

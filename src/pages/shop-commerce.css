@@ -185,3 +185,18 @@
     animation: none;
   }
 }
+
+.shop-claims-note {
+  max-width: 720px;
+  margin: 56px auto 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #b9c6d2;
+}
+.shop-claims-note a,
+.shop-cart-footer a {
+  color: #e2c47f;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

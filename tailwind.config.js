@@ -17,8 +17,13 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['"Inter Variable"', 'Inter', 'system-ui', 'sans-serif'],
+        serif: [
+          '"Playfair Display Variable"',
+          '"Playfair Display"',
+          'Georgia',
+          'serif',
+        ],
       },
       keyframes: {
         twinkle: {

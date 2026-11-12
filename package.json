@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:local": "pwsh -NoProfile -File scripts/start-local.ps1",
-    "build": "vite build",
+    "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-ssr && node scripts/prerender.js",
     "preview": "vite preview",
     "dev:api": "node --watch --env-file-if-exists=work/database/api.env --env-file-if-exists=.env server/index.js",
     "start:api": "node --env-file-if-exists=.env server/index.js",
@@ -20,13 +20,20 @@
     "db:migrate": "node --env-file-if-exists=.env scripts/migrate.ts",
     "db:import-legacy": "node --env-file-if-exists=.env scripts/import-legacy.ts",
     "db:local:setup": "node --env-file=work/database/.env scripts/provision-local-db.ts",
-    "dev:studio-auth": "node --env-file=work/database/.env scripts/fixtures/studio-auth.ts"
+    "dev:studio-auth": "node --env-file=work/database/.env scripts/fixtures/studio-auth.ts",
+    "launch:check": "node scripts/launch-check.js",
+    "preview:prod": "node scripts/serve-dist.js",
+    "og:image": "node scripts/generate-og-image.js",
+    "test:e2e": "playwright test",
+    "check:budget": "node scripts/check-budget.js"
   },
   "dependencies": {
     "@fastify/cors": "11.4.1",
     "@fastify/rate-limit": "11.2.2",
     "@fastify/swagger": "9.9.3",
     "@fastify/type-provider-typebox": "6.3.0",
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/playfair-display": "5.3.0",
     "@supabase/supabase-js": "2.119.0",
     "@tanstack/react-query": "5.107.1",
     "fastify": "5.12.8",
@@ -42,6 +49,8 @@
     "typebox": "1.4.6"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.63.0",
     "@types/node": "26.6.6",
     "@types/pg": "8.23.1",
     "@types/react": "18.3.31",

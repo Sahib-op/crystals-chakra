@@ -72,7 +72,7 @@ function ReadingPackageCard({ service, featured, livePrices, onSelect }) {
         rel="noreferrer"
         onClick={() => onSelect(id)}
         className="royal-button"
-        aria-label={`Ask about ${title} on WhatsApp`}
+        aria-label={`Ask on WhatsApp about ${title}`}
       >
         Ask on WhatsApp <WhatsAppIcon size={17} />
       </a>
@@ -260,6 +260,12 @@ export default function Home() {
           )}
         </ScrollSection>
       </div>
+      <ScrollSection id="booking" theme="ivory">
+        <Booking embedded />
+      </ScrollSection>
+      <ScrollSection id="information" theme="parchment">
+        <ScienceOfAstrology embedded />
+      </ScrollSection>
       <ScrollSection
         id="collection"
         theme="midnight"
@@ -281,12 +287,6 @@ export default function Home() {
             Shop the Collection <ArrowRight size={17} />
           </Link>
         </div>
-      </ScrollSection>
-      <ScrollSection id="information" theme="parchment">
-        <ScienceOfAstrology embedded />
-      </ScrollSection>
-      <ScrollSection id="booking" theme="ivory">
-        <Booking embedded />
       </ScrollSection>
       <ScrollSection id="questions" theme="parchment">
         <div className="questions-layout">
@@ -333,7 +333,8 @@ export default function Home() {
             browser without saving or sharing it. WhatsApp and telephone links
             open external services. If you previously submitted a consultation
             request here, contact {SUPPORT_EMAIL} to ask about that record or
-            request deletion. Hosting providers may keep operational logs.
+            request deletion. Hosting providers may keep operational logs.{' '}
+            <Link to="/policies#privacy">Read the full privacy notice</Link>.
           </p>
         </details>
       </ScrollSection>

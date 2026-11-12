@@ -122,7 +122,7 @@ body {
 }
 .royal-eyebrow {
   color: var(--accent);
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.19em;
   font-weight: 600;
   line-height: 1.8;
@@ -131,7 +131,7 @@ body {
 .journey-section h1,
 .journey-section h2,
 .journey-section h3 {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
 }
 .journey-section h2 {
   font-size: clamp(36px, 4.4vw, 58px);
@@ -171,7 +171,7 @@ body {
   gap: 12px;
   border-bottom: 1px solid var(--rule);
   padding: 10px 0;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--ink);
 }
 .journey-actions {
@@ -212,7 +212,7 @@ body {
   display: block;
   color: #0c396d;
   letter-spacing: 0.37em;
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 600;
   margin-top: 7px;
 }
@@ -248,7 +248,7 @@ body {
   align-items: center;
   gap: 10px;
   color: #6b6e5e;
-  font-size: 10px;
+  font-size: 13px;
   margin-top: 18px;
 }
 .welcome-assurance svg {
@@ -311,7 +311,7 @@ body {
   align-items: center;
   gap: 16px;
   color: #d6be84;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.19em;
 }
 .cosmos-caption i {
@@ -325,7 +325,7 @@ body {
   justify-content: center;
   gap: 14px;
   color: #93763b;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.18em;
   padding: 12px 0;
 }
@@ -382,14 +382,14 @@ body {
     serif;
 }
 .service-tag {
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   border: 1px solid #d4af3744;
   padding: 5px 7px;
   border-radius: 3px;
 }
 .royal-service .royal-eyebrow {
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.12em;
 }
 .royal-service h3 {
@@ -416,7 +416,7 @@ body {
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.7;
   color: #d5d9d9;
 }
@@ -440,7 +440,7 @@ body {
   margin-left: 9px;
 }
 .royal-service .royal-button {
-  font-size: 10px;
+  font-size: 13px;
   padding: 13px 12px;
   gap: 12px;
 }
@@ -450,7 +450,7 @@ body {
   justify-content: center;
   gap: 12px;
   margin-top: 20px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--subtle);
   line-height: 1.8;
 }
@@ -623,7 +623,7 @@ body {
   color: #a47c31;
 }
 .tarot-card > span {
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: 0.2em;
 }
 .card-front {
@@ -663,7 +663,7 @@ body {
 .booking-page h2:first-child,
 .booking-page > div > h2 {
   font-size: clamp(36px, 4.2vw, 55px);
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display Variable', 'Playfair Display', serif;
   line-height: 1.15;
   margin: 18px 0 24px;
   color: #12314e;
@@ -679,7 +679,7 @@ body {
 }
 .booking-page .eyebrow {
   color: #996b23;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.17em;
 }
 .booking-aside {
@@ -715,11 +715,11 @@ body {
   padding: 13px;
 }
 .booking-panel label:not(.consent) {
-  font-size: 11px;
+  font-size: 14px;
   color: #e5dbc5;
 }
 .booking-panel .consent {
-  font-size: 10px;
+  font-size: 13px;
 }
 .booking-panel .consent a {
   color: #e6c276;
@@ -731,7 +731,7 @@ body {
   font-size: 12px;
 }
 .booking-panel .form-note {
-  font-size: 9px;
+  font-size: 12px;
 }
 .booking-panel .error {
   color: #fda4af;
@@ -757,7 +757,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 11px;
+  font-size: 14px;
   color: #153d60;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -803,7 +803,7 @@ body {
   margin-top: 26px;
   padding-top: 18px;
   border-top: 1px solid #9d742833;
-  font-size: 11px;
+  font-size: 14px;
   color: #6d725f;
   scroll-margin-top: 40px;
 }
@@ -836,7 +836,7 @@ body {
 }
 .collection-status {
   display: block;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   color: #879eb2;
   margin-top: 20px;
@@ -971,7 +971,7 @@ body {
   gap: 20px;
 }
 .shop-return > a:first-child {
-  font-size: 11px;
+  font-size: 14px;
   color: #dec799;
   border-bottom: 1px solid #d4af3744;
   padding-bottom: 5px;
@@ -1048,7 +1048,7 @@ body {
     justify-self: end;
   }
   .cosmos-caption {
-    font-size: 6px;
+    font-size: 12px;
     gap: 10px;
     bottom: 27px;
   }
@@ -1062,13 +1062,13 @@ body {
     font-size: 23px;
   }
   .service-tag {
-    font-size: 6px;
+    font-size: 12px;
   }
   .royal-service > p:not(.royal-eyebrow) {
     min-height: 0;
   }
   .royal-service .royal-button {
-    font-size: 9px;
+    font-size: 12px;
     gap: 8px;
   }
   .tarot-layout {
@@ -1107,7 +1107,7 @@ body {
     font-size: 18px;
   }
   .journey-brand small {
-    font-size: 5px;
+    font-size: 12px;
     letter-spacing: 0.32em;
   }
   .welcome-grid {
@@ -1132,12 +1132,12 @@ body {
     margin-top: 22px;
   }
   .royal-button {
-    font-size: 11px;
+    font-size: 14px;
     padding: 13px 18px;
     gap: 15px;
   }
   .royal-text-button {
-    font-size: 10px;
+    font-size: 13px;
   }
   .welcome-cosmos {
     max-width: 290px;
@@ -1155,11 +1155,11 @@ body {
     bottom: 25px;
   }
   .welcome-assurance {
-    font-size: 9px;
+    font-size: 12px;
     margin-top: 18px;
   }
   .scroll-invitation {
-    font-size: 6px;
+    font-size: 12px;
     letter-spacing: 0.13em;
     padding: 12px 0;
   }
@@ -1192,17 +1192,17 @@ body {
     margin-bottom: 20px;
   }
   .service-tag {
-    font-size: 7px;
+    font-size: 12px;
   }
   .royal-service li {
-    font-size: 11px;
+    font-size: 14px;
   }
   .royal-service .royal-button {
-    font-size: 11px;
+    font-size: 14px;
   }
   .service-footnote {
     align-items: flex-start;
-    font-size: 9px;
+    font-size: 12px;
     gap: 9px;
     margin-top: 20px;
   }
@@ -1237,7 +1237,7 @@ body {
     font-size: 22px;
   }
   .embedded-science .parchment-note p:not(.chapter-label) {
-    font-size: 11px;
+    font-size: 14px;
   }
   .tarot-layout {
     grid-template-columns: 1fr;
@@ -1287,7 +1287,7 @@ body {
   }
   .booking-panel .consent {
     gap: 10px;
-    font-size: 9px;
+    font-size: 12px;
   }
   .questions-layout {
     grid-template-columns: 1fr;
@@ -1297,17 +1297,17 @@ body {
     font-size: 38px;
   }
   .contact-link {
-    font-size: 10px;
+    font-size: 13px;
   }
   .royal-faq summary {
     font-size: 12px;
     gap: 12px;
   }
   .royal-faq details p {
-    font-size: 11px;
+    font-size: 14px;
   }
   .privacy-disclosure {
-    font-size: 10px;
+    font-size: 13px;
     margin-top: 26px;
     padding-top: 18px;
   }
@@ -1354,7 +1354,7 @@ body {
   .royal-footer > span:nth-child(2) {
     order: 3;
     width: 100%;
-    font-size: 7px;
+    font-size: 12px;
   }
   .royal-footer a {
     margin-left: 0;
@@ -1392,7 +1392,7 @@ body {
     padding: 21px;
   }
   .royal-shop .shop-preview-note {
-    font-size: 10px;
+    font-size: 13px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1524,7 +1524,7 @@ body {
   box-shadow: 0 6px 20px #0002;
   padding: 9px 13px;
   border-radius: 5px;
-  font-size: 11px;
+  font-size: 14px;
   transition:
     opacity 0.15s,
     transform 0.15s;
@@ -1757,7 +1757,7 @@ body {
     margin: 16px 0;
   }
   .welcome-copy .royal-eyebrow {
-    font-size: 8px;
+    font-size: 12px;
   }
   .welcome-description {
     font-size: 12px;

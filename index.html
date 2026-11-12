@@ -12,37 +12,68 @@
       content="Personal tarot and Vedic astrology readings. Speak directly with the Crystals Chakra studio on WhatsApp or by phone, and explore the crystal collection."
     />
 
-    <!-- Open Graph / WhatsApp Preview -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Crystals Chakra — Unlock Your Destiny" />
-    <meta
-      property="og:description"
-      content="Personal tarot and Vedic astrology readings. Speak directly with the studio on WhatsApp or by phone."
-    />
-    <meta property="og:url" content="https://crystalschakra.com" />
-    <meta property="og:site_name" content="Crystals Chakra" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Crystals Chakra — Unlock Your Destiny"
-    />
-    <meta
-      name="twitter:description"
-      content="Personal tarot and Vedic astrology readings from Crystals Chakra."
-    />
-
     <title>Crystals Chakra — Unlock Your Destiny</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
+    <div
+      id="intro"
+      class="intro"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="intro-title"
+      aria-describedby="intro-hint"
+      hidden
+    >
+      <canvas aria-hidden="true"></canvas>
+      <div class="intro-content">
+        <p class="intro-brand">
+          <img src="/favicon.svg" alt="" width="40" height="40" />
+          Crystals Chakra
+        </p>
+        <p id="intro-title" class="intro-title">Unlock Your <em>Destiny</em></p>
+        <button
+          type="button"
+          class="intro-card"
+          aria-label="Draw your card and enter Crystals Chakra"
+        >
+          <span class="intro-card-inner" aria-hidden="true">
+            <span class="intro-card-face intro-card-back">
+              <svg viewBox="0 0 120 180">
+                <rect x="6" y="6" width="108" height="168" rx="6" />
+                <rect x="13" y="13" width="94" height="154" rx="4" />
+                <circle cx="60" cy="90" r="27" />
+                <circle cx="60" cy="90" r="17" />
+                <path
+                  d="M60 52v-14M60 142v-14M22 90h14M98 90h-14M33 63l9 9M87 117l-9-9M87 63l-9 9M33 117l9-9"
+                />
+                <path
+                  class="fill"
+                  d="M60 80l3.6 6.4L70 90l-6.4 3.6L60 100l-3.6-6.4L50 90l6.4-3.6z"
+                />
+              </svg>
+            </span>
+            <span class="intro-card-face intro-card-front">
+              <svg viewBox="0 0 120 180">
+                <rect x="6" y="6" width="108" height="168" rx="6" />
+                <path
+                  class="fill"
+                  d="M60 46l7.6 22.4L90 70l-18 14.4L78.4 108 60 94.6 41.6 108 48 84.4 30 70l22.4-1.6z"
+                />
+                <circle class="fill" cx="30" cy="40" r="2" />
+                <circle class="fill" cx="92" cy="34" r="2.6" />
+                <circle class="fill" cx="96" cy="124" r="1.8" />
+                <circle class="fill" cx="24" cy="118" r="2.2" />
+              </svg>
+              <span class="intro-card-name">The Star</span>
+            </span>
+          </span>
+        </button>
+        <p id="intro-hint" class="intro-hint">Tap the card to enter</p>
+      </div>
+      <button type="button" class="intro-skip">Skip intro</button>
+    </div>
+    <script src="/intro.js"></script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

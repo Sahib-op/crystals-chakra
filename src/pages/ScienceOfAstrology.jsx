@@ -47,7 +47,7 @@ export default function ScienceOfAstrology({ embedded = false }) {
       {!embedded && (
         <>
           <PageMeta
-            title="The Science of Astrology"
+            title="Understanding Astrology"
             description="Birth charts, traditional interpretation and the distinction between astronomy and astrology."
             path="/science"
           />
@@ -58,7 +58,7 @@ export default function ScienceOfAstrology({ embedded = false }) {
         <section className="science-hero">
           <AnimatedTitle
             as={embedded ? 'h2' : 'h1'}
-            text="The Science of Astrology"
+            text="Understanding Astrology"
             goldWord="Astrology"
             className="science-title font-serif font-bold"
             startDelay={0.1}

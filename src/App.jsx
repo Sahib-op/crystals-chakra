@@ -15,6 +15,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 const Shop = lazy(() => import('./pages/Shop'));
+const Policies = lazy(() => import('./pages/Policies'));
 const StudioPage = lazy(() => import('./features/studio/StudioPage.tsx'));
 function NavigationEffects() {
   const { pathname, hash } = useLocation();
@@ -53,62 +54,85 @@ function CustomerNavigation() {
     </>
   );
 }
-export default function App() {
+// Router-agnostic shell: BrowserRouter in the browser, StaticRouter when the
+// build prerenders public pages (src/entry-server.jsx).
+export function AppShell() {
   return (
-    <BrowserRouter>
-      <JourneyProvider>
-        <NavigationEffects />
-        <CustomerNavigation />
+    <JourneyProvider>
+      <NavigationEffects />
+      <CustomerNavigation />
+      <nav aria-label="Skip link">
         <a className="journey-skip" href="#main">
           Skip to content
         </a>
-        <main id="main">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route
-              path="/shop"
-              element={
-                <Suspense
-                  fallback={
-                    <p className="px-8 py-28" role="status">
-                      Opening the shop…
-                    </p>
-                  }
-                >
-                  <Shop />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/studio"
-              element={
-                <Suspense
-                  fallback={
-                    <p style={{ padding: '110px 40px' }}>Opening the studio…</p>
-                  }
-                >
-                  <StudioPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/services"
-              element={<Navigate replace to="/#services" />}
-            />
-            <Route
-              path="/science"
-              element={<Navigate replace to="/#information" />}
-            />
-            <Route path="/book" element={<LegacyBooking />} />
-            <Route
-              path="/privacy"
-              element={<Navigate replace to="/#privacy" />}
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        <Footer />
-      </JourneyProvider>
+      </nav>
+      <main id="main">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/shop"
+            element={
+              <Suspense
+                fallback={
+                  <p className="px-8 py-28" role="status">
+                    Opening the shop…
+                  </p>
+                }
+              >
+                <Shop />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/studio"
+            element={
+              <Suspense
+                fallback={
+                  <p style={{ padding: '110px 40px' }}>Opening the studio…</p>
+                }
+              >
+                <StudioPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/services"
+            element={<Navigate replace to="/#services" />}
+          />
+          <Route
+            path="/science"
+            element={<Navigate replace to="/#information" />}
+          />
+          <Route path="/book" element={<LegacyBooking />} />
+          <Route
+            path="/policies"
+            element={
+              <Suspense
+                fallback={
+                  <p className="px-8 py-28" role="status">
+                    Opening policies…
+                  </p>
+                }
+              >
+                <Policies />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/privacy"
+            element={<Navigate replace to="/policies#privacy" />}
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      <Footer />
+    </JourneyProvider>
+  );
+}
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppShell />
     </BrowserRouter>
   );
 }

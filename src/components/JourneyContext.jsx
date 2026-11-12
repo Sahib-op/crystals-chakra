@@ -6,9 +6,9 @@ export const SECTION_LABELS = {
   home: 'Welcome',
   tarot: 'Tarot Readings',
   services: 'Kundli Services',
+  booking: 'Book a Reading',
+  information: 'About Astrology',
   collection: 'Shop',
-  information: 'The Science',
-  booking: 'Contact the Studio',
   questions: 'Questions',
 };
 const JourneyContext = createContext(null);

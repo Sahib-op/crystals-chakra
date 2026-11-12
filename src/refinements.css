@@ -278,7 +278,7 @@
   margin-top: 6px;
 }
 .services-section .service-price > span {
-  font-size: 11px;
+  font-size: 14px;
 }
 .collection-invitation h2 {
   margin-top: 0;
@@ -817,4 +817,67 @@
   .scroll-header * {
     transition: none;
   }
+}
+
+/* Booking path: explicit steps so nobody assumes a click books or pays. */
+.booking-steps-title {
+  margin: 30px 0 12px;
+  font-family: 'Inter Variable', Inter, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #092d48;
+}
+.booking-steps {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: booking-step;
+  max-width: 460px;
+}
+.booking-steps li {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding-left: 46px;
+  counter-increment: booking-step;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #25485e;
+}
+.booking-steps li::before {
+  content: counter(booking-step);
+  position: absolute;
+  left: 0;
+  top: -1px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ba8c37;
+  border-radius: 50%;
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  color: #8a6420;
+  background: #fff8e8;
+}
+.booking-steps strong {
+  color: #092d48;
+  font-weight: 600;
+}
+.booking-hours {
+  margin-top: 18px;
+  font-size: 15px;
+  color: #25485e;
+}
+
+.royal-footer {
+  font-size: 14px;
+}
+.royal-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
 }

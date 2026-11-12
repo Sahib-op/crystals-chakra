@@ -11,3 +11,6 @@ data/
 !.env.example
 
 work/
+dist-ssr/
+test-results/
+playwright-report/

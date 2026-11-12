@@ -6,7 +6,12 @@ export default function Footer() {
       <span>
         © {new Date().getFullYear()} {BRAND_NAME}
       </span>
-      <Link to="/#privacy">Privacy & care</Link>
+      <nav aria-label="Policies" className="royal-footer-links">
+        <Link to="/policies">Policies</Link>
+        <Link to="/policies#privacy">Privacy</Link>
+        <Link to="/policies#returns">Shipping & returns</Link>
+        <Link to="/policies#grievance">Complaints</Link>
+      </nav>
       <Link to="/studio">Studio sign-in</Link>
     </footer>
   );

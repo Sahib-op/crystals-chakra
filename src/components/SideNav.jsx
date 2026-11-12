@@ -15,9 +15,9 @@ const SECTIONS = [
   ['home', 'Welcome', Home],
   ['tarot', 'Tarot Readings', Moon],
   ['services', 'Kundli Services', Sparkles],
+  ['booking', 'Book a Reading', CalendarDays],
+  ['information', 'About Astrology', BookOpen],
   ['collection', 'Shop', ShoppingBag],
-  ['information', 'The Science', BookOpen],
-  ['booking', 'Contact the Studio', CalendarDays],
   ['questions', 'Questions', HelpCircle],
 ];
 export default function SideNav() {

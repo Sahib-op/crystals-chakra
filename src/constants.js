@@ -11,4 +11,4 @@ export const SITE_URL = STUDIO.siteUrl;
 export const DEFAULT_TITLE = `${BRAND_NAME} — ${BRAND_TAGLINE}`;
 export const DEFAULT_DESCRIPTION =
   'Personal tarot and Vedic astrology readings. Speak directly with the Crystals Chakra studio on WhatsApp or by phone, and explore the crystal collection.';
-export const DEFAULT_OG_IMAGE = '/og-image.png';
+export const DEFAULT_OG_IMAGE = '/og-image.jpg';

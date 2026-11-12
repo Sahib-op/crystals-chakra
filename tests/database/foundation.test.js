@@ -444,7 +444,7 @@ test('migration failures roll back DDL and history, and edited applied SQL is re
         join(directory, name),
       );
     await writeFile(
-      join(directory, '202611070099_failure.sql'),
+      join(directory, '209912310099_failure.sql'),
       'create table studio.must_not_survive(id integer); select 1/0;',
     );
     const url = pathToFileURL(directory + sep);
