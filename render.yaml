@@ -12,9 +12,11 @@ services:
     plan: starter
     # NODE_ENV=production makes npm omit devDependencies; the API needs none.
     buildCommand: npm ci
-    # Applies versioned migrations through the separate privileged connection
-    # before the new version receives traffic. Failure stops the deploy.
-    preDeployCommand: npm run db:migrate
+    # Migrations are applied by an operator from a trusted machine before
+    # deploying a release that needs them (docs/DEPLOYMENT.md §1). The
+    # privileged migration credential is deliberately never placed in this
+    # service's environment, so the running API only ever holds the restricted
+    # runtime login.
     startCommand: npm run start:api
     # Liveness. /api/ready additionally checks the database; point an external
     # uptime monitor at it rather than restarting instances on a database blip.
@@ -40,9 +42,6 @@ services:
       # Supabase CA certificate uploaded as a Render secret file.
       - key: DATABASE_CA_CERT_FILE
         value: /etc/secrets/supabase-ca.crt
-      # Privileged migration login; used only by preDeployCommand.
-      - key: MIGRATION_DATABASE_URL
-        sync: false
       # Owner studio sign-in (public values; never the service-role key).
       - key: SUPABASE_URL
         sync: false

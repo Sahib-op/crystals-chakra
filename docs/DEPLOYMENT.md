@@ -49,7 +49,6 @@ Production runs on **Vercel** (static frontend), **Render** (API) and **Supabase
 | -------------------------- | ------------------------------------------------------------------------------- |
 | `FRONTEND_URL`             | `https://crystalschakra.com` (exact origin, no trailing slash)                  |
 | `DATABASE_URL`             | `chakra_api_prod` login via the session pooler                                  |
-| `MIGRATION_DATABASE_URL`   | privileged `postgres` session-pooler URL (used only by the pre-deploy step)     |
 | `SUPABASE_URL`             | `https://<ref>.supabase.co`                                                     |
 | `SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_…` (public key; never the service-role key)                     |
 | `SHOPIFY_STORE_DOMAIN`     | `<store>.myshopify.com` — leave unset to keep the preview shop                  |
@@ -57,7 +56,7 @@ Production runs on **Vercel** (static frontend), **Render** (API) and **Supabase
 | `SHOPIFY_CHECKOUT_HOST`    | custom checkout host if the store uses one, e.g. `shop.crystalschakra.com`      |
 | `SHOPIFY_WEBHOOK_SECRET`   | the signing key shown under Shopify admin → Settings → Notifications → Webhooks |
 
-4. Deploy. `preDeployCommand` runs migrations first; a failure stops the deploy and keeps the previous version serving.
+4. Deploy. Migrations are not run by Render: apply them first from a trusted machine (step 1.4) whenever a release adds one. The privileged migration credential never enters the API's environment.
 5. Add the custom domain `api.crystalschakra.com` and verify `https://api.crystalschakra.com/api/ready` returns `{"status":"ready","database":"ok"}`. Point an uptime monitor at `/api/ready`.
 
 ## 3. Shopify (shop, payments and order notifications)

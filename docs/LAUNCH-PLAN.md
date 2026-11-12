@@ -57,7 +57,7 @@ Fetched or searched on 12 November 2026. Law-firm summaries are secondary source
 
 ## 3. Skills used
 
-No additional organisation skills were available. The pinned guidance in [SKILLS-SOURCES.md](SKILLS-SOURCES.md) (security best practices, React performance, web interface guidelines, Supabase/Postgres) still applies. This pass also uses the built-in security-review and code-review passes, Lighthouse 12 and axe-core 4 for measurement. The measurement tools run from a scratch folder and are not project dependencies.
+No additional organisation skills were available. The pinned guidance in [SKILLS-SOURCES.md](SKILLS-SOURCES.md) (security best practices, React performance, web interface guidelines, Supabase/Postgres) still applies. This pass also used the built-in security-review pass over the full change set (no reportable vulnerabilities; one configuration hardening applied: the privileged migration credential was kept out of the Render API environment), plus Lighthouse 12 and axe-core 4 for measurement. The measurement tools run from a scratch folder and are not project dependencies.
 
 ## 4. Phased plan
 
@@ -91,7 +91,7 @@ Each phase ends with tests and recorded evidence. ✅ = implemented in this pass
 ### Phase 4 — Production hosting, security headers, operations
 
 - ✅ `vercel.json`: CSP, HSTS, frame-ancestors, Permissions-Policy, COOP, immutable asset caching; tested against the built site.
-- ✅ `render.yaml`: Singapore region, always-on paid plan, every required variable, migrations before deploy, readiness health check.
+- ✅ `render.yaml`: Singapore region, always-on paid plan, every runtime variable and no privileged migration credential in the API environment (migrations stay an operator step).
 - ✅ `/api/ready` checks the database separately from liveness (OPS-01).
 - ✅ Production runbook: environment variables per service, first deploy order, migration, secrets, rollback, backup and restore drill.
 - 🔒 Accounts, domain, DNS, paid tiers, secrets entered in each provider's dashboard.
