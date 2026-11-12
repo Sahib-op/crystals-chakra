@@ -38,7 +38,7 @@
     "react-helmet-async": "^3.0.0",
     "react-router-dom": "^7.17.0",
     "three": "^0.187.0",
-    "typebox": "1.4.5"
+    "typebox": "1.4.6"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
