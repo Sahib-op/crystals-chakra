@@ -35,3 +35,25 @@ Installed and used the [Vite skill](https://github.com/antfu/skills/tree/main/sk
 ## Latest correction
 
 Removed the visitor-facing “Explore the look” feature at the user's request. Updated the existing browser test to verify the fixed design when old experimental preferences are present. Production build and bundle budgets passed. The targeted desktop/mobile suite passed 8 checks and skipped 2 touch-only checks on desktop. Verified that old saved preferences have no effect.
+
+## Review pass on `claude/affectionate-rubin-u9vqux` — 14 November 2026
+
+`stack-upgrade` was deleted from GitHub after its last push; its commits were restored by SHA and fast-forwarded onto this branch, so all of the work above is kept. The working brief was then checked item by item against the result.
+
+- **CI:** the only failure was Prettier formatting in `StudioPage.tsx`; fixed.
+- **Section breakers (brief: redesign and surprise):** replaced the faint diya row with a toran of light (`RoyalOrnament.jsx`, `experience-motion.css`). Marigold garland swags, brass diyas and marigold tassels; flames flicker with a halo, pendants sway and a glint travels the garland while the section is on screen; static under reduced motion. Section content gained 28 px (desktop) / 30 px (mobile) top clearance, measured to clear the lowest lamp from 320 px to desktop.
+- **Reading tabs (brief: more tabs must not throw off positioning):** the three-column grid left a fourth card alone on a second row. Columns now follow the number of readings (up to four on wide screens, three, two, one), incomplete rows are centred, and prices and buttons align at the card bottom. The booking panel still spans the grid.
+- **Switchable themes (brief: keep switchable for now):** restored as a hidden design lab. `?lab=1` turns it on in that browser until “Close the lab” (or `?lab=0`); it is also on in local development. Four palettes (royal, saffron & plum, forest & ivory, temple red & gold) and three section orders. Visitors always get the default; saved choices are ignored unless the lab is on; the panel and palette CSS are a separate 2 KB chunk. The header now follows the palette variable (same colour by default).
+- **Welcome screen:** restored the pointer-following parallax, gold glow and constellation lines from the earlier version inside the new text-first gateway. Exit now finishes on `animationend` with a timer fallback, and the 3D scene waits for the intro to close (`crystals:intro-closed`) so its long setup task never competes with the exit.
+- **Removed feature restored:** the studio email address (formerly in the Questions section) is back in the booking panel.
+- **Touch:** the header brand and booking phone link were the only targets under 40 px on a Pixel 7; both are 44 px now (audit: 0 targets under 40 px).
+- **Budget:** `check:budget` measured the entry file only. After the upgrade the bundler moved ~38 KB between the entry and a modulepreloaded shared chunk, so the old figure (131.9 KB) understated first-load JS. It now counts entry + preloaded chunks: 149.0 KB gzip (owner's build: 148.0 KB) against a 155 KB budget.
+- **Tests:** a design-lab browser test; Playwright limited to two workers because desktop pages render WebGL in software and parallel browsers starved each other's timers (the intro exit test failed only under load).
+
+### Measured
+
+62 Node tests, 23 PostgreSQL tests, 44 browser tests (2 touch-only skips on desktop), contracts, types, formatting, build, budget and audit pass. Lighthouse mobile, local compressed build: welcome screen 84, site 79–84, shop 86, reading guide 91; Accessibility, Best Practices and SEO 100 everywhere. An A/B against the owner's `a15a2da` build under identical conditions gave 83–86 for both, so the drop from the earlier 92–94 came with the upgrade and redesign (first paint 2.6 s → 3.1 s from larger render-blocking CSS and JS), not this pass. Next performance step: critical-CSS inlining or splitting the homepage hydration.
+
+### Plugins
+
+Skill and plugin searches found no organisation skills. From the Anthropic plugin directory, frontend-design, Vercel, Supabase, Design (accessibility review) and Playwright were offered for installation; they need the owner's approval in the app and were not used in this pass.

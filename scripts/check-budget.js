@@ -1,8 +1,9 @@
-// Bundle budget for the public entry, measured on the production build.
-// Fails when the critical path grows past the limits below, or when the 3D
-// scene leaks into the initial HTML. Budgets are set a little above the
-// measured sizes on 12 November 2026 (docs/LAUNCH-PLAN.md) so growth is a
-// deliberate decision.
+// Bundle budget for the homepage's first load, measured on the production
+// build. initialJs counts the entry script plus every chunk the HTML
+// modulepreloads, because the bundler can move shared code between them
+// (counting the entry alone hid ~16 KB after the Vite 8 upgrade). Fails when
+// the critical path grows past these limits or the 3D scene is preloaded.
+// Budgets sit a little above the sizes measured on 14 November 2026.
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { gzipSync } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
@@ -10,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 const KB = 1024;
 const BUDGET = {
-  entryJs: 140 * KB, // gzip
+  initialJs: 155 * KB, // gzip, entry + modulepreloaded chunks (149 KB)
   entryCss: 25 * KB, // gzip
   introJs: 6 * KB, // gzip, render-path script
   homeHtml: 30 * KB, // gzip, prerendered page
@@ -20,6 +21,11 @@ const html = await readFile(dist + 'index.html', 'utf8');
 const entry = html.match(
   /<script type="module"[^>]*src="\/(assets\/[^"]+\.js)"/,
 )?.[1];
+const preloadedJs = [
+  ...html.matchAll(
+    /<link rel="modulepreload"[^>]*href="\/(assets\/[^"]+\.js)"/g,
+  ),
+].map((m) => m[1]);
 const css = [
   ...html.matchAll(/<link rel="stylesheet"[^>]*href="\/(assets\/[^"]+\.css)"/g),
 ].map((m) => m[1]);
@@ -27,7 +33,9 @@ if (!entry || !css.length)
   throw new Error('Could not find the entry assets in dist/index.html');
 
 const measured = {
-  entryJs: await gz(dist + entry),
+  initialJs: (
+    await Promise.all([entry, ...preloadedJs].map((file) => gz(dist + file)))
+  ).reduce((a, b) => a + b, 0),
   entryCss: (await Promise.all(css.map((file) => gz(dist + file)))).reduce(
     (a, b) => a + b,
     0,

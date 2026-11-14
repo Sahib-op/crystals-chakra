@@ -1,6 +1,7 @@
 /* The frame may move; the brand and action typography never morph. */
 .scroll-header.scroll-header {
-  background: #082c4bf5;
+  /* Same as #082c4bf5 by default; follows the design lab's palette. */
+  background: color-mix(in srgb, var(--page-dark, #082c4b) 96%, transparent);
   border-color: #bc94465c;
 }
 .scroll-header .scroll-header-inner {
@@ -415,4 +416,12 @@
   .toran-glint {
     display: none;
   }
+}
+
+/* Comfortable touch targets (44 px) for the header brand and phone link. */
+.scroll-header .scroll-header-brand,
+.contact-phone-row > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }

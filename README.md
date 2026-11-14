@@ -52,6 +52,10 @@ npm run launch:check   # business facts still awaiting the studio
 npm run preview:prod   # serve dist/ locally with vercel.json rewrites and headers
 ```
 
+### Try other palettes and section orders
+
+Open the site with `?lab=1` (for example `http://localhost:5175/?lab=1`) to show the design lab: four colour palettes and three section orders, remembered in that browser until you choose **Close the lab** or open `?lab=0`. It is on automatically in `npm run dev`. Visitors never see it and always get the default design.
+
 ### Preview the owner studio
 
 After starting and provisioning the isolated PostgreSQL database, run `npm run dev:studio-auth` in a separate terminal. Start or restart `npm run dev:api` after the fixture reports ready. Open [the local studio](http://localhost:5175/studio), choose **Use the local preview account**, sign in, then enter the fixture code `123456`. The fixture only works with the loopback development database and is rejected in production.
