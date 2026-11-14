@@ -16,7 +16,7 @@ async function watchCsp(page) {
 }
 
 test.describe('prerendered public HTML', () => {
-  for (const path of ['/', '/shop', '/policies']) {
+  for (const path of ['/', '/shop', '/policies', '/how-readings-work']) {
     test(`${path} works before JavaScript with security headers`, async ({
       request,
     }) => {
@@ -261,7 +261,10 @@ test.describe('readings and booking', () => {
       below: true,
       spansGrid: true,
     });
-    await page.getByRole('link', { name: 'Book a tarot reading' }).click();
+    await page
+      .locator('#tarot')
+      .getByRole('link', { name: 'Book a tarot reading' })
+      .click();
     await expect(page.getByLabel('Which reading interests you?')).toHaveValue(
       'tarot',
     );
@@ -285,5 +288,101 @@ test.describe('readings and booking', () => {
       document.querySelector('.tarot-portrait').scrollIntoView(),
     );
     await expect(page.locator('.tarot-portrait')).toHaveClass(/is-revealed/);
+  });
+});
+
+test.describe('about astrology, FAQ and the reading guide', () => {
+  test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
+
+  test('the basics are easy to find and link both ways with the readings', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    for (const id of [
+      'card-meanings',
+      'key-terms',
+      'birth-details',
+      'questions',
+    ])
+      await expect(page.locator(`#information #${id}`)).toHaveCount(1);
+    // Readings -> info.
+    await expect(
+      page.locator('#tarot a[href="#card-meanings"]').first(),
+    ).toBeVisible();
+    await expect(
+      page.locator('.reading-learn-row a[href="#key-terms"]'),
+    ).toBeVisible();
+    // Info -> readings: a term link selects that reading in the booking panel.
+    await page
+      .locator('#term-dasha')
+      .getByRole('link', { name: 'Parashara Patrika Plus' })
+      .click();
+    await expect(page.getByLabel('Which reading interests you?')).toHaveValue(
+      'parashara',
+    );
+    // The old final Questions section is gone; its contacts moved here.
+    await expect(page.locator('section#questions')).toHaveCount(1);
+    await expect(page.locator('#questions a[href^="mailto:"]')).toBeVisible();
+    await expect(page.locator('#questions .royal-faq details')).toHaveCount(4);
+  });
+
+  test('the reading guide has the full FAQ and never invents business facts', async ({
+    page,
+  }) => {
+    await page.goto('/how-readings-work');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(
+      'How a reading',
+    );
+    await expect(page.locator('#all-questions details')).toHaveCount(10);
+    await expect(page.locator('.guide-pending').first()).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: 'Book a reading' }),
+    ).toHaveAttribute('href', '/#booking');
+  });
+});
+
+test.describe('design lab', () => {
+  test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
+
+  test('hidden from visitors; ?lab=1 switches palette and section order', async ({
+    page,
+  }) => {
+    await page.addInitScript(() =>
+      localStorage.setItem(
+        'crystals-chakra:appearance:v1',
+        JSON.stringify({ palette: 'plum', sectionOrder: 'about-first' }),
+      ),
+    );
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await expect(page.locator('.design-lab')).toHaveCount(0);
+    expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
+    const aboutFirst = () =>
+      page.evaluate(
+        () =>
+          !!(
+            document
+              .getElementById('information')
+              .compareDocumentPosition(document.getElementById('tarot')) &
+            Node.DOCUMENT_POSITION_FOLLOWING
+          ),
+      );
+    expect(await aboutFirst()).toBe(false);
+
+    await page.goto('/?lab=1');
+    const lab = page.locator('.design-lab');
+    await expect(lab).toBeVisible();
+    await expect(page.locator('html')).toHaveAttribute('data-palette', 'plum');
+    expect(await aboutFirst()).toBe(true);
+    await lab.getByRole('button', { name: /Emerald/ }).click();
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-palette',
+      'emerald',
+    );
+    await lab.getByRole('button', { name: 'Close the lab' }).click();
+    await expect(lab).toHaveCount(0);
+    expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
+    expect(await aboutFirst()).toBe(false);
   });
 });

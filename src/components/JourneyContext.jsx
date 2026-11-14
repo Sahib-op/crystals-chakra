@@ -8,8 +8,8 @@ export const SECTION_LABELS = {
   services: 'Kundli Services',
   booking: 'Book a Reading',
   information: 'About Astrology',
-  collection: 'Shop',
   questions: 'Questions',
+  collection: 'Shop',
 };
 const JourneyContext = createContext(null);
 export function JourneyProvider({ children }) {

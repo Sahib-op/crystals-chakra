@@ -17,8 +17,8 @@ const SECTIONS = [
   ['services', 'Kundli Services', Sparkles],
   ['booking', 'Book a Reading', CalendarDays],
   ['information', 'About Astrology', BookOpen],
-  ['collection', 'Shop', ShoppingBag],
   ['questions', 'Questions', HelpCircle],
+  ['collection', 'Shop', ShoppingBag],
 ];
 export default function SideNav() {
   const [ready, setReady] = useState(false);

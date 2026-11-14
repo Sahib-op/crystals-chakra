@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowUpRight, Check, Copy, Phone } from 'lucide-react';
 import { useJourney } from '../components/JourneyContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
@@ -64,6 +65,9 @@ export default function Booking({ embedded = false }) {
             <span>At the time you agreed together.</span>
           </li>
         </ol>
+        <Link className="booking-guide-link" to="/how-readings-work">
+          Your first reading, explained
+        </Link>
         {(hours || responseTime) && (
           <p className="booking-hours">
             {hours && <>Studio hours: {hours}. </>}
