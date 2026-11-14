@@ -10,18 +10,12 @@ export default defineConfig({
   testDir: 'tests/e2e',
   timeout: 30_000,
   fullyParallel: true,
-  // Desktop pages render WebGL in software here; more parallel browsers
-  // starve each other's timers and make timing assertions flaky.
-  workers: 2,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['list'], ['github']] : 'list',
   use: {
     baseURL: `http://127.0.0.1:${WEB}`,
     trace: 'off',
-    ...(process.env.PLAYWRIGHT_CHANNEL
-      ? { channel: process.env.PLAYWRIGHT_CHANNEL }
-      : {}),
   },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },

@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowUpRight, Check, Copy, Mail, Phone } from 'lucide-react';
+import { ArrowUpRight, Check, Copy, Phone } from 'lucide-react';
 import { useJourney } from '../components/JourneyContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { readingContact } from '../../shared/contact.js';
 import { fact } from '../../shared/business.js';
-import { SUPPORT_EMAIL } from '../constants';
 
 export default function Booking({ embedded = false }) {
   const Heading = embedded ? 'h2' : 'h1';
@@ -35,16 +33,12 @@ export default function Booking({ embedded = false }) {
     >
       <div>
         <Heading id="booking-heading">
-          Book Your <em>Reading</em>
+          Book Your <span className="gold-gradient-text">Reading</span>
         </Heading>
         <p className="page-intro">
           Speak directly with the studio on WhatsApp or by phone. There is no
           form to fill in and nothing to pay on this website.
         </p>
-        <Link className="reading-text-link" to="/how-readings-work">
-          Your first reading, explained{' '}
-          <ArrowUpRight size={16} aria-hidden="true" />
-        </Link>
         <h3 className="booking-steps-title">How booking works</h3>
         <ol className="booking-steps">
           <li>
@@ -130,12 +124,6 @@ export default function Booking({ embedded = false }) {
               ? 'Select the phone number above to copy it.'
               : ''}
         </p>
-        <a className="contact-email" href={`mailto:${SUPPORT_EMAIL}`}>
-          <Mail size={16} aria-hidden="true" />
-          <span>
-            Prefer email? <strong>{SUPPORT_EMAIL}</strong>
-          </span>
-        </a>
       </div>
     </section>
   );

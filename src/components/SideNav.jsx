@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useJourney } from './JourneyContext';
 import { Link, useLocation } from 'react-router-dom';
-import { m, useReducedMotion } from 'motion/react';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   Home,
   Sparkles,
@@ -18,7 +18,7 @@ const SECTIONS = [
   ['booking', 'Book a Reading', CalendarDays],
   ['information', 'About Astrology', BookOpen],
   ['collection', 'Shop', ShoppingBag],
-  ['guide', 'Reading guide & FAQ', HelpCircle],
+  ['questions', 'Questions', HelpCircle],
 ];
 export default function SideNav() {
   const [ready, setReady] = useState(false);
@@ -38,7 +38,7 @@ export default function SideNav() {
   function go(id) {
     setReady(false);
     setOpen(false);
-    if (pathname === '/' && id !== 'collection' && id !== 'guide')
+    if (pathname === '/' && id !== 'collection')
       document
         .getElementById(id)
         ?.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' });
@@ -67,7 +67,7 @@ export default function SideNav() {
         }
       }}
     >
-      <m.div
+      <motion.div
         className="morph-surface"
         onAnimationComplete={() => setReady(open)}
         initial={false}
@@ -97,11 +97,11 @@ export default function SideNav() {
           id="section-icons"
           aria-label="Page sections"
           className="morph-icons"
-          inert={!(open && ready)}
+          inert={!(open && ready) ? '' : undefined}
           aria-hidden={!(open && ready)}
         >
           {SECTIONS.map(([id, label, Icon], i) => (
-            <m.div
+            <motion.div
               key={id}
               className="morph-item"
               initial={false}
@@ -113,13 +113,7 @@ export default function SideNav() {
               }
             >
               <Link
-                to={
-                  id === 'guide'
-                    ? '/how-readings-work'
-                    : id === 'collection'
-                      ? `/shop${search}`
-                      : `/${search}#${id}`
-                }
+                to={id === 'collection' ? `/shop${search}` : `/${search}#${id}`}
                 aria-label={label}
                 aria-current={
                   id === 'collection' && pathname === '/shop'
@@ -135,10 +129,10 @@ export default function SideNav() {
                   {label}
                 </span>
               </Link>
-            </m.div>
+            </motion.div>
           ))}
         </nav>
-      </m.div>
+      </motion.div>
     </aside>
   );
 }

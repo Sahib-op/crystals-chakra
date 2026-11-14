@@ -8,10 +8,6 @@ import {
   matchPath,
 } from 'react-router-dom';
 import { JourneyProvider } from './components/JourneyContext';
-import { AppearanceProvider } from './components/AppearanceContext';
-import { LazyMotion, MotionConfig, domAnimation } from 'motion/react';
-import PageLoading from './components/PageLoading';
-import KeyboardViewport from './components/KeyboardViewport';
 import ScrollHeader from './components/ScrollHeader';
 import RoyalMotion from './components/RoyalMotion';
 import SideNav from './components/SideNav';
@@ -20,7 +16,6 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 const Shop = lazy(() => import('./pages/Shop'));
 const Policies = lazy(() => import('./pages/Policies'));
-const HowReadingsWork = lazy(() => import('./pages/HowReadingsWork'));
 const StudioPage = lazy(() => import('./features/studio/StudioPage.tsx'));
 function NavigationEffects() {
   const { pathname, hash } = useLocation();
@@ -61,101 +56,77 @@ function CustomerNavigation() {
 }
 // Router-agnostic shell: BrowserRouter in the browser, StaticRouter when the
 // build prerenders public pages (src/entry-server.jsx).
-export function AppShell({ staticPages = {} }) {
-  const ShopPage = staticPages.Shop || Shop;
-  const PoliciesPage = staticPages.Policies || Policies;
-  const GuidePage = staticPages.HowReadingsWork || HowReadingsWork;
+export function AppShell() {
   return (
-    <MotionConfig reducedMotion="user">
-      <LazyMotion features={domAnimation} strict>
-        <AppearanceProvider>
-          <JourneyProvider>
-            <div className="app-shell">
-              <NavigationEffects />
-              <KeyboardViewport />
-              <CustomerNavigation />
-              <nav aria-label="Skip link">
-                <a className="journey-skip" href="#main">
-                  Skip to content
-                </a>
-              </nav>
-              <main id="main">
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route
-                    path="/shop"
-                    element={
-                      <Suspense
-                        fallback={
-                          <PageLoading
-                            variant="shop"
-                            title="Opening the collection…"
-                          />
-                        }
-                      >
-                        <ShopPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/studio"
-                    element={
-                      <Suspense
-                        fallback={
-                          <PageLoading
-                            variant="studio"
-                            title="Opening the studio…"
-                          />
-                        }
-                      >
-                        <StudioPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/services"
-                    element={<Navigate replace to="/#services" />}
-                  />
-                  <Route
-                    path="/science"
-                    element={<Navigate replace to="/#information" />}
-                  />
-                  <Route path="/book" element={<LegacyBooking />} />
-                  <Route
-                    path="/how-readings-work"
-                    element={
-                      <Suspense
-                        fallback={
-                          <PageLoading title="Opening the reading guide…" />
-                        }
-                      >
-                        <GuidePage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/policies"
-                    element={
-                      <Suspense
-                        fallback={<PageLoading title="Opening policies…" />}
-                      >
-                        <PoliciesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/privacy"
-                    element={<Navigate replace to="/policies#privacy" />}
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
-          </JourneyProvider>
-        </AppearanceProvider>
-      </LazyMotion>
-    </MotionConfig>
+    <JourneyProvider>
+      <NavigationEffects />
+      <CustomerNavigation />
+      <nav aria-label="Skip link">
+        <a className="journey-skip" href="#main">
+          Skip to content
+        </a>
+      </nav>
+      <main id="main">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/shop"
+            element={
+              <Suspense
+                fallback={
+                  <p className="px-8 py-28" role="status">
+                    Opening the shop…
+                  </p>
+                }
+              >
+                <Shop />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/studio"
+            element={
+              <Suspense
+                fallback={
+                  <p style={{ padding: '110px 40px' }}>Opening the studio…</p>
+                }
+              >
+                <StudioPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/services"
+            element={<Navigate replace to="/#services" />}
+          />
+          <Route
+            path="/science"
+            element={<Navigate replace to="/#information" />}
+          />
+          <Route path="/book" element={<LegacyBooking />} />
+          <Route
+            path="/policies"
+            element={
+              <Suspense
+                fallback={
+                  <p className="px-8 py-28" role="status">
+                    Opening policies…
+                  </p>
+                }
+              >
+                <Policies />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/privacy"
+            element={<Navigate replace to="/policies#privacy" />}
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      <Footer />
+    </JourneyProvider>
   );
 }
 export default function App() {

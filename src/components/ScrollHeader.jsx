@@ -1,10 +1,10 @@
 import {
-  m,
+  motion,
   useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
-} from 'motion/react';
+} from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { Phone } from 'lucide-react';
 import BrandLogo from './BrandLogo';
@@ -17,16 +17,17 @@ export default function ScrollHeader() {
   const { search, pathname } = useLocation();
   const studio = pathname === '/';
   const reduced = useReducedMotion();
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
   const targetMorph = useTransform(scrollY, [0, 120], [0, 1]);
   const morph = useSpring(targetMorph, {
     stiffness: 140,
     damping: 28,
     restDelta: 0.001,
   });
+  const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 30 });
   const contact = readingContact(selectedService);
   return (
-    <m.header
+    <motion.header
       ref={headerRef}
       className={`scroll-header ${!studio || headerVisible ? 'is-pill' : 'is-masthead'}`}
       aria-label="Reading shortcuts"
@@ -74,6 +75,11 @@ export default function ScrollHeader() {
           </a>
         </div>
       </div>
-    </m.header>
+      <motion.div
+        className="scroll-header-progress"
+        aria-hidden="true"
+        style={{ scaleX: reduced ? scrollYProgress : progress }}
+      />
+    </motion.header>
   );
 }

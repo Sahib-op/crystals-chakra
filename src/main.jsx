@@ -12,7 +12,6 @@ import './journey.css';
 import './opening.css';
 import './refinements.css';
 import './intro.css';
-import './appearance.css';
 
 const container = document.getElementById('root');
 const app = (
@@ -31,7 +30,3 @@ else {
   container.replaceChildren();
   ReactDOM.createRoot(container).render(app);
 }
-
-import './pages/reading-experience.css';
-import './experience-motion.css';
-import './keyboard-viewport.css';

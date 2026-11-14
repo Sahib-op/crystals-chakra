@@ -9,6 +9,7 @@ export const SECTION_LABELS = {
   booking: 'Book a Reading',
   information: 'About Astrology',
   collection: 'Shop',
+  questions: 'Questions',
 };
 const JourneyContext = createContext(null);
 export function JourneyProvider({ children }) {
@@ -46,13 +47,10 @@ export function JourneyProvider({ children }) {
           return;
         }
         let current = 'home';
-        // Follow the sections in DOM order.
-        for (const el of document.querySelectorAll('.royal-journey [id]')) {
-          if (
-            SECTION_LABELS[el.id] &&
-            el.getBoundingClientRect().top <= innerHeight * 0.35
-          )
-            current = el.id;
+        for (const id of Object.keys(SECTION_LABELS)) {
+          const el = document.getElementById(id);
+          if (el && el.getBoundingClientRect().top <= innerHeight * 0.35)
+            current = id;
         }
         setActiveSection(current);
         setHeaderVisible(window.scrollY > 64);
@@ -71,7 +69,7 @@ export function JourneyProvider({ children }) {
       window.removeEventListener('resize', update);
     };
   }, [location.pathname]);
-  const services = catalogue ?? bundledServices;
+  const services = catalogue ?? (serviceError ? bundledServices : []);
   const requested = new URLSearchParams(location.search).get('service') || '';
   const selectedService = services.find((s) => s.id === requested) || null;
   function selectService(id) {
@@ -91,7 +89,6 @@ export function JourneyProvider({ children }) {
     <JourneyContext.Provider
       value={{
         services,
-        catalogueReady: catalogue !== null,
         serviceError,
         retryServices: () => setAttempt((n) => n + 1),
         activeSection,

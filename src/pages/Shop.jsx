@@ -9,7 +9,6 @@ import {
 import PageMeta from '../components/PageMeta';
 import CosmicBackground from '../components/CosmicBackground';
 import AnimatedTitle from '../components/AnimatedTitle';
-import { CollectionSkeleton } from '../components/PageLoading';
 import { request } from '../lib/api';
 import { productEnquiryHref } from '../../shared/contact.js';
 import {
@@ -55,7 +54,6 @@ function ProductCard({ product, live, cart, onAdd, onViewCart, busy }) {
             src={product.image.url}
             alt={product.image.altText || product.title}
             loading="lazy"
-            decoding="async"
             width="400"
             height="340"
           />
@@ -532,127 +530,130 @@ export default function Shop() {
             <span />✧<span />
           </div>
         </section>
-        <section
-          className="shop-catalog-region"
-          aria-label="Crystal collection"
-        >
-          {catalog?.mode === 'preview' && (
-            <div className="shop-preview-note">
-              <span className="preview-dot" />
-              <p>
-                <strong>A first look at the collection.</strong> Illustrative
-                previews and indicative prices. Online purchasing will open when
-                the collection is ready.
-              </p>
+        {catalog?.mode === 'preview' && (
+          <div className="shop-preview-note">
+            <span className="preview-dot" />
+            <p>
+              <strong>A first look at the collection.</strong> Illustrative
+              previews and indicative prices. Online purchasing will open when
+              the collection is ready.
+            </p>
+          </div>
+        )}
+        {catalog?.mode === 'live' && (
+          <ShopCart
+            panelRef={cartPanel}
+            lines={cartLines}
+            updateQuantity={updateQuantity}
+            busy={checkingOut}
+            error={checkoutError}
+            onCheckout={checkout}
+          />
+        )}
+        {catalog && (
+          <div className="shop-toolbar">
+            <div>
+              <span className="product-count">
+                {products.length} {products.length === 1 ? 'piece' : 'pieces'}
+                {catalog.nextCursor ? ' in loaded results' : ''}
+              </span>
             </div>
-          )}
-          {catalog?.mode === 'live' && (
-            <ShopCart
-              panelRef={cartPanel}
-              lines={cartLines}
-              updateQuantity={updateQuantity}
-              busy={checkingOut}
-              error={checkoutError}
-              onCheckout={checkout}
-            />
-          )}
-          {catalog && (
-            <div className="shop-toolbar">
-              <div>
-                <span className="product-count">
-                  {products.length} {products.length === 1 ? 'piece' : 'pieces'}
-                  {catalog.nextCursor ? ' in loaded results' : ''}
-                </span>
-              </div>
-              <div className="shop-controls">
-                <label className="sr-only" htmlFor="shop-search">
-                  {catalog.nextCursor
-                    ? 'Search loaded products'
-                    : 'Search the collection'}
-                </label>
-                <input
-                  id="shop-search"
-                  placeholder={
-                    catalog.nextCursor
-                      ? 'Search loaded pieces…'
-                      : 'Find your crystal…'
-                  }
-                  type="search"
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                />
-                <label className="sr-only" htmlFor="shop-sort">
-                  Sort products
-                </label>
-                <select
-                  id="shop-sort"
-                  value={sort}
-                  onChange={(event) => setSort(event.target.value)}
-                >
-                  <option value="featured">Featured</option>
-                  <option value="low">Price: low to high</option>
-                  <option value="high">Price: high to low</option>
-                </select>
-              </div>
-            </div>
-          )}
-          {catalogError && (
-            <div role="alert" className="shop-error shop-catalog-error">
-              <ShoppingBag size={28} aria-hidden="true" />
-              <h2>The collection is taking a moment</h2>
-              <p>{catalogError}</p>
-              <button
-                type="button"
-                onClick={() => setReload((count) => count + 1)}
-              >
-                <RefreshCw size={14} aria-hidden="true" /> Retry collection
-              </button>
-            </div>
-          )}
-          {!catalog && !catalogError && <CollectionSkeleton />}
-          <p role="status" className="sr-only">
-            {message}
-          </p>
-          <div className="shop-grid">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                live={catalog.mode === 'live'}
-                cart={cart}
-                onAdd={addToCart}
-                onViewCart={viewCart}
-                busy={checkingOut}
+            <div className="shop-controls">
+              <label className="sr-only" htmlFor="shop-search">
+                {catalog.nextCursor
+                  ? 'Search loaded products'
+                  : 'Search the collection'}
+              </label>
+              <input
+                id="shop-search"
+                placeholder={
+                  catalog.nextCursor
+                    ? 'Search loaded pieces…'
+                    : 'Find your crystal…'
+                }
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
               />
+              <label className="sr-only" htmlFor="shop-sort">
+                Sort products
+              </label>
+              <select
+                id="shop-sort"
+                value={sort}
+                onChange={(event) => setSort(event.target.value)}
+              >
+                <option value="featured">Featured</option>
+                <option value="low">Price: low to high</option>
+                <option value="high">Price: high to low</option>
+              </select>
+            </div>
+          </div>
+        )}
+        {catalogError && (
+          <div role="alert" className="shop-error">
+            {catalogError}
+            <button
+              type="button"
+              onClick={() => setReload((count) => count + 1)}
+            >
+              <RefreshCw size={14} aria-hidden="true" /> Retry collection
+            </button>
+          </div>
+        )}
+        {!catalog && !catalogError && (
+          <div
+            className="shop-grid"
+            aria-label="Loading collection"
+            aria-busy="true"
+          >
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="product-skeleton" />
             ))}
           </div>
-          {catalog && !products.length && (
-            <p className="collection-empty">
-              {term
-                ? catalog.nextCursor
-                  ? 'No matches in the pieces loaded so far.'
-                  : 'No pieces match your search.'
-                : 'The collection is empty right now.'}
-            </p>
-          )}
-          {catalog?.nextCursor && (
-            <div className="shop-pagination">
-              {pageError && <p role="alert">{pageError}</p>}
-              <button
-                type="button"
-                className="shop-checkout"
-                disabled={loadingMore}
-                onClick={loadMore}
-              >
-                {loadingMore
-                  ? 'Loading more…'
-                  : pageError
-                    ? 'Retry next page'
-                    : 'Load more pieces'}
-              </button>
-            </div>
-          )}
-        </section>
+        )}
+        <p role="status" className="sr-only">
+          {message}
+        </p>
+        <div className="shop-grid">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              live={catalog.mode === 'live'}
+              cart={cart}
+              onAdd={addToCart}
+              onViewCart={viewCart}
+              busy={checkingOut}
+            />
+          ))}
+        </div>
+        {catalog && !products.length && (
+          <p className="collection-empty">
+            {term
+              ? catalog.nextCursor
+                ? 'No matches in the pieces loaded so far.'
+                : 'No pieces match your search.'
+              : 'The collection is empty right now.'}
+          </p>
+        )}
+        {catalog?.nextCursor && (
+          <div className="shop-pagination">
+            {pageError && <p role="alert">{pageError}</p>}
+            <button
+              type="button"
+              className="shop-checkout"
+              disabled={loadingMore}
+              onClick={loadMore}
+            >
+              {loadingMore
+                ? 'Loading more…'
+                : pageError
+                  ? 'Retry next page'
+                  : 'Load more pieces'}
+            </button>
+          </div>
+        )}
         <p className="shop-claims-note">
           Crystals and tools are sold as decorative and personal items. We do
           not claim that any product heals, cures or guarantees a result.{' '}
