@@ -28,7 +28,7 @@ export default function ScrollSection({ id, theme, children, className = '' }) {
           </div>
         )}
       </div>
-      <RoyalOrnament />
+      {id !== 'home' && <RoyalOrnament />}
       <div className="journey-content">{children}</div>
     </section>
   );

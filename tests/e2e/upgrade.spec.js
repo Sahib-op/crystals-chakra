@@ -79,3 +79,38 @@ test('touch devices do not download or mount the desktop cursor', async ({
   expect(downloaded.some((url) => url.includes('DesktopCursor'))).toBe(false);
   await expect(page.locator('.tarot-cursor')).toHaveCount(0);
 });
+
+test('the reading dialog fits a shortened touch viewport', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile);
+  await page.addInitScript(() => {
+    const viewport = new EventTarget();
+    Object.assign(viewport, { height: innerHeight, offsetTop: 0, scale: 1 });
+    Object.defineProperty(window, 'visualViewport', { value: viewport });
+  });
+  await page.goto('/');
+  await page
+    .getByRole('button', { name: 'Get My Free Cosmic Reading' })
+    .click();
+  const field = page.getByLabel('Date of birth');
+  await expect(field).toBeFocused();
+  await page.evaluate(() => {
+    Object.assign(window.visualViewport, { height: 320, offsetTop: 60 });
+    window.visualViewport.dispatchEvent(new Event('resize'));
+  });
+  await expect(page.locator('html')).toHaveAttribute('data-keyboard-open', '');
+  const dialog = page.getByRole('dialog');
+  const bounds = await dialog.boundingBox();
+  expect(bounds.y).toBeGreaterThanOrEqual(60);
+  expect(bounds.y + bounds.height).toBeLessThanOrEqual(380);
+  await expect(field).toBeFocused();
+  await dialog
+    .getByRole('button', { name: 'Reveal My Reading' })
+    .scrollIntoViewIfNeeded();
+  const action = await dialog
+    .getByRole('button', { name: 'Reveal My Reading' })
+    .boundingBox();
+  expect(action.y + action.height).toBeLessThanOrEqual(380);
+});

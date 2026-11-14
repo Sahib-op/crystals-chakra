@@ -3,6 +3,9 @@
   background: #082c4bf5;
   border-color: #bc94465c;
 }
+.scroll-header .scroll-header-inner {
+  padding-inline: clamp(8px, 2vw, 16px);
+}
 .scroll-header .scroll-header-brand > span {
   font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
   color: #f1dfb9;
@@ -155,10 +158,6 @@
 .is-inview > .diya-breaker .diya-pendant,
 .is-inview > .diya-breaker .diya-flame {
   animation-play-state: running;
-}
-.journey-section.welcome-section > .diya-breaker {
-  top: auto;
-  bottom: -27px;
 }
 @keyframes diya-sway {
   from {

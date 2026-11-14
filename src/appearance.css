@@ -219,6 +219,7 @@ body {
     min-height: 48px;
   }
   .morph-sidebar:not(.is-expanded) .morph-surface {
+    height: 48px !important;
     background: var(--page-dark) !important;
     border-radius: 50% !important;
   }
