@@ -81,6 +81,8 @@ test.describe('welcome screen', () => {
 
   test('Escape, skip and deep links bypass it', async ({ page }) => {
     await page.goto('/');
+    // The intro script has run once it holds focus; only then press Escape.
+    await expect(page.locator('.intro-enter')).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(page.locator('#intro')).toHaveCount(0);
     await page.evaluate(() => sessionStorage.clear());

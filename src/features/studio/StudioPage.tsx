@@ -44,10 +44,11 @@ export default function StudioPage() {
 function StudioEntry({ cache }: { cache: QueryClient }) {
   const config = useQuery({
     queryKey: ['studio-config'],
-    queryFn: ({ signal }) => withRequestTimeout(
-      (requestSignal) => studioApi.config(requestSignal),
-      { signal, message: 'The studio connection took too long. Please try again.' },
-    ),
+    queryFn: ({ signal }) =>
+      withRequestTimeout((requestSignal) => studioApi.config(requestSignal), {
+        signal,
+        message: 'The studio connection took too long. Please try again.',
+      }),
     retry: false,
     staleTime: 60000,
   });
@@ -59,8 +60,13 @@ function StudioEntry({ cache }: { cache: QueryClient }) {
       </Helmet>
       {!config.data?.configured && (
         <header className="studio-heading">
-          <div><h1>Studio</h1><p>Readings, publishing and day-to-day work.</p></div>
-          <div><Link to="/">View website</Link></div>
+          <div>
+            <h1>Studio</h1>
+            <p>Readings, publishing and day-to-day work.</p>
+          </div>
+          <div>
+            <Link to="/">View website</Link>
+          </div>
         </header>
       )}
       {config.isPending ? (
@@ -68,7 +74,11 @@ function StudioEntry({ cache }: { cache: QueryClient }) {
       ) : !config.data ? (
         <section className="studio-auth-card">
           <h1>Studio unavailable</h1>
-          <p role="alert">{config.error instanceof Error ? config.error.message : 'The sign-in service could not be reached.'}</p>
+          <p role="alert">
+            {config.error instanceof Error
+              ? config.error.message
+              : 'The sign-in service could not be reached.'}
+          </p>
           <button
             className="studio-primary"
             onClick={() => void config.refetch()}
@@ -147,7 +157,11 @@ function OwnerArea({
       !controller.signal.aborted && currentSession.current === session;
     void withRequestTimeout(
       (requestSignal) => studioApi.session(session.access_token, requestSignal),
-      { signal: controller.signal, message: 'Studio access could not be checked in time. Please try again.' },
+      {
+        signal: controller.signal,
+        message:
+          'Studio access could not be checked in time. Please try again.',
+      },
     )
       .then((result) => {
         if (!isCurrent()) return;
