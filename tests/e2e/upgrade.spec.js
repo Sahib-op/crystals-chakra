@@ -6,16 +6,28 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
-test('appearance persists and booking remains beneath the reading grid', async ({
+test('the production layout ignores saved appearance experiments', async ({
   page,
 }) => {
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      'crystals-chakra:appearance:v1',
+      JSON.stringify({ palette: 'forest', sectionOrder: 'collection-first' }),
+    ),
+  );
   await page.goto('/');
-  await page.locator('.appearance-controls summary').click();
-  await page.getByRole('button', { name: 'Forest & ivory' }).click();
-  await page.getByLabel('After the readings').selectOption('collection-first');
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'forest');
-  await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'forest');
+  await page.waitForLoadState('networkidle');
+  await expect(page.getByText('Explore the look', { exact: true })).toHaveCount(
+    0,
+  );
+  expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
+  expect(
+    await page
+      .locator('html')
+      .evaluate((el) =>
+        getComputedStyle(el).getPropertyValue('--page-dark').trim(),
+      ),
+  ).toBe('#082c4b');
   expect(
     await page.evaluate(() => {
       const info = document.getElementById('information');
@@ -24,7 +36,7 @@ test('appearance persists and booking remains beneath the reading grid', async (
       const booking = document.getElementById('booking');
       return (
         Boolean(
-          collection.compareDocumentPosition(info) &
+          info.compareDocumentPosition(collection) &
           Node.DOCUMENT_POSITION_FOLLOWING,
         ) &&
         booking.getBoundingClientRect().top >=

@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { BRAND_NAME } from '../constants';
-import { AppearanceControls } from './AppearanceContext';
 export default function Footer() {
   return (
     <footer className="royal-footer">
@@ -14,7 +13,6 @@ export default function Footer() {
         <Link to="/policies#returns">Shipping & returns</Link>
         <Link to="/policies#grievance">Complaints</Link>
       </nav>
-      <AppearanceControls />
       <Link to="/studio">Studio sign-in</Link>
     </footer>
   );

@@ -46,7 +46,7 @@ export function JourneyProvider({ children }) {
           return;
         }
         let current = 'home';
-        // Follow actual DOM order, including the visitor's section preference.
+        // Follow the sections in DOM order.
         for (const el of document.querySelectorAll('.royal-journey [id]')) {
           if (
             SECTION_LABELS[el.id] &&

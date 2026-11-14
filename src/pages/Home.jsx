@@ -10,7 +10,6 @@ import ScienceOfAstrology from './ScienceOfAstrology';
 import Booking from './Booking';
 import { generateCosmicReading } from '../cosmicEngine';
 import { useJourney } from '../components/JourneyContext';
-import { useAppearance } from '../components/AppearanceContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { readingContact } from '../../shared/contact.js';
 
@@ -69,7 +68,6 @@ export default function Home() {
   const reduced = useReducedMotion();
   const [snapshot, setSnapshot] = useState(false);
   const [reading, setReading] = useState(null);
-  const { sectionOrder } = useAppearance();
   const {
     services,
     catalogueReady,
@@ -82,12 +80,10 @@ export default function Home() {
   const generalContact = readingContact(selectedService);
   function chooseReading(id) {
     selectService(id);
-    document
-      .getElementById('booking')
-      ?.scrollIntoView({
-        behavior: reduced ? 'instant' : 'smooth',
-        block: 'start',
-      });
+    document.getElementById('booking')?.scrollIntoView({
+      behavior: reduced ? 'instant' : 'smooth',
+      block: 'start',
+    });
     document.getElementById('contact-reading')?.focus({ preventScroll: true });
   }
   const information = (
@@ -267,9 +263,8 @@ export default function Home() {
           </div>
         </ScrollSection>
       </div>
-      {sectionOrder === 'collection-first'
-        ? [collection, information]
-        : [information, collection]}
+      {information}
+      {collection}
       <ReadingOverlay
         onRestart={() => setReading(null)}
         isOpen={snapshot}
