@@ -270,7 +270,8 @@
 }
 .reading-dialog-body h2 {
   font:
-    400 32px/1.25 'Playfair Display',
+    400 32px/1.25 'Playfair Display Variable',
+    'Playfair Display',
     Georgia,
     serif;
   color: #e9ce92;
@@ -296,7 +297,8 @@
   padding: 13px 14px;
   width: 100%;
   font:
-    400 16px Inter,
+    400 16px 'Inter Variable',
+    Inter,
     system-ui,
     sans-serif;
   color: #f5eddc;
@@ -354,7 +356,8 @@
 }
 .result-heading h3 {
   font:
-    400 44px/1.15 'Playfair Display',
+    400 44px/1.15 'Playfair Display Variable',
+    'Playfair Display',
     Georgia,
     serif;
   color: #efd28d;

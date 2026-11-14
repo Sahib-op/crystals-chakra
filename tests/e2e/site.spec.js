@@ -235,3 +235,55 @@ test.describe('pages', () => {
     );
   });
 });
+
+test.describe('readings and booking', () => {
+  test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
+
+  test('one booking panel sits under the reading cards, and tarot books into it', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByText('Reveal What')).toHaveCount(0);
+    const layout = await page.evaluate(() => {
+      const grid = document.querySelector('#services .reading-grid');
+      const panel = document.getElementById('booking');
+      const g = grid.getBoundingClientRect();
+      const b = panel.getBoundingClientRect();
+      return {
+        insideReadings: Boolean(panel.closest('#services')),
+        below: b.top > g.bottom,
+        spansGrid: Math.abs(b.width - g.width) < 2,
+      };
+    });
+    expect(layout).toEqual({
+      insideReadings: true,
+      below: true,
+      spansGrid: true,
+    });
+    await page.getByRole('link', { name: 'Book a tarot reading' }).click();
+    await expect(page.getByLabel('Which reading interests you?')).toHaveValue(
+      'tarot',
+    );
+  });
+
+  test('the header morphs on scroll and the portrait slides in once', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    const morph = () =>
+      page.evaluate(() =>
+        document
+          .querySelector('.scroll-header')
+          .style.getPropertyValue('--header-morph'),
+      );
+    expect(await morph()).toBe('0');
+    await page.evaluate(() => scrollTo(0, 600));
+    await expect.poll(morph, { timeout: 5000 }).toBe('1');
+    await page.evaluate(() =>
+      document.querySelector('.tarot-portrait').scrollIntoView(),
+    );
+    await expect(page.locator('.tarot-portrait')).toHaveClass(/is-revealed/);
+  });
+});

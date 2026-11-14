@@ -225,7 +225,8 @@ body {
 }
 .welcome-copy h1 {
   font:
-    600 clamp(52px, 6.7vw, 90px)/1.07 'Playfair Display',
+    600 clamp(52px, 6.7vw, 90px)/1.07 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   letter-spacing: -0.045em;
   margin: 24px 0;
@@ -378,7 +379,8 @@ body {
 }
 .service-top > span:first-child {
   font:
-    18px 'Playfair Display',
+    18px 'Playfair Display Variable',
+    'Playfair Display',
     serif;
 }
 .service-tag {
@@ -427,14 +429,16 @@ body {
 }
 .service-price {
   font:
-    30px 'Playfair Display',
+    30px 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   color: #f5dfaa;
   margin: 4px 0 18px;
 }
 .service-price > span {
   font:
-    9px 'Inter',
+    9px 'Inter Variable',
+    'Inter',
     sans-serif;
   color: #9eadbf;
   margin-left: 9px;
@@ -586,7 +590,8 @@ body {
 }
 .tarot-byline {
   font:
-    italic 25px 'Playfair Display',
+    italic 25px 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   color: #edd7a4;
   margin-bottom: 22px;

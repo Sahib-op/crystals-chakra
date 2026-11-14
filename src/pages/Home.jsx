@@ -199,16 +199,24 @@ export default function Home() {
                     </p>
                   )}
                   <p>{featuredTarot.description}</p>
-                  <a
-                    className="royal-button"
-                    href={readingContact(featuredTarot).whatsapp}
-                    onClick={() => selectService(featuredTarot.id)}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`Ask about ${featuredTarot.title} on WhatsApp`}
-                  >
-                    Ask about Tarot <WhatsAppIcon size={18} />
-                  </a>
+                  <div className="tarot-actions">
+                    <a
+                      className="royal-button"
+                      href="#booking"
+                      onClick={() => selectService(featuredTarot.id)}
+                    >
+                      Book a tarot reading
+                    </a>
+                    <a
+                      className="tarot-direct-link"
+                      href={readingContact(featuredTarot).whatsapp}
+                      onClick={() => selectService(featuredTarot.id)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      or ask on WhatsApp <WhatsAppIcon size={16} />
+                    </a>
+                  </div>
                 </>
               ) : (
                 <a
@@ -246,13 +254,7 @@ export default function Home() {
           )}
         </ScrollSection>
         <ScrollSection id="services" theme="royal" className="services-section">
-          <div className="royal-section-heading">
-            <h2>
-              Reveal What
-              <br />
-              <em>Your Stars Say</em>
-            </h2>
-          </div>
+          <h2 className="sr-only">Astrology readings</h2>
           {error && (
             <div className="journey-error" role="alert">
               {error}
@@ -269,7 +271,10 @@ export default function Home() {
               Ask about available Kundli readings <WhatsAppIcon size={18} />
             </a>
           ) : (
-            <div className="royal-services">
+            <div
+              className="royal-services reading-grid"
+              style={{ '--count': astrology.length }}
+            >
               {astrology.map((service, index) => (
                 <ReadingPackageCard
                   key={service.id}
@@ -281,11 +286,12 @@ export default function Home() {
               ))}
             </div>
           )}
+          {/* One permanent booking panel for every reading, tarot included. */}
+          <div id="booking" className="booking-sheet">
+            <Booking embedded />
+          </div>
         </ScrollSection>
       </div>
-      <ScrollSection id="booking" theme="ivory">
-        <Booking embedded />
-      </ScrollSection>
       <ScrollSection id="information" theme="parchment">
         <ScienceOfAstrology embedded />
       </ScrollSection>

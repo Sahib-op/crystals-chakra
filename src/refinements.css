@@ -22,6 +22,9 @@
 }
 .scroll-header {
   --header-morph: 0;
+  /* Text colours switch cleanly halfway through the morph (with a short
+     crossfade) instead of passing through low-contrast in-between shades. */
+  --header-ink: 0;
   --header-open-left: 76px;
   --header-open-right: 40px;
   --header-pill-edge: 20px;
@@ -71,12 +74,15 @@
   filter: none !important;
 }
 .scroll-header-brand > span {
+  /* The self-hosted family; the old name fell back to Georgia mid-morph. */
   font:
-    600 20px/1.1 'Playfair Display',
+    600 20px/1.1 'Playfair Display Variable',
+    'Playfair Display',
     Georgia,
     serif;
   white-space: nowrap;
-  color: color-mix(in srgb, #123852, #f1dfb9 calc(100% * var(--header-morph)));
+  color: color-mix(in srgb, #123852, #f1dfb9 calc(100% * var(--header-ink)));
+  transition: color 0.2s;
 }
 .scroll-header-brand b {
   font-weight: inherit;
@@ -104,12 +110,12 @@
     border-color 0.2s;
 }
 .header-whatsapp {
-  color: color-mix(in srgb, #1a5b48, #c0e0c8 calc(100% * var(--header-morph)));
+  color: color-mix(in srgb, #1a5b48, #c0e0c8 calc(100% * var(--header-ink)));
   border: 1px solid rgb(86 141 112 / 0.45);
   background: color-mix(
     in srgb,
     #ffffff30,
-    #a9d7b408 calc(100% * var(--header-morph))
+    #a9d7b408 calc(100% * var(--header-ink))
   );
 }
 .header-whatsapp:hover {
@@ -127,15 +133,15 @@
 .header-reading-short {
   display: none;
 }
-.scroll-header-progress {
-  position: absolute;
-  bottom: 0;
-  left: 30px;
-  right: 30px;
-  height: 1px;
-  background: #e8c77c;
-  transform-origin: left;
-  opacity: calc(0.7 * var(--header-morph));
+@supports (width: round(nearest, 0.4px, 1px)) {
+  .scroll-header {
+    --header-ink: round(nearest, var(--header-morph), 1);
+  }
+}
+@supports not (width: round(nearest, 0.4px, 1px)) {
+  .scroll-header {
+    --header-ink: var(--header-morph);
+  }
 }
 .scroll-header :focus-visible {
   outline: 2px solid #b18b42;
@@ -343,7 +349,8 @@
 }
 .embedded-science .birth-details-list h4 {
   font:
-    500 17px 'Playfair Display',
+    500 17px 'Playfair Display Variable',
+    'Playfair Display',
     Georgia,
     serif;
 }
@@ -390,28 +397,26 @@
   user-select: none;
 }
 .reading-hindi-title {
-  position: absolute;
-  top: -26px;
-  left: -8px;
-  z-index: -1;
-  font-size: clamp(48px, 6vw, 82px);
-  line-height: 1.6;
+  /* Its own line above the English heading: overlapping strokes produced
+     bright specks where Devanagari crossed the cream letters. */
+  display: block;
+  margin-bottom: 4px;
+  font-size: clamp(22px, 2.3vw, 30px);
+  line-height: 1.5;
   color: #e6c88b;
-  opacity: 0.13;
+  opacity: 0.78;
   white-space: nowrap;
 }
 .package-hindi-title {
-  position: absolute;
-  top: 7px;
-  right: 12px;
-  left: 12px;
-  font-size: clamp(25px, 2.7vw, 35px);
-  line-height: 1.7;
-  text-align: right;
+  display: block;
+  margin-bottom: 2px;
+  font-size: clamp(18px, 1.6vw, 21px);
+  line-height: 1.5;
   color: #f3d89d;
-  opacity: 0.14;
+  opacity: 0.72;
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 .royal-services .royal-service > h3 {
   position: relative;
@@ -955,4 +960,144 @@ html.js .tarot-portrait:not(.is-revealed) {
     opacity: 1;
     transform: none;
   }
+}
+
+/* Tarot section background: drifting aurora and twinkling star dust.
+   Transform/opacity only; runs only while on screen (.is-inview). */
+.tarot-section > .section-atmosphere::before,
+.tarot-section > .section-atmosphere::after {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  animation-play-state: paused;
+}
+.tarot-section > .section-atmosphere::before {
+  background:
+    radial-gradient(ellipse 38% 30% at 22% 30%, #e9c98a26, transparent 70%),
+    radial-gradient(ellipse 34% 28% at 78% 62%, #8c3a4f2e, transparent 72%);
+  animation: tarot-aurora 26s ease-in-out infinite alternate;
+}
+.tarot-section > .section-atmosphere::after {
+  background-image:
+    radial-gradient(circle, #fff2cc99 0.9px, transparent 1.4px),
+    radial-gradient(circle, #f3e5ab66 0.7px, transparent 1.1px);
+  background-size:
+    181px 173px,
+    97px 113px;
+  background-position:
+    0 0,
+    40px 60px;
+  animation:
+    tarot-dust-drift 60s linear infinite,
+    tarot-dust-twinkle 5s ease-in-out infinite alternate;
+}
+.tarot-section.is-inview > .section-atmosphere::before,
+.tarot-section.is-inview > .section-atmosphere::after {
+  animation-play-state: running;
+}
+@keyframes tarot-aurora {
+  from {
+    transform: translate3d(-4%, -2%, 0) scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: translate3d(6%, 4%, 0) scale(1.12);
+    opacity: 1;
+  }
+}
+@keyframes tarot-dust-drift {
+  to {
+    transform: translate3d(-181px, -173px, 0);
+  }
+}
+@keyframes tarot-dust-twinkle {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tarot-section > .section-atmosphere::before,
+  .tarot-section > .section-atmosphere::after {
+    animation: none;
+  }
+}
+
+/* Readings: count-aware cards with centred incomplete rows, so adding or
+   removing readings never leaves one pinned to a side. --count is set from
+   the number of readings. */
+.services-section .reading-grid {
+  --gap: 20px;
+  --cols: min(var(--count, 3), 3);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: var(--gap);
+}
+.services-section .reading-grid > .royal-service {
+  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+/* Price and action align at the bottom of every card in a row. */
+.services-section .reading-grid .service-price {
+  margin-top: auto;
+}
+@media (max-width: 1050px) {
+  .services-section .reading-grid {
+    --cols: min(var(--count, 3), 2);
+  }
+}
+@media (max-width: 680px) {
+  .services-section .reading-grid {
+    --cols: 1;
+    --gap: 16px;
+  }
+}
+
+/* The permanent booking panel: the former Book section as a cream sheet
+   directly under the reading cards, as wide as the card grid. */
+.booking-sheet {
+  --ink: #12314e;
+  --subtle: #5d655f;
+  --accent: #996b23;
+  --rule: #b88b4140;
+  margin-top: 40px;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid #d4af3766;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 90% 0%, #f9e0a455, transparent 60%), #f8efd9;
+  color: var(--ink);
+  box-shadow:
+    0 0 0 6px #082c4b,
+    0 0 0 7px #d4af3740,
+    0 18px 40px #0005;
+  scroll-margin-top: calc(var(--scroll-header-height) + 28px);
+}
+.booking-sheet .booking-page {
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+}
+.tarot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 22px;
+}
+.tarot-direct-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: #f1dfb9;
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }

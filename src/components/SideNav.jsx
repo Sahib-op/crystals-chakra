@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useJourney } from './JourneyContext';
 import { Link, useLocation } from 'react-router-dom';
-import { m, useReducedMotion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   Home,
   Sparkles,
@@ -67,7 +67,7 @@ export default function SideNav() {
         }
       }}
     >
-      <m.div
+      <motion.div
         className="morph-surface"
         onAnimationComplete={() => setReady(open)}
         initial={false}
@@ -101,7 +101,7 @@ export default function SideNav() {
           aria-hidden={!(open && ready)}
         >
           {SECTIONS.map(([id, label, Icon], i) => (
-            <m.div
+            <motion.div
               key={id}
               className="morph-item"
               initial={false}
@@ -129,10 +129,10 @@ export default function SideNav() {
                   {label}
                 </span>
               </Link>
-            </m.div>
+            </motion.div>
           ))}
         </nav>
-      </m.div>
+      </motion.div>
     </aside>
   );
 }

@@ -1,5 +1,5 @@
 import {
-  m,
+  motion,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -17,17 +17,16 @@ export default function ScrollHeader() {
   const { search, pathname } = useLocation();
   const studio = pathname === '/';
   const reduced = useReducedMotion();
-  const { scrollY, scrollYProgress } = useScroll();
+  const { scrollY } = useScroll();
   const targetMorph = useTransform(scrollY, [0, 120], [0, 1]);
   const morph = useSpring(targetMorph, {
     stiffness: 140,
     damping: 28,
     restDelta: 0.001,
   });
-  const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 30 });
   const contact = readingContact(selectedService);
   return (
-    <m.header
+    <motion.header
       ref={headerRef}
       className={`scroll-header ${!studio || headerVisible ? 'is-pill' : 'is-masthead'}`}
       aria-label="Reading shortcuts"
@@ -75,11 +74,6 @@ export default function ScrollHeader() {
           </a>
         </div>
       </div>
-      <m.div
-        className="scroll-header-progress"
-        aria-hidden="true"
-        style={{ scaleX: reduced ? scrollYProgress : progress }}
-      />
-    </m.header>
+    </motion.header>
   );
 }

@@ -12,7 +12,10 @@ const KB = 1024;
 const BUDGET = {
   // Entry plus every modulepreloaded chunk: the bundler can move shared code
   // between them, so the entry file alone can understate first-load JS.
-  initialJs: 140 * KB, // gzip
+  // React 19 + Motion 14 (full components: LazyMotion's m components did
+  // not animate in this setup, breaking the header and side rail) measured
+  // 159 KB on 14 Nov 2026, up from 129.6 KB on React 18 + framer-motion 11.
+  initialJs: 165 * KB, // gzip
   entryCss: 25 * KB, // gzip
   introJs: 6 * KB, // gzip, render-path script
   homeHtml: 30 * KB, // gzip, prerendered page
