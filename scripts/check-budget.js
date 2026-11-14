@@ -10,7 +10,9 @@ import { fileURLToPath } from 'node:url';
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 const KB = 1024;
 const BUDGET = {
-  entryJs: 140 * KB, // gzip
+  // Entry plus every modulepreloaded chunk: the bundler can move shared code
+  // between them, so the entry file alone can understate first-load JS.
+  initialJs: 140 * KB, // gzip
   entryCss: 25 * KB, // gzip
   introJs: 6 * KB, // gzip, render-path script
   homeHtml: 30 * KB, // gzip, prerendered page
@@ -20,6 +22,11 @@ const html = await readFile(dist + 'index.html', 'utf8');
 const entry = html.match(
   /<script type="module"[^>]*src="\/(assets\/[^"]+\.js)"/,
 )?.[1];
+const preloaded = [
+  ...html.matchAll(
+    /<link rel="modulepreload"[^>]*href="\/(assets\/[^"]+\.js)"/g,
+  ),
+].map((m) => m[1]);
 const css = [
   ...html.matchAll(/<link rel="stylesheet"[^>]*href="\/(assets\/[^"]+\.css)"/g),
 ].map((m) => m[1]);
@@ -27,7 +34,9 @@ if (!entry || !css.length)
   throw new Error('Could not find the entry assets in dist/index.html');
 
 const measured = {
-  entryJs: await gz(dist + entry),
+  initialJs: (
+    await Promise.all([entry, ...preloaded].map((file) => gz(dist + file)))
+  ).reduce((a, b) => a + b, 0),
   entryCss: (await Promise.all(css.map((file) => gz(dist + file)))).reduce(
     (a, b) => a + b,
     0,
@@ -43,10 +52,7 @@ for (const [name, limit] of Object.entries(BUDGET)) {
     `${ok ? 'ok  ' : 'FAIL'} ${name.padEnd(9)} ${(measured[name] / KB).toFixed(1).padStart(6)} KB gzip (budget ${limit / KB} KB)`,
   );
 }
-const preloaded = [
-  ...html.matchAll(/rel="modulepreload"[^>]*href="\/assets\/([^"]+)"/g),
-].map((m) => m[1]);
-if (preloaded.some((file) => file.startsWith('createScene'))) {
+if (preloaded.some((file) => file.startsWith('assets/createScene'))) {
   console.log('FAIL the WebGL scene is preloaded on the critical path');
   failed = true;
 }

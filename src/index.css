@@ -1,31 +1,147 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-html,
-body,
-#root {
-  min-height: 100%;
+@theme {
+  --color-chakra-bg: #0a0514;
+  --color-chakra-surface: #150a21;
+  --color-chakra-ring: #2a1b42;
+  --color-chakra-cyan: #25a9ba;
+  --color-chakra-blue: #14467d;
+  --color-chakra-gold: #d4af37;
+  --color-chakra-goldLight: #f3e5ab;
+  --color-chakra-text: #f8fafc;
+  --color-chakra-muted: #94a3b8;
+
+  --font-sans: 'Inter Variable', Inter, system-ui, sans-serif;
+  --font-serif: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+
+  --animate-twinkle: twinkle 4s ease-in-out infinite;
+  --animate-glow-pulse: glowpulse 7s ease-in-out infinite;
+  --animate-align: align 6s ease-in-out infinite;
+  --animate-glow-line-pulse: glow-line-pulse 4s ease-in-out infinite;
+  --animate-star-drift: star-drift 8s ease-in-out infinite;
+  --animate-logo-float: logo-float 10s ease-in-out infinite;
+
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.15;
+    }
+    50% {
+      opacity: 0.9;
+    }
+  }
+  @keyframes glowpulse {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.94);
+    }
+    50% {
+      opacity: 0.65;
+      transform: scale(1.06);
+    }
+  }
+  @keyframes align {
+    0%,
+    100% {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+    45%,
+    55% {
+      opacity: 0.2;
+      transform: scale(1.2);
+    }
+  }
+  @keyframes glow-line-pulse {
+    0%,
+    100% {
+      opacity: 0.3;
+      stroke-width: 1.5;
+    }
+    50% {
+      opacity: 0.7;
+      stroke-width: 2.5;
+    }
+  }
+  @keyframes star-drift {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes logo-float {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    33% {
+      transform: translateY(-8px) rotate(1deg);
+    }
+    66% {
+      transform: translateY(4px) rotate(-0.5deg);
+    }
+  }
 }
 
-body {
-  margin: 0;
-  background: #0a0514;
-  color: #f8fafc;
-  font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  -webkit-user-select: text;
-  user-select: text;
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+  /* Tailwind v3 placeholder colour (v4 defaults to 50% of the text colour). */
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-gray-400);
+  }
+  /* Tailwind v3 gave buttons a pointer cursor; v4's preflight does not. */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@utility glass-panel {
+  @apply bg-chakra-surface/60 backdrop-blur-md border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)];
+}
+
+@utility gold-gradient-text {
+  @apply bg-clip-text text-transparent bg-linear-to-r from-chakra-goldLight via-chakra-gold to-chakra-goldLight;
 }
 
 @layer utilities {
-  .glass-panel {
-    @apply bg-chakra-surface/60 backdrop-blur-md border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)];
+  html,
+  body,
+  #root {
+    min-height: 100%;
   }
-  .gold-gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-chakra-goldLight via-chakra-gold to-chakra-goldLight;
+
+  body {
+    margin: 0;
+    background: #0a0514;
+    color: #f8fafc;
+    font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-user-select: text;
+    user-select: text;
   }
 }
 

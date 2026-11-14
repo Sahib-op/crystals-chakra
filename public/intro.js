@@ -11,6 +11,9 @@
  */
 (function () {
   'use strict';
+  // Lets CSS hold scroll-reveal elements at their start position only when
+  // JavaScript will be there to reveal them.
+  document.documentElement.classList.add('js');
   var intro = document.getElementById('intro');
   if (!intro) return;
   var html = document.documentElement;

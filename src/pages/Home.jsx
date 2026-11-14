@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -40,6 +39,40 @@ const QUESTIONS = [
     'Start with the level of detail you want. You can also send us your questions on WhatsApp before choosing. Confirm scope, delivery and any payment directly with the studio.',
   ],
 ];
+// The portrait slides in once, the first time it scrolls into view. CSS does
+// the motion (.tarot-portrait in refinements.css), so prerendered HTML and
+// reduced-motion preferences always show it at rest.
+function PortraitReveal({ children }) {
+  const ref = useRef(null);
+  const [revealed, setRevealed] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !('IntersectionObserver' in window)) {
+      setRevealed(true);
+      return undefined;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.intersectionRatio >= 0.2) {
+          setRevealed(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: [0, 0.2] },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <figure
+      ref={ref}
+      className={`tarot-portrait${revealed ? ' is-revealed' : ''}`}
+    >
+      {children}
+    </figure>
+  );
+}
+
 function ReadingPackageCard({ service, featured, livePrices, onSelect }) {
   const { id, hindiTitle, title, description, features, price } = service;
   return (
@@ -81,7 +114,6 @@ function ReadingPackageCard({ service, featured, livePrices, onSelect }) {
 }
 
 export default function Home() {
-  const reduced = useReducedMotion();
   const [snapshot, setSnapshot] = useState(false),
     [reading, setReading] = useState(null);
   const {
@@ -189,16 +221,7 @@ export default function Home() {
                 </a>
               )}
             </div>
-            <motion.figure
-              className="tarot-portrait"
-              initial={{ opacity: reduced ? 1 : 0, x: reduced ? 0 : 88 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{
-                duration: reduced ? 0 : 0.9,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-            >
+            <PortraitReveal>
               <img
                 src="/images/amanpreet-placeholder.svg"
                 alt="Portrait placeholder for Amanpreet Kaur"
@@ -207,7 +230,7 @@ export default function Home() {
                 loading="lazy"
                 decoding="async"
               />
-            </motion.figure>
+            </PortraitReveal>
           </div>
           {moreTarot.length > 0 && (
             <div className="royal-services">

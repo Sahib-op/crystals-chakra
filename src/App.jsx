@@ -7,6 +7,7 @@ import {
   useLocation,
   matchPath,
 } from 'react-router-dom';
+import { LazyMotion, MotionConfig, domAnimation } from 'motion/react';
 import { JourneyProvider } from './components/JourneyContext';
 import ScrollHeader from './components/ScrollHeader';
 import RoyalMotion from './components/RoyalMotion';

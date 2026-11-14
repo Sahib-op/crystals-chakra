@@ -34,7 +34,7 @@ export default function ServiceCard({
       }}
     >
       {isPopular && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-chakra-goldLight via-chakra-gold to-chakra-goldLight text-chakra-bg px-4 py-1 rounded-full text-sm font-bold shadow-lg whitespace-nowrap">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-chakra-goldLight via-chakra-gold to-chakra-goldLight text-chakra-bg px-4 py-1 rounded-full text-sm font-bold shadow-lg whitespace-nowrap">
           MOST POPULAR
         </div>
       )}

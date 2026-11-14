@@ -881,3 +881,40 @@
   flex-wrap: wrap;
   gap: 4px 22px;
 }
+
+/* AnimatedTitle: each letter rises into place (same timing as before). */
+.title-char {
+  animation: title-rise 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes title-rise {
+  from {
+    transform: translateY(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .title-char {
+    animation: none;
+  }
+}
+
+/* Tarot portrait: slides in from the right once, the first time it is seen
+   (PortraitReveal in Home.jsx). Slow and long by request. */
+.tarot-portrait {
+  transition:
+    opacity 1.8s ease-out,
+    transform 2.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+html.js .tarot-portrait:not(.is-revealed) {
+  opacity: 0;
+  transform: translate3d(240px, 0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tarot-portrait {
+    transition: none;
+  }
+  html.js .tarot-portrait:not(.is-revealed) {
+    opacity: 1;
+    transform: none;
+  }
+}
