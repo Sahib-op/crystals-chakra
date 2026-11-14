@@ -22,45 +22,18 @@ function cardTexture(item) {
   ctx.font = '17px Georgia';
   ctx.fillText(item.name.toUpperCase(), 128, 327);
   ctx.font = '110px Georgia';
-  const glyph = { sun: '☉', moon: '☾', star: '✧' };
-  if (glyph[item.kind]) ctx.fillText(glyph[item.kind], 128, 165);
-  else {
-    const points = {
-      orion: [
-        [70, 80],
-        [185, 85],
-        [105, 156],
-        [128, 168],
-        [150, 178],
-        [72, 250],
-        [190, 250],
-      ],
-      lyra: [
-        [75, 72],
-        [98, 140],
-        [185, 133],
-        [169, 235],
-        [86, 235],
-      ],
-      cassiopeia: [
-        [45, 105],
-        [85, 230],
-        [130, 110],
-        [176, 225],
-        [215, 91],
-      ],
-    }[item.kind];
-    ctx.strokeStyle = '#cfb773';
+  const glyph = { sun: '☉', moon: '☾', star: '✧', strength: '∞', hermit: '◇', world: '◎' };
+  ctx.fillText(glyph[item.kind], 128, 165);
+  if (item.kind === 'hermit') {
+    ctx.strokeStyle = '#efdaaa';
     ctx.lineWidth = 2;
+    ctx.strokeRect(101, 121, 54, 91);
     ctx.beginPath();
-    points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+    ctx.arc(128, 119, 13, Math.PI, 0);
     ctx.stroke();
-    points.forEach(([x, y]) => {
-      ctx.beginPath();
-      ctx.arc(x, y, 5, 0, Math.PI * 2);
-      ctx.fill();
-    });
   }
+  ctx.font = '15px Georgia';
+  ctx.fillText({ sun: 'XIX', moon: 'XVIII', star: 'XVII', strength: 'VIII', hermit: 'IX', world: 'XXI' }[item.kind], 128, 53);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
@@ -81,7 +54,7 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
   canvas.setAttribute('aria-hidden', 'true');
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 50);
-  camera.position.set(0, 0.15, 5.8);
+  camera.position.set(0, 0.1, 5.65);
   const controls = new OrbitControls(camera, canvas);
   controls.enableZoom = false;
   controls.enablePan = false;
@@ -113,9 +86,9 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
   const surfaces = [];
   const pickable = [];
   const settings = [
-    { radius: 1.4, tilt: [0.95, 0, -0.3], speed: 0.025 },
-    { radius: 1.07, tilt: [-0.5, 0.7, 0.3], speed: -0.03 },
-    { radius: 0.74, tilt: [0.4, -0.45, 0.2], speed: 0.035 },
+    { radius: 1.4, tilt: [0.95, 0, -0.3], speed: 0.095 },
+    { radius: 1.07, tilt: [-0.5, 0.7, 0.3], speed: -0.115 },
+    { radius: 0.74, tilt: [0.4, -0.45, 0.2], speed: 0.14 },
   ];
   settings.forEach((config, i) => {
     const group = new THREE.Group();
@@ -145,8 +118,8 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
         emissive: 0x000000,
       });
       const geometry = new THREE.BoxGeometry(
-        item.type === 'Tarot' ? 0.38 : 0.34,
-        item.type === 'Tarot' ? 0.56 : 0.45,
+        0.5,
+        0.74,
         0.045,
       );
       const mesh = new THREE.Mesh(geometry, [
@@ -178,7 +151,8 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
     lastPaint = 0,
     pointer = null,
     down = null,
-    hovered = null;
+    hovered = null,
+    paused = false;
   const raycaster = new THREE.Raycaster();
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   function setHover(item) {
@@ -209,28 +183,35 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
   }
   function position() {
     ringGroups.forEach(({ group, markers, config }, i) => {
-      group.rotation.x = config.tilt[0] + Math.sin(elapsed * 0.13 + i) * 0.12;
+      group.rotation.x = config.tilt[0] + Math.sin(elapsed * 0.27 + i) * 0.22;
       // Gentle precession keeps the three planes legible throughout the orbit.
-      group.rotation.y = config.tilt[1] + Math.sin(elapsed * 0.09 + i) * 0.22;
-      group.rotation.z = config.tilt[2] + elapsed * config.speed * 0.1;
+      group.rotation.y = config.tilt[1] + Math.sin(elapsed * 0.21 + i) * 0.32;
+      group.rotation.z = config.tilt[2] + Math.sin(elapsed * 0.17 + i) * 0.2;
       markers.forEach(({ mesh, angle }) => {
         const t = angle + elapsed * config.speed;
         mesh.position.set(
           config.radius * Math.cos(t),
           config.radius * Math.sin(t),
-          0,
+          Math.sin(elapsed * 0.8 + angle) * 0.1,
         );
-        mesh.rotation.z = t + Math.PI / 2;
+        mesh.rotation.set(
+          Math.sin(elapsed * 0.65 + angle) * 0.18,
+          Math.cos(elapsed * 0.5 + angle) * 0.22,
+          t + Math.PI / 2 + Math.sin(elapsed * 0.4 + angle) * 0.12,
+        );
       });
     });
-    core.rotation.y = elapsed * 0.25;
+    model.rotation.y = Math.sin(elapsed * 0.12) * 0.2;
+    model.rotation.x = Math.sin(elapsed * 0.15) * 0.08;
+    core.rotation.y = elapsed * 0.55;
   }
   function tick(time) {
     if (disposed || contextLost) return;
     frame = requestAnimationFrame(tick);
     const interval = innerWidth < 700 ? 1000 / 30 : 1000 / 45;
     if (time - lastPaint < interval) return;
-    elapsed += last ? Math.min((time - last) / 1000, 0.08) : 0;
+    // Hold a card steady under the pointer, while dragging, or while reading it.
+    if (!hovered && !down && !paused) elapsed += last ? Math.min((time - last) / 1000, 0.08) : 0;
     last = time;
     lastPaint = time;
     position();
@@ -318,6 +299,7 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
   draw();
   sync();
   return {
+    setPaused(value) { paused = value; },
     dispose() {
       disposed = true;
       cancelAnimationFrame(frame);

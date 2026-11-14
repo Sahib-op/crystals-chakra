@@ -12,6 +12,7 @@ import './journey.css';
 import './opening.css';
 import './refinements.css';
 import './intro.css';
+import './appearance.css';
 
 const container = document.getElementById('root');
 const app = (

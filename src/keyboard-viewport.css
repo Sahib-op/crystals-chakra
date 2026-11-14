@@ -1,0 +1,5 @@
+@media (any-pointer: coarse) {
+  html[data-keyboard-open] { scroll-behavior: auto; scroll-padding-block: 24px; }
+  html[data-keyboard-open] #main { padding-block-end: var(--keyboard-inset, 0px); }
+  html[data-keyboard-open] :is(input, textarea, [contenteditable='true']) { scroll-margin-block: 24px; }
+}

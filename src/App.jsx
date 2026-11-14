@@ -8,6 +8,10 @@ import {
   matchPath,
 } from 'react-router-dom';
 import { JourneyProvider } from './components/JourneyContext';
+import { AppearanceProvider } from './components/AppearanceContext';
+import { MotionConfig } from 'motion/react';
+import PageLoading from './components/PageLoading';
+import KeyboardViewport from './components/KeyboardViewport';
 import ScrollHeader from './components/ScrollHeader';
 import RoyalMotion from './components/RoyalMotion';
 import SideNav from './components/SideNav';
@@ -16,6 +20,7 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 const Shop = lazy(() => import('./pages/Shop'));
 const Policies = lazy(() => import('./pages/Policies'));
+const HowReadingsWork = lazy(() => import('./pages/HowReadingsWork'));
 const StudioPage = lazy(() => import('./features/studio/StudioPage.tsx'));
 function NavigationEffects() {
   const { pathname, hash } = useLocation();
@@ -58,8 +63,12 @@ function CustomerNavigation() {
 // build prerenders public pages (src/entry-server.jsx).
 export function AppShell() {
   return (
+    <MotionConfig reducedMotion="user">
+    <AppearanceProvider>
     <JourneyProvider>
+      <div className="app-shell">
       <NavigationEffects />
+      <KeyboardViewport />
       <CustomerNavigation />
       <nav aria-label="Skip link">
         <a className="journey-skip" href="#main">
@@ -73,11 +82,7 @@ export function AppShell() {
             path="/shop"
             element={
               <Suspense
-                fallback={
-                  <p className="px-8 py-28" role="status">
-                    Opening the shop…
-                  </p>
-                }
+                fallback={<PageLoading variant="shop" title="Opening the collection…" />}
               >
                 <Shop />
               </Suspense>
@@ -87,9 +92,7 @@ export function AppShell() {
             path="/studio"
             element={
               <Suspense
-                fallback={
-                  <p style={{ padding: '110px 40px' }}>Opening the studio…</p>
-                }
+                fallback={<PageLoading variant="studio" title="Opening the studio…" />}
               >
                 <StudioPage />
               </Suspense>
@@ -104,15 +107,16 @@ export function AppShell() {
             element={<Navigate replace to="/#information" />}
           />
           <Route path="/book" element={<LegacyBooking />} />
+          <Route path="/how-readings-work" element={
+            <Suspense fallback={<PageLoading title="Opening the reading guide…" />}>
+              <HowReadingsWork />
+            </Suspense>
+          } />
           <Route
             path="/policies"
             element={
               <Suspense
-                fallback={
-                  <p className="px-8 py-28" role="status">
-                    Opening policies…
-                  </p>
-                }
+                fallback={<PageLoading title="Opening policies…" />}
               >
                 <Policies />
               </Suspense>
@@ -126,7 +130,10 @@ export function AppShell() {
         </Routes>
       </main>
       <Footer />
+      </div>
     </JourneyProvider>
+    </AppearanceProvider>
+    </MotionConfig>
   );
 }
 export default function App() {

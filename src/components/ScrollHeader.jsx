@@ -4,7 +4,7 @@ import {
   useScroll,
   useSpring,
   useTransform,
-} from 'framer-motion';
+} from 'motion/react';
 import { Link, useLocation } from 'react-router-dom';
 import { Phone } from 'lucide-react';
 import BrandLogo from './BrandLogo';
@@ -17,14 +17,13 @@ export default function ScrollHeader() {
   const { search, pathname } = useLocation();
   const studio = pathname === '/';
   const reduced = useReducedMotion();
-  const { scrollY, scrollYProgress } = useScroll();
+  const { scrollY } = useScroll();
   const targetMorph = useTransform(scrollY, [0, 120], [0, 1]);
   const morph = useSpring(targetMorph, {
     stiffness: 140,
     damping: 28,
     restDelta: 0.001,
   });
-  const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 30 });
   const contact = readingContact(selectedService);
   return (
     <motion.header
@@ -75,11 +74,7 @@ export default function ScrollHeader() {
           </a>
         </div>
       </div>
-      <motion.div
-        className="scroll-header-progress"
-        aria-hidden="true"
-        style={{ scaleX: reduced ? scrollYProgress : progress }}
-      />
     </motion.header>
   );
 }
+

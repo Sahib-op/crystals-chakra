@@ -13,6 +13,8 @@ import { studioAuth } from './auth.ts';
 import { PasswordSignIn, Authenticator } from './SignIn.tsx';
 import ReadingWorkspace from './ReadingWorkspace.tsx';
 import { useJourney } from '../../components/JourneyContext.jsx';
+import { StudioLoadingCard } from '../../components/PageLoading.jsx';
+import { withRequestTimeout } from '../../lib/requestTimeout.js';
 import './studio.css';
 
 export default function StudioPage() {
@@ -42,7 +44,12 @@ export default function StudioPage() {
 function StudioEntry({ cache }: { cache: QueryClient }) {
   const config = useQuery({
     queryKey: ['studio-config'],
-    queryFn: ({ signal }) => studioApi.config(signal),
+    queryFn: ({ signal }) => withRequestTimeout(
+      (requestSignal) => studioApi.config(requestSignal),
+      { signal, message: 'The studio connection took too long. Please try again.' },
+    ),
+    retry: false,
+    staleTime: 60000,
   });
   return (
     <div className="studio-page">
@@ -50,14 +57,18 @@ function StudioEntry({ cache }: { cache: QueryClient }) {
         <title>Studio — Crystals Chakra</title>
         <meta name="robots" content="noindex,nofollow" />
       </Helmet>
+      {!config.data?.configured && (
+        <header className="studio-heading">
+          <div><h1>Studio</h1><p>Readings, publishing and day-to-day work.</p></div>
+          <div><Link to="/">View website</Link></div>
+        </header>
+      )}
       {config.isPending ? (
-        <p className="studio-loading" role="status">
-          Opening the studio…
-        </p>
+        <StudioLoadingCard />
       ) : !config.data ? (
         <section className="studio-auth-card">
           <h1>Studio unavailable</h1>
-          <p>The sign-in service could not be reached.</p>
+          <p role="alert">{config.error instanceof Error ? config.error.message : 'The sign-in service could not be reached.'}</p>
           <button
             className="studio-primary"
             onClick={() => void config.refetch()}
@@ -134,8 +145,10 @@ function OwnerArea({
     const controller = new AbortController();
     const isCurrent = () =>
       !controller.signal.aborted && currentSession.current === session;
-    void studioApi
-      .session(session.access_token, controller.signal)
+    void withRequestTimeout(
+      (requestSignal) => studioApi.session(session.access_token, requestSignal),
+      { signal: controller.signal, message: 'Studio access could not be checked in time. Please try again.' },
+    )
       .then((result) => {
         if (!isCurrent()) return;
         setGate(result.mfaRequired ? 'mfa' : 'ready');
@@ -203,9 +216,7 @@ function OwnerArea({
         />
       )}
       {gate === 'checking' && !invite && (
-        <p role="status" className="studio-loading">
-          Verifying studio access…
-        </p>
+        <StudioLoadingCard title="Verifying studio access…" />
       )}
       {gate === 'denied' && !invite && (
         <section className="studio-auth-card">

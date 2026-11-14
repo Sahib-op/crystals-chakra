@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowUpRight, Check, Copy, Phone } from 'lucide-react';
 import { useJourney } from '../components/JourneyContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
@@ -33,12 +34,15 @@ export default function Booking({ embedded = false }) {
     >
       <div>
         <Heading id="booking-heading">
-          Book Your <span className="gold-gradient-text">Reading</span>
+          Book Your <em>Reading</em>
         </Heading>
         <p className="page-intro">
           Speak directly with the studio on WhatsApp or by phone. There is no
           form to fill in and nothing to pay on this website.
         </p>
+        <Link className="reading-text-link" to="/how-readings-work">
+          Your first reading, explained <ArrowUpRight size={16} aria-hidden="true" />
+        </Link>
         <h3 className="booking-steps-title">How booking works</h3>
         <ol className="booking-steps">
           <li>

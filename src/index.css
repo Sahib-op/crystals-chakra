@@ -1,6 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@config '../tailwind.config.js';
+
+/* Preserve the v3 border default while adopting v4's native Vite pipeline. */
+@layer base {
+  *, ::before, ::after { border-color: var(--color-gray-200, currentColor); }
+  button:not(:disabled), [role='button']:not(:disabled) { cursor: pointer; }
+}
 
 html,
 body,

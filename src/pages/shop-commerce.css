@@ -200,3 +200,46 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+.royal-shop {
+  min-block-size: 100svh;
+  overflow: clip;
+}
+.royal-shop .shop-catalog-region {
+  min-block-size: 560px;
+}
+.royal-shop .shop-catalog-error {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  margin-top: 32px;
+  padding: 32px;
+}
+.royal-shop .shop-catalog-error h2 {
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-size: 26px;
+  color: #f0d49c;
+}
+.royal-shop .shop-catalog-error button { min-height: 44px; padding: 8px 12px; }
+.royal-shop .product-content { display: flex; flex-direction: column; }
+.royal-shop .product-content p { flex: 1; }
+.royal-shop .crystal-product { display: flex; flex-direction: column; }
+.royal-shop .product-art { flex: none; }
+.royal-shop .product-content { flex: 1; }
+@media (hover: none) {
+  .royal-shop .crystal-product:hover { transform: none; }
+}
+@media (max-width: 600px) {
+  .royal-shop .shop-controls { display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; }
+  .royal-shop .shop-controls :is(input, select) { width: 100%; font-size: 16px; }
+  .royal-shop .shop-variant select { font-size: 16px; }
+  .royal-shop .shop-toolbar { align-items: stretch; }
+  .royal-shop .shop-cart summary { padding-inline: 14px; }
+  .royal-shop .shop-cart-content { padding-inline: 14px; }
+  .royal-shop .shop-cart-quantity { flex-wrap: wrap; }
+  .royal-shop .shop-checkout { width: 100%; }
+}

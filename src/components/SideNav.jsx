@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useJourney } from './JourneyContext';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   Home,
   Sparkles,
@@ -18,7 +18,7 @@ const SECTIONS = [
   ['booking', 'Book a Reading', CalendarDays],
   ['information', 'About Astrology', BookOpen],
   ['collection', 'Shop', ShoppingBag],
-  ['questions', 'Questions', HelpCircle],
+  ['guide', 'Reading guide & FAQ', HelpCircle],
 ];
 export default function SideNav() {
   const [ready, setReady] = useState(false);
@@ -38,7 +38,7 @@ export default function SideNav() {
   function go(id) {
     setReady(false);
     setOpen(false);
-    if (pathname === '/' && id !== 'collection')
+    if (pathname === '/' && id !== 'collection' && id !== 'guide')
       document
         .getElementById(id)
         ?.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' });
@@ -97,7 +97,7 @@ export default function SideNav() {
           id="section-icons"
           aria-label="Page sections"
           className="morph-icons"
-          inert={!(open && ready) ? '' : undefined}
+          inert={!(open && ready)}
           aria-hidden={!(open && ready)}
         >
           {SECTIONS.map(([id, label, Icon], i) => (
@@ -113,7 +113,7 @@ export default function SideNav() {
               }
             >
               <Link
-                to={id === 'collection' ? `/shop${search}` : `/${search}#${id}`}
+                to={id === 'guide' ? '/how-readings-work' : id === 'collection' ? `/shop${search}` : `/${search}#${id}`}
                 aria-label={label}
                 aria-current={
                   id === 'collection' && pathname === '/shop'

@@ -12,7 +12,7 @@ import { dirname, join } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 const ssrDir = join(root, 'dist-ssr');
-export const PRERENDERED_ROUTES = ['/', '/shop', '/policies'];
+export const PRERENDERED_ROUTES = ['/', '/shop', '/policies', '/how-readings-work'];
 
 const template = await readFile(join(dist, 'index.html'), 'utf8');
 if (!template.includes('<div id="root"></div>'))

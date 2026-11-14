@@ -9,6 +9,7 @@ import {
 import PageMeta from '../components/PageMeta';
 import CosmicBackground from '../components/CosmicBackground';
 import AnimatedTitle from '../components/AnimatedTitle';
+import { CollectionSkeleton } from '../components/PageLoading';
 import { request } from '../lib/api';
 import { productEnquiryHref } from '../../shared/contact.js';
 import {
@@ -54,6 +55,7 @@ function ProductCard({ product, live, cart, onAdd, onViewCart, busy }) {
             src={product.image.url}
             alt={product.image.altText || product.title}
             loading="lazy"
+            decoding="async"
             width="400"
             height="340"
           />
@@ -530,6 +532,7 @@ export default function Shop() {
             <span />✧<span />
           </div>
         </section>
+        <section className="shop-catalog-region" aria-label="Crystal collection">
         {catalog?.mode === 'preview' && (
           <div className="shop-preview-note">
             <span className="preview-dot" />
@@ -591,8 +594,10 @@ export default function Shop() {
           </div>
         )}
         {catalogError && (
-          <div role="alert" className="shop-error">
-            {catalogError}
+          <div role="alert" className="shop-error shop-catalog-error">
+            <ShoppingBag size={28} aria-hidden="true" />
+            <h2>The collection is taking a moment</h2>
+            <p>{catalogError}</p>
             <button
               type="button"
               onClick={() => setReload((count) => count + 1)}
@@ -602,15 +607,7 @@ export default function Shop() {
           </div>
         )}
         {!catalog && !catalogError && (
-          <div
-            className="shop-grid"
-            aria-label="Loading collection"
-            aria-busy="true"
-          >
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="product-skeleton" />
-            ))}
-          </div>
+          <CollectionSkeleton />
         )}
         <p role="status" className="sr-only">
           {message}
@@ -654,6 +651,7 @@ export default function Shop() {
             </button>
           </div>
         )}
+        </section>
         <p className="shop-claims-note">
           Crystals and tools are sold as decorative and personal items. We do
           not claim that any product heals, cures or guarantees a result.{' '}
