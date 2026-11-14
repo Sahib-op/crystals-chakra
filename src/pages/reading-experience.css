@@ -365,3 +365,5 @@
   .reading-experience .tarot-section .section-atmosphere::before { animation: none; }
 }
 
+
+.reading-guide-page .reading-eyebrow { color: var(--page-ink); }

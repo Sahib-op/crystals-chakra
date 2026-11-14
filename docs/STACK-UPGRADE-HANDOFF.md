@@ -44,3 +44,11 @@ Work in progress, 14 November 2026. This file will be updated with final verific
 - Browser download timed out. Installed Edge is being used with `PLAYWRIGHT_CHANNEL=msedge`; config supports this optional environment variable. Browser suite running at this checkpoint.
 - Bundle budget remains failing: entry JS about 147.2 KiB gzip vs 140 KiB, CSS about 26.3 KiB vs 25 KiB. Do not silently raise budgets. Need reduce payload or explicitly document remaining regression.
 - Need additional delayed-loading/theme/mobile-cursor tests and visual QA. No production deployment or merge done.
+
+## Verification checkpoint
+- `6b1f526` fixed the production prerender and was pushed. The following commit adds guide contrast fixes and upgrade regression tests.
+- `npm test`: 62 passed. Type checking, generated-contract validation and production build passed.
+- Existing Edge regression suite: 32 passed, then both guide contrast failures passed on targeted rerun. New upgrade suite: 7 passed and 1 desktop-only skip for a touch-only test. The new checks cover delayed API responses, appearance persistence, booking placement and no mobile desktop-cursor request.
+- Run the test suite in this workspace with `$env:PLAYWRIGHT_CHANNEL = 'msedge'; npm run test:e2e -- --workers=2` after `npm run build`. The Playwright Chromium download timed out, but Edge is installed.
+- The original intermittent production latency was not measured. Source proves a short route fallback caused the footer to jump, and delay injection verified the new layout. Shopify and the Studio configuration/auth chain can contribute to waits. Physical mobile keyboard and visual 3D review still need verification.
+- Remaining work: bring the production bundle under the existing budget, visually review the redesign, and verify the physical keyboard behavior. Do not interpret the front-end changes as a production deployment.
