@@ -10,6 +10,7 @@ import PageMeta from '../components/PageMeta';
 import CosmicBackground from '../components/CosmicBackground';
 import AnimatedTitle from '../components/AnimatedTitle';
 import { request } from '../lib/api';
+import { takePrefetchedProducts } from '../lib/prefetch';
 import { productEnquiryHref } from '../../shared/contact.js';
 import {
   loadCart,
@@ -326,6 +327,7 @@ export default function Shop() {
   const cartRestored = useRef(false);
   const [message, setMessage] = useState('');
   const [loadingMore, setLoadingMore] = useState(false);
+  const [slowCatalog, setSlowCatalog] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
   const [reload, setReload] = useState(0);
   const cartPanel = useRef(null);
@@ -335,14 +337,24 @@ export default function Shop() {
   useEffect(() => {
     const controller = new AbortController();
     setCatalogError('');
-    request('products', undefined, controller.signal)
+    setSlowCatalog(false);
+    // A cold API host can take a while to wake; say so instead of going quiet.
+    const slow = setTimeout(() => setSlowCatalog(true), 4000);
+    (
+      (reload === 0 && takePrefetchedProducts()) ||
+      request('products', undefined, controller.signal)
+    )
       .then((result) => {
         if (!controller.signal.aborted) setCatalog(result);
       })
       .catch((error) => {
         if (!controller.signal.aborted) setCatalogError(error.message);
-      });
-    return () => controller.abort();
+      })
+      .finally(() => clearTimeout(slow));
+    return () => {
+      clearTimeout(slow);
+      controller.abort();
+    };
   }, [reload]);
 
   // Save runs before restore on mount, so the initial empty cart never
@@ -602,14 +614,20 @@ export default function Shop() {
           </div>
         )}
         {!catalog && !catalogError && (
-          <div
-            className="shop-grid"
-            aria-label="Loading collection"
-            aria-busy="true"
-          >
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="product-skeleton" />
-            ))}
+          <div className="shop-loading">
+            <p role="status" className="shop-loading-label">
+              <span className="shop-loading-spark" aria-hidden="true">
+                ✧
+              </span>
+              {slowCatalog
+                ? 'Still gathering the collection. The first visit after a quiet spell can take a few seconds.'
+                : 'Gathering the collection…'}
+            </p>
+            <div className="shop-grid" aria-hidden="true">
+              {[1, 2, 3].map((item) => (
+                <div key={item} className="product-skeleton" />
+              ))}
+            </div>
           </div>
         )}
         <p role="status" className="sr-only">

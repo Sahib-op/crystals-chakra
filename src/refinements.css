@@ -1306,3 +1306,182 @@ html.js .tarot-portrait:not(.is-revealed) {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+
+/* ---------- Page loading: hold the layout, give loading a place ---------- */
+/* Main always fills the viewport, so a short loading state can never pull the
+   footer up into the middle of the screen. */
+#main {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+.route-loading {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 120px 24px 80px;
+  text-align: center;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+.route-loading p {
+  margin: 0;
+}
+.route-loading-ivory {
+  background: #f8efd9;
+  color: #12314e;
+}
+.route-loading-parchment {
+  background: #f7eed7;
+  color: #17384e;
+}
+.route-loading-midnight {
+  background: #071e35;
+  color: #f0d49c;
+}
+.route-loading-note {
+  max-width: 34ch;
+  font-size: 14px;
+  opacity: 0.8;
+}
+.route-loading-mark {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+.route-loading-mark span {
+  position: absolute;
+  inset: 0;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.35;
+}
+.route-loading-mark span:nth-child(2) {
+  inset: 12px;
+  border-color: #d4af37;
+  border-top-color: transparent;
+  opacity: 0.9;
+  animation: route-loading-turn 1.6s linear infinite;
+}
+.route-loading-mark i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #d4af37;
+  box-shadow: 0 0 12px #d4af37aa;
+}
+@keyframes route-loading-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.shop-loading-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  margin: 0 0 14px;
+  color: #d8c79e;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.shop-loading-spark {
+  color: #d4af37;
+  animation: route-loading-glow 1.8s ease-in-out infinite;
+}
+@keyframes route-loading-glow {
+  50% {
+    opacity: 0.35;
+  }
+}
+/* Studio checks sign-in before showing anything; keep that space reserved. */
+.studio-page > .studio-loading {
+  display: grid;
+  place-content: center;
+  min-height: 60vh;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-loading-mark span:nth-child(2),
+  .shop-loading-spark {
+    animation: none;
+  }
+}
+
+/* ---------- Touch: every tap target at least 44px ---------- */
+@media (pointer: coarse) {
+  /* Invisible hit-area extensions: the controls look exactly the same. */
+  .scroll-header-brand,
+  .header-whatsapp,
+  .header-reading {
+    position: relative;
+  }
+  .scroll-header-brand::after,
+  .header-whatsapp::after,
+  .header-reading::after {
+    content: '';
+    position: absolute;
+    inset: -6px -2px;
+  }
+  /* The handle sits at the screen edge, so it extends inward. */
+  .morph-trigger::after {
+    content: '';
+    position: absolute;
+    inset: 0 -20px 0 -10px;
+  }
+  /* Underlined "back" links keep their underline close to the text. */
+  .policies-back,
+  .shop-return > a:first-child {
+    position: relative;
+  }
+  .policies-back::after,
+  .shop-return > a:first-child::after {
+    content: '';
+    position: absolute;
+    inset: -14px -4px;
+  }
+  /* Stacked links and disclosures get a full-height row. */
+  .contact-phone-row > a,
+  .topic-readings a,
+  .policies-toc a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .short-questions-contact .contact-link,
+  .privacy-disclosure > summary {
+    min-height: 44px;
+  }
+  .short-questions-contact .contact-link {
+    margin: 6px 0;
+  }
+}
+
+/* ---------- On-screen keyboard (see src/lib/keyboardViewport.js) ---------- */
+input,
+textarea,
+select {
+  scroll-margin-top: 96px;
+  scroll-margin-bottom: 24px;
+}
+/* The reading dialog moves into the visible area above the keyboard and
+   scrolls inside it, so the date field and the submit button stay reachable. */
+html.keyboard-open .cosmic-reading-dialog {
+  top: calc(var(--vv-top, 0px) + 12px);
+  bottom: auto;
+  margin-top: 0;
+  max-height: calc(var(--vv-height, 100dvh) - 24px);
+}
+/* While typing on a phone, the fixed side handle steps aside so it never sits
+   over a field; it returns when the keyboard closes. */
+html.keyboard-open .morph-sidebar {
+  visibility: hidden;
+}

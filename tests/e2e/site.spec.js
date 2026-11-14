@@ -371,8 +371,10 @@ test.describe('design lab', () => {
     expect(await aboutFirst()).toBe(false);
 
     await page.goto('/?lab=1');
+    await page.waitForLoadState('networkidle');
     const lab = page.locator('.design-lab');
-    await expect(lab).toBeVisible();
+    // Hydration can trail behind the software-rendered 3D scene on desktop CI.
+    await expect(lab).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('html')).toHaveAttribute('data-palette', 'plum');
     expect(await aboutFirst()).toBe(true);
     await lab.getByRole('button', { name: /Emerald/ }).click();
@@ -384,5 +386,87 @@ test.describe('design lab', () => {
     await expect(lab).toHaveCount(0);
     expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
     expect(await aboutFirst()).toBe(false);
+  });
+});
+
+test.describe('loading and touch', () => {
+  test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
+
+  test('the footer stays below the fold while the shop loads', async ({
+    page,
+  }) => {
+    await page.route(/\/assets\/Shop-.*\.js$/, async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      await route.continue();
+    });
+    await page.route(/\/api\/products/, async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 9000));
+      await route.continue();
+    });
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    const footerTop = () =>
+      page.evaluate(
+        () =>
+          document.querySelector('.royal-footer').getBoundingClientRect().top,
+      );
+    const height = page.viewportSize().height;
+    await page
+      .locator('#collection')
+      .getByRole('link', { name: /Shop/ })
+      .click();
+    await expect(page.getByText('Opening the shop…')).toBeVisible();
+    expect(await footerTop()).toBeGreaterThanOrEqual(height);
+    await expect(page.getByText('Gathering the collection…')).toBeVisible();
+    expect(await footerTop()).toBeGreaterThanOrEqual(height);
+    await expect(page.getByText(/Still gathering the collection/)).toBeVisible({
+      timeout: 8000,
+    });
+    expect(await footerTop()).toBeGreaterThanOrEqual(height);
+  });
+
+  test('the reading dialog moves above the on-screen keyboard', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, 'touch devices only');
+    // Playwright cannot open a real keyboard, so stand in a visual viewport
+    // that shrinks the way a phone's does when it opens.
+    await page.addInitScript(() => {
+      const fake = new EventTarget();
+      let height = window.innerHeight;
+      Object.defineProperties(fake, {
+        height: { get: () => height },
+        width: { get: () => window.innerWidth },
+        offsetTop: { get: () => 0 },
+        offsetLeft: { get: () => 0 },
+        scale: { get: () => 1 },
+      });
+      window.__setKeyboard = (px) => {
+        height = window.innerHeight - px;
+        fake.dispatchEvent(new Event('resize'));
+      };
+      Object.defineProperty(window, 'visualViewport', { get: () => fake });
+    });
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await page.getByRole('button', { name: /Free Cosmic Reading/ }).click();
+    const field = page.locator('#reading-dob');
+    await expect(field).toBeFocused();
+    const keyboard = 340;
+    await page.evaluate((px) => window.__setKeyboard(px), keyboard);
+    await expect(page.locator('html')).toHaveClass(/keyboard-open/);
+    const visibleBottom = page.viewportSize().height - keyboard;
+    const box = await page.locator('.cosmic-reading-dialog').boundingBox();
+    expect(box.y + box.height).toBeLessThanOrEqual(visibleBottom);
+    const fieldBox = await field.boundingBox();
+    expect(fieldBox.y + fieldBox.height).toBeLessThanOrEqual(visibleBottom);
+    // The submit button is reachable by scrolling inside the dialog.
+    const submit = page.getByRole('button', { name: 'Reveal My Reading' });
+    await submit.scrollIntoViewIfNeeded();
+    const submitBox = await submit.boundingBox();
+    expect(submitBox.y + submitBox.height).toBeLessThanOrEqual(visibleBottom);
+    await page.evaluate(() => window.__setKeyboard(0));
+    await expect(page.locator('html')).not.toHaveClass(/keyboard-open/);
   });
 });

@@ -4,7 +4,7 @@ A readings-first website for a family-run Indian tarot and astrology studio, wit
 
 ## Current build and production goal
 
-The royal cream, navy, burgundy and gold identity, original logo, compact masthead and expandable side rail are retained. First-time homepage visitors see an interactive welcome screen: a star field that follows the pointer and a tarot card that opens the site. The 3D rings load automatically only on capable desktops; phones get a lightweight animated illustration with an “Explore in 3D” option. English leads the interface; Hindi reading titles use a licensed local Devanagari font. Tarot with Amanpreet Kaur is a first-class reading alongside the three existing astrology packages.
+The royal cream, navy, burgundy and gold identity, original logo, compact masthead and expandable side rail are retained. First-time homepage visitors see an interactive welcome screen: a star field that follows the pointer and a large “Step into your stars” line that opens the site when tapped, clicked or scrolled. Desktop mice get a custom tarot cursor; touch devices never load it. The 3D rings load automatically only on capable desktops; phones get a lightweight animated illustration with an “Explore in 3D” option. English leads the interface; Hindi reading titles use a licensed local Devanagari font. Tarot with Amanpreet Kaur is a first-class reading alongside the three existing astrology packages.
 
 The WhatsApp-first customer flow and a private reading editor are implemented. The studio editor supports drafts, preview, publishing, archiving and change history. Practitioner and consultation management, hosted authentication and multi-item commerce remain in the build plan.
 
@@ -58,13 +58,20 @@ After starting and provisioning the isolated PostgreSQL database, run `npm run d
 
 ## Customer flows
 
-- One scrolling studio page: opening → tarot → astrology packages → booking → understanding astrology → collection invitation → questions. `/shop` and `/policies` are separate. Legacy `/services`, `/science`, `/book` and `/privacy` links redirect and preserve useful reading selection.
+- One scrolling studio page: opening → tarot → astrology packages with one booking panel beneath them → About Astrology & Tarot (card meanings, key terms, birth details and a short FAQ, all linked both ways with the readings) → collection invitation. `/how-readings-work` is the full reading guide and FAQ. `/shop` and `/policies` are separate. Legacy `/services`, `/science`, `/book` and `/privacy` links redirect and preserve useful reading selection.
 - The booking section explains the four steps (choose, message, studio confirms date/time/price/payment, reading) and states that nothing is booked until the studio confirms.
 - `/policies` covers business details, privacy, reading terms, shipping, returns, product claims and the grievance officer, rendered from confirmed facts only.
 - Paid-reading actions open the configured studio WhatsApp number with a short package-specific message. The visitor sends it in WhatsApp. The persistent header offers Contact and Call; the contact section also exposes the number and a copy control.
 - The free tool needs only a date of birth. Calendar validation, conventional tropical zodiac ranges and digit-sum numerology run in the browser. It is not a Vedic chart or scientifically established prediction. Closing the tool clears the date.
 - The website loads the published reading catalogue and uses the bundled catalogue if the first request fails. General studio contact stays available while the catalogue loads.
 - Unconfigured commerce displays clearly labelled illustrative items and disables checkout. The cart keeps only variant IDs and quantities in the browser for up to seven days and clears once Shopify checkout opens.
+
+- Slow loads hold the layout: every lazily loaded page shows a full-height loading panel in its own colours, so the footer never jumps up. Hovering, focusing or touching a shop link starts loading the shop and its catalogue early, and the shop says so plainly if a cold API host takes a few seconds to wake.
+- Phones: every control has a tap area of at least 44px, nothing relies on hover, and `src/lib/keyboardViewport.js` keeps the focused field and the reading dialog's buttons above the on-screen keyboard.
+
+### Design lab (hidden from visitors)
+
+Open any page with `?lab=1` to show a small panel for trying alternative colour palettes and section orders. The choice is stored only in that browser until `?lab=0` or “Close the lab”; visitors always get the default design, and the lab code loads as a separate chunk only when requested. Palettes live in `src/components/design-lab.css`, orders in `src/components/AppearanceContext.jsx`.
 
 ## Structure and boundaries
 

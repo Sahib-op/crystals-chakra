@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect } from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -14,32 +14,58 @@ import ScrollHeader from './components/ScrollHeader';
 import RoyalMotion from './components/RoyalMotion';
 import SideNav from './components/SideNav';
 import Footer from './components/Footer';
+import RouteLoading from './components/RouteLoading';
+import { loadShopPage, prefetchShop } from './lib/prefetch';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
-const Shop = lazy(() => import('./pages/Shop'));
+const Shop = lazy(loadShopPage);
 const Policies = lazy(() => import('./pages/Policies'));
 const HowReadingsWork = lazy(() => import('./pages/HowReadingsWork'));
 const StudioPage = lazy(() => import('./features/studio/StudioPage.tsx'));
 function NavigationEffects() {
   const { pathname, hash } = useLocation();
+  // A new page starts at the top before it paints. Smooth scrolling here would
+  // glide up from the old scroll position past the footer while the next page
+  // is still loading.
+  useLayoutEffect(() => {
+    if (!hash) window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [pathname, hash]);
   useEffect(() => {
+    if (!hash) return undefined;
     const frame = requestAnimationFrame(() => {
-      if (hash) {
-        const disclosure = document.getElementById(hash.slice(1));
-        if (disclosure?.tagName === 'DETAILS') disclosure.open = true;
-        document
-          .getElementById(decodeURIComponent(hash.slice(1)))
-          ?.scrollIntoView({
-            behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
-              .matches
-              ? 'instant'
-              : 'smooth',
-            block: 'start',
-          });
-      } else window.scrollTo(0, 0);
+      const disclosure = document.getElementById(hash.slice(1));
+      if (disclosure?.tagName === 'DETAILS') disclosure.open = true;
+      document
+        .getElementById(decodeURIComponent(hash.slice(1)))
+        ?.scrollIntoView({
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
+            .matches
+            ? 'instant'
+            : 'smooth',
+          block: 'start',
+        });
     });
     return () => cancelAnimationFrame(frame);
   }, [pathname, hash]);
+  return null;
+}
+// Hover, focus or touch on any shop link starts loading the shop early.
+function ShopIntent() {
+  useEffect(() => {
+    const onIntent = (event) => {
+      if (
+        event.target instanceof Element &&
+        event.target.closest('a[href="/shop"]')
+      )
+        prefetchShop();
+    };
+    const events = ['pointerover', 'focusin', 'touchstart'];
+    for (const type of events)
+      document.addEventListener(type, onIntent, { passive: true });
+    return () => {
+      for (const type of events) document.removeEventListener(type, onIntent);
+    };
+  }, []);
   return null;
 }
 function LegacyBooking() {
@@ -64,6 +90,7 @@ export function AppShell() {
     <AppearanceProvider>
       <JourneyProvider>
         <NavigationEffects />
+        <ShopIntent />
         <CustomerNavigation />
         <nav aria-label="Skip link">
           <a className="journey-skip" href="#main">
@@ -78,9 +105,7 @@ export function AppShell() {
               element={
                 <Suspense
                   fallback={
-                    <p className="px-8 py-28" role="status">
-                      Opening the shop…
-                    </p>
+                    <RouteLoading tone="midnight" label="Opening the shop…" />
                   }
                 >
                   <Shop />
@@ -92,7 +117,10 @@ export function AppShell() {
               element={
                 <Suspense
                   fallback={
-                    <p style={{ padding: '110px 40px' }}>Opening the studio…</p>
+                    <RouteLoading
+                      tone="parchment"
+                      label="Opening the studio…"
+                    />
                   }
                 >
                   <StudioPage />
@@ -111,13 +139,7 @@ export function AppShell() {
             <Route
               path="/policies"
               element={
-                <Suspense
-                  fallback={
-                    <p className="px-8 py-28" role="status">
-                      Opening policies…
-                    </p>
-                  }
-                >
+                <Suspense fallback={<RouteLoading label="Opening policies…" />}>
                   <Policies />
                 </Suspense>
               }
@@ -126,11 +148,7 @@ export function AppShell() {
               path="/how-readings-work"
               element={
                 <Suspense
-                  fallback={
-                    <p className="px-8 py-28" role="status">
-                      Opening the reading guide…
-                    </p>
-                  }
+                  fallback={<RouteLoading label="Opening the reading guide…" />}
                 >
                   <HowReadingsWork />
                 </Suspense>

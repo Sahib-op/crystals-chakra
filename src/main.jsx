@@ -13,7 +13,9 @@ import './opening.css';
 import './refinements.css';
 import './intro.css';
 import './toran.css';
+import { startKeyboardViewport } from './lib/keyboardViewport';
 
+startKeyboardViewport();
 const container = document.getElementById('root');
 const app = (
   <React.StrictMode>
