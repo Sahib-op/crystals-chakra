@@ -111,3 +111,32 @@ export const QUESTIONS = [
     a: 'This website does not collect your details. The studio receives only what you send on WhatsApp or say on the phone, and uses it to arrange and give your reading.',
   },
 ];
+
+// Shown over the zodiac ring beside the About Astrology title.
+export const PROOF_NOTE = {
+  title: 'Precision is not the same as proof.',
+  text: 'Astrology is a cultural and spiritual practice. Its claims about personality and future events are not established scientific predictions. A chart’s calculations and the meaning people find in it are different things.',
+};
+
+// What a full (Kundli) reading needs. Shown in Hinglish with the Devanagari
+// beside it; `en` is read to screen readers only.
+export const BIRTH_DETAILS = [
+  {
+    id: 'date',
+    hinglish: 'Janam Tithi',
+    hindi: 'जन्म तिथि',
+    en: 'date of birth',
+  },
+  {
+    id: 'time',
+    hinglish: 'Janam Samay',
+    hindi: 'जन्म समय',
+    en: 'time of birth',
+  },
+  {
+    id: 'place',
+    hinglish: 'Janam Sthaan',
+    hindi: 'जन्म स्थान',
+    en: 'place of birth',
+  },
+];

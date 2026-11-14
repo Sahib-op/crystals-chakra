@@ -1,5 +1,25 @@
 /* Loaded only when the design lab is on (AppearanceContext.jsx).
-   Each palette recolours the page surfaces; the logo keeps its colours. */
+   Each palette recolours the page surfaces; the logo keeps its colours.
+   The default (no data-palette) is the royal blue, indigo and emerald mix in
+   refinements.css. */
+/* Every alternative palette starts from the previous all-blue surfaces. */
+:root[data-palette] .readings-flow {
+  background:
+    radial-gradient(ellipse at 8% 8%, #65313e66, transparent 60%),
+    linear-gradient(165deg, #1d2b3d, #082c4b 74%);
+}
+:root[data-palette] .collection-invitation {
+  background: #071d34;
+}
+:root[data-palette] .collection-invitation > .section-atmosphere {
+  background-image:
+    radial-gradient(circle, #f7d58b66 0.7px, transparent 1px),
+    linear-gradient(125deg, #082b4a, #041d37);
+  background-size:
+    137px 151px,
+    100% 100%;
+}
+
 :root[data-palette='plum'] body,
 :root[data-palette='plum'] .journey-section {
   --ink: #3d1a33;
@@ -240,6 +260,15 @@
   height: 20px;
   border-radius: 6px;
   flex: none;
+}
+.swatch-mix {
+  background: linear-gradient(
+    90deg,
+    #1c2253 0 25%,
+    #082c4b 25% 50%,
+    #0a2e26 50% 75%,
+    #f8efd9 75%
+  );
 }
 .swatch-royal {
   background: linear-gradient(90deg, #082c4b 50%, #f8efd9 50%);

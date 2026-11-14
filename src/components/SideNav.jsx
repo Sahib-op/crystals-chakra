@@ -16,9 +16,9 @@ const SECTIONS = [
   ['tarot', 'Tarot Readings', Moon],
   ['services', 'Kundli Services', Sparkles],
   ['booking', 'Book a Reading', CalendarDays],
+  ['collection', 'Shop', ShoppingBag],
   ['information', 'About Astrology', BookOpen],
   ['questions', 'Questions', HelpCircle],
-  ['collection', 'Shop', ShoppingBag],
 ];
 export default function SideNav() {
   const [ready, setReady] = useState(false);
@@ -35,9 +35,14 @@ export default function SideNav() {
     document.addEventListener('pointerdown', outside);
     return () => document.removeEventListener('pointerdown', outside);
   }, []);
+  const lastPointer = useRef('mouse');
   function go(id) {
-    setReady(false);
-    setOpen(false);
+    // With a mouse the rail stays open after a click and closes when the
+    // pointer leaves it; touch and keyboard close it straight away.
+    if (lastPointer.current !== 'mouse') {
+      setReady(false);
+      setOpen(false);
+    }
     if (pathname === '/' && id !== 'collection')
       document
         .getElementById(id)
@@ -50,10 +55,17 @@ export default function SideNav() {
       onPointerEnter={(e) => {
         if (e.pointerType === 'mouse') setOpen(true);
       }}
+      onPointerDown={(e) => {
+        lastPointer.current = e.pointerType;
+      }}
+      onKeyDownCapture={() => {
+        lastPointer.current = 'keyboard';
+      }}
       onPointerLeave={(e) => {
+        // Keyboard focus keeps it open; a mouse click's focus does not.
         if (
           e.pointerType === 'mouse' &&
-          !root.current?.contains(document.activeElement)
+          !root.current?.querySelector(':focus-visible')
         )
           setOpen(false);
       }}

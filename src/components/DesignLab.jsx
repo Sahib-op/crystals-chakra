@@ -1,14 +1,9 @@
-import {
-  DEFAULTS,
-  PALETTES,
-  SECTION_ORDERS,
-  useAppearance,
-} from './AppearanceContext';
+import { DEFAULTS, PALETTES, useAppearance } from './AppearanceContext';
 import './design-lab.css';
 
 // Floating panel for the studio's design experiments (see AppearanceContext).
 export default function DesignLab({ onClose }) {
-  const { palette, sectionOrder, setAppearance } = useAppearance();
+  const { palette, setAppearance } = useAppearance();
   return (
     <details className="design-lab" open>
       <summary>
@@ -40,23 +35,6 @@ export default function DesignLab({ onClose }) {
             ))}
           </div>
         </fieldset>
-        <label htmlFor="lab-section-order">Section order</label>
-        <select
-          id="lab-section-order"
-          value={sectionOrder}
-          onChange={(event) =>
-            setAppearance((current) => ({
-              ...current,
-              sectionOrder: event.target.value,
-            }))
-          }
-        >
-          {SECTION_ORDERS.map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
         <div className="design-lab-actions">
           <button type="button" onClick={() => setAppearance(DEFAULTS)}>
             Reset to default

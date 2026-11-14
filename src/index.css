@@ -629,93 +629,7 @@ textarea,
   font-size: 14px;
   color: #748297;
 }
-.chapter-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-bottom: 1px solid #ffffff1a;
-  gap: 12px;
-}
-.chapter-tabs button {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  text-align: left;
-  padding: 18px 4px;
-  color: #94a3b8;
-  font-size: 13px;
-  border-bottom: 2px solid transparent;
-}
-.chapter-tabs button > span {
-  font:
-    16px 'Playfair Display Variable',
-    'Playfair Display',
-    serif;
-  color: #677588;
-}
-.chapter-tabs button svg {
-  margin-left: auto;
-  opacity: 0;
-}
-.chapter-tabs button[aria-pressed='true'] {
-  border-color: #d4af37;
-  color: #f3e5ab;
-}
-.chapter-tabs button[aria-pressed='true'] svg {
-  opacity: 1;
-}
-.chapter-tabs button[aria-pressed='true'] > span {
-  color: #d4af37;
-}
-.chapter-panel {
-  display: grid;
-  grid-template-columns: 0.65fr 1.4fr;
-  gap: 48px;
-  align-items: center;
-  padding: 44px;
-  background: linear-gradient(125deg, #10283b99, #150a2199);
-  border: 1px solid #ffffff12;
-  border-radius: 0 0 14px 14px;
-}
-.chapter-visual {
-  min-height: 220px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 22px;
-  color: #d4af37;
-  border: 1px solid #d4af3730;
-  border-radius: 50% 50% 8px 8px;
-  background: radial-gradient(circle, #14467d26, transparent);
-}
-.chapter-visual > span {
-  font:
-    12px 'Inter Variable',
-    'Inter',
-    sans-serif;
-  letter-spacing: 0.2em;
-  color: #a99464;
-}
-.chapter-panel h2 {
-  font:
-    600 32px 'Playfair Display Variable',
-    'Playfair Display',
-    serif;
-  margin: 12px 0 18px;
-}
-.chapter-panel p:not(.chapter-label) {
-  font-size: 14px;
-  line-height: 1.9;
-  color: #b1bdcd;
-}
-.chapter-note {
-  font-size: 12px;
-  color: #baaa84;
-  border-left: 2px solid #d4af3780;
-  margin-top: 22px;
-  padding-left: 16px;
-  line-height: 1.85;
-}
+
 .birth-details-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -735,14 +649,14 @@ textarea,
   line-height: 1.9;
   max-width: 350px;
 }
-.birth-details-list > div {
+.birth-details-list > li {
   display: flex;
   align-items: center;
   gap: 20px;
   padding: 22px 0;
   border-bottom: 1px solid #ffffff15;
 }
-.birth-details-list > div:first-child {
+.birth-details-list > li:first-child {
   padding-top: 0;
 }
 .detail-icon {
@@ -774,41 +688,7 @@ textarea,
   color: #786b53;
   margin-left: auto;
 }
-.parchment-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 30px;
-  padding: 36px 40px;
-  background: radial-gradient(ellipse at top left, #fff4db, #e8d6ad);
-  border: 1px solid #d4af37;
-  border-radius: 12px;
-  color: #142f4e;
-  box-shadow:
-    inset 0 0 0 5px #efe1c455,
-    inset 0 0 0 6px #b98b3c45;
-}
-.note-sigil {
-  font-size: 50px;
-  color: #9a6e28;
-  line-height: 1;
-}
-.parchment-note .chapter-label {
-  color: #88682d;
-  font-weight: 600;
-}
-.parchment-note h2 {
-  font:
-    600 27px 'Playfair Display Variable',
-    'Playfair Display',
-    serif;
-  margin: 12px 0;
-}
-.parchment-note p:not(.chapter-label) {
-  color: #555a5b;
-  font-size: 13px;
-  line-height: 1.9;
-  max-width: 790px;
-}
+
 .science-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1163,10 +1043,7 @@ textarea,
   .science-hero {
     gap: 20px;
   }
-  .chapter-panel {
-    gap: 30px;
-    padding: 32px;
-  }
+
   .birth-details-section,
   .science-bottom {
     gap: 45px;
@@ -1314,47 +1191,7 @@ textarea,
     font-size: 12px;
     letter-spacing: 0.13em;
   }
-  .chapter-tabs {
-    gap: 5px;
-  }
-  .chapter-tabs button {
-    font-size: 14px;
-    padding: 14px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 7px;
-  }
-  .chapter-tabs button svg {
-    display: none;
-  }
-  .chapter-tabs button > span {
-    font-size: 13px;
-  }
-  .chapter-panel {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 24px 20px;
-  }
-  .chapter-visual {
-    min-height: 120px;
-    border-radius: 8px;
-    flex-direction: row;
-    gap: 32px;
-  }
-  .chapter-visual svg {
-    width: 45px;
-    height: 45px;
-  }
-  .chapter-panel h2 {
-    font-size: 27px;
-  }
-  .chapter-panel p:not(.chapter-label) {
-    font-size: 13px;
-  }
-  .chapter-note {
-    font-size: 14px;
-  }
+
   .birth-details-section {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -1363,23 +1200,10 @@ textarea,
   .section-title {
     font-size: 32px;
   }
-  .birth-details-list > div {
+  .birth-details-list > li {
     padding: 19px 0;
   }
-  .parchment-note {
-    padding: 27px 23px;
-    gap: 14px;
-  }
-  .note-sigil {
-    font-size: 28px;
-  }
-  .parchment-note h2 {
-    font-size: 24px;
-    line-height: 1.3;
-  }
-  .parchment-note p:not(.chapter-label) {
-    font-size: 12px;
-  }
+
   .science-bottom {
     grid-template-columns: 1fr;
     gap: 10px;

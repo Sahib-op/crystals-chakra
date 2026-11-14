@@ -516,36 +516,11 @@ body {
 .embedded-science .chart-star {
   color: #9d7428;
 }
-.embedded-science .chapter-tabs {
-  border-color: #9b762b55;
-}
-.embedded-science .chapter-tabs button {
-  color: #60707b;
-}
-.embedded-science .chapter-tabs button[aria-pressed='true'] {
-  color: #153b60;
-  border-color: #9d7428;
-}
-.embedded-science .chapter-tabs button > span,
-.embedded-science .chapter-tabs button[aria-pressed='true'] > span {
-  color: #9b762b;
-}
-.embedded-science .chapter-panel {
-  background: linear-gradient(125deg, #0c3050, #071f38);
-  color: #fbefd7;
-  border-color: #b68a3555;
-}
-.embedded-science .chapter-panel h2 {
-  font-size: 30px;
-  color: #fbefd7;
-}
-.embedded-science .chapter-panel .chapter-label {
-  color: #d8b972;
-}
+
 .embedded-science .section-overline > span {
   color: #74766b;
 }
-.embedded-science .birth-details-list > div {
+.embedded-science .birth-details-list > li {
   border-color: #9d742833;
 }
 .embedded-science .birth-details-list h3 {
@@ -559,16 +534,7 @@ body {
   border-color: #9d742844;
   background: #f9f1de;
 }
-.embedded-science .parchment-note {
-  background: #fbf4e4;
-  border-color: #b68a3566;
-  box-shadow:
-    inset 0 0 0 5px #fbf4e4,
-    inset 0 0 0 6px #b68a3526;
-}
-.embedded-science .parchment-note h2 {
-  font-size: 27px;
-}
+
 .embedded-science .science-bottom {
   display: none;
 }
@@ -1224,26 +1190,12 @@ body {
   .embedded-science .chart-art {
     min-height: 250px;
   }
-  .embedded-science .chapter-panel {
-    padding: 22px 18px;
-  }
-  .embedded-science .chapter-panel h2 {
-    font-size: 25px;
-  }
+
   .embedded-science .birth-details-section {
     padding: 32px 0;
     gap: 28px;
   }
-  .embedded-science .parchment-note {
-    gap: 10px;
-    padding: 22px 19px;
-  }
-  .embedded-science .parchment-note h2 {
-    font-size: 22px;
-  }
-  .embedded-science .parchment-note p:not(.chapter-label) {
-    font-size: 14px;
-  }
+
   .tarot-layout {
     grid-template-columns: 1fr;
     gap: 6%;
@@ -1672,20 +1624,8 @@ body {
 .embedded-science .ornament-divider {
   margin: 22px 0 28px;
 }
-.embedded-science .chapter-panel {
-  padding: 26px;
-  gap: 28px;
-}
-.embedded-science .chapter-visual {
-  min-height: 155px;
-}
-.embedded-science .chapter-panel h2 {
-  font-size: 27px;
-}
-.embedded-science .parchment-note {
-  padding: 25px 28px;
-}
-.embedded-science .birth-details-list > div {
+
+.embedded-science .birth-details-list > li {
   padding: 16px 0;
 }
 .embedded-science .birth-details-section {
@@ -1695,9 +1635,7 @@ body {
   font-size: 32px;
   margin: 14px 0;
 }
-.embedded-science .chapter-note {
-  margin-top: 16px;
-}
+
 .tarot-layout h2,
 .collection-invitation h2 {
   font-size: clamp(42px, 5vw, 62px);
@@ -1793,22 +1731,12 @@ body {
     max-width: 220px;
     min-height: 225px;
   }
-  .embedded-science .chapter-panel {
-    padding: 21px 18px;
-  }
-  .embedded-science .chapter-visual {
-    min-height: 90px;
-  }
+
   .embedded-science .birth-details-section {
     padding: 26px 0;
     gap: 20px;
   }
-  .embedded-science .parchment-note {
-    padding: 22px 20px;
-  }
-  .embedded-science .chapter-panel h2 {
-    font-size: 25px;
-  }
+
   .tarot-art {
     height: 240px;
   }

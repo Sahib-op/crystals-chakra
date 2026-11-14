@@ -662,3 +662,20 @@
     animation: none;
   }
 }
+
+/* Desktop: the 3D rings and the whole card row fit in the first screen.
+   The square sizes from the viewport height (header ~92px above, card row
+   ~120px below) so nothing is cut off on shorter laptop screens. */
+@media (min-width: 761px) {
+  #home.opening-section {
+    padding-bottom: 20px;
+  }
+  .opening-section .celestial-webgl {
+    width: min(100%, max(340px, calc(100vh - 212px)));
+    width: min(100%, max(340px, calc(100svh - 212px)));
+    margin-inline: auto;
+  }
+  .opening-section .tarot-fan {
+    padding-top: 6px;
+  }
+}

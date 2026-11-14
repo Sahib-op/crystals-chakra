@@ -14,7 +14,6 @@
   --scroll-header-height: 60px;
 }
 .journey-section,
-#understand,
 #privacy {
   scroll-margin-top: calc(
     var(--scroll-header-height) + env(safe-area-inset-top, 0px) + 16px
@@ -150,7 +149,7 @@
 
 /* Both opening actions share the same edges and centre line. */
 #home.opening-section {
-  padding-top: 106px;
+  padding-top: 92px;
 }
 .opening-section .journey-actions {
   width: min(100%, 330px);
@@ -311,29 +310,7 @@
   width: min(100%, 265px);
   max-width: 100%;
 }
-.embedded-science .chapter-tabs button {
-  padding: 16px 6px;
-  font-size: 14px;
-}
-.embedded-science .chapter-panel {
-  grid-template-columns: 120px minmax(0, 1fr);
-  padding: 24px;
-  gap: 28px;
-}
-.embedded-science .chapter-visual {
-  min-height: 110px;
-  border: 0;
-  background: none;
-}
-.embedded-science .chapter-panel h3 {
-  font-size: 27px;
-  margin: 0 0 14px;
-  line-height: 1.25;
-}
-.embedded-science .chapter-panel p {
-  font-size: 15px;
-  line-height: 1.8;
-}
+
 .embedded-science .birth-details-section {
   padding: 28px 0;
   gap: 5%;
@@ -343,29 +320,18 @@
   font-size: 28px;
   margin: 0;
 }
-.embedded-science .birth-details-list > div {
+.embedded-science .birth-details-list > li {
   padding: 12px 0;
   gap: 16px;
 }
-.embedded-science .birth-details-list h4 {
+.embedded-science .birth-details-list .detail-name {
   font:
     500 17px 'Playfair Display Variable',
     'Playfair Display',
     Georgia,
     serif;
 }
-.embedded-science .parchment-note {
-  padding: 24px 28px;
-}
-.embedded-science .parchment-note h3 {
-  font-size: 25px;
-  margin: 0 0 14px;
-  line-height: 1.25;
-}
-.embedded-science .parchment-note p {
-  font-size: 15px;
-  line-height: 1.8;
-}
+
 .booking-page > div > h2 {
   margin-top: 0;
 }
@@ -604,7 +570,8 @@
    only. The system cursor is hidden only while the custom one is visible;
    text fields keep the native text cursor. */
 html.custom-cursor,
-html.custom-cursor * {
+html.custom-cursor *,
+html.custom-cursor ::backdrop {
   cursor: none !important;
 }
 html.custom-cursor :is(input, textarea, [contenteditable='true']) {
@@ -617,6 +584,14 @@ html.custom-cursor :is(input, textarea, [contenteditable='true']) {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.2s;
+  /* Undo the browser's popover box (it lives in the top layer). */
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
 }
 .tarot-cursor.is-visible {
   opacity: 1;
@@ -815,35 +790,12 @@ html.custom-cursor :is(input, textarea, [contenteditable='true']) {
     max-width: 100%;
     justify-self: center;
   }
-  .embedded-science .chapter-tabs {
-    gap: 6px;
-  }
-  .embedded-science .chapter-tabs button {
-    font-size: 12px;
-    padding: 14px 3px;
-    line-height: 1.5;
-  }
-  .embedded-science .chapter-panel {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 22px;
-    gap: 0;
-  }
-  .embedded-science .chapter-visual {
-    display: none;
-  }
-  .embedded-science .chapter-panel h3 {
-    font-size: 25px;
-  }
+
   .embedded-science .birth-details-section {
     gap: 18px;
     padding: 26px 0;
   }
-  .embedded-science .parchment-note {
-    padding: 22px;
-  }
-  .embedded-science .parchment-note h3 {
-    font-size: 24px;
-  }
+
   .royal-shop .cosmic-page {
     padding-top: 88px;
   }
@@ -1484,4 +1436,168 @@ html.keyboard-open .cosmic-reading-dialog {
    over a field; it returns when the keyboard closes. */
 html.keyboard-open .morph-sidebar {
   visibility: hidden;
+}
+
+/* ---------- About Astrology: compact hero, note over the ring ---------- */
+.embedded-science .science-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 0;
+  gap: 32px;
+  margin-bottom: 10px;
+}
+.science-hero-art {
+  display: grid;
+  place-items: center;
+  min-height: 380px;
+}
+.science-hero-art > * {
+  grid-area: 1 / 1;
+}
+.embedded-science .science-hero-art .chart-art {
+  width: 380px;
+  height: 380px;
+}
+.embedded-science .science-hero-art .chart-art > div:not(.chart-halo) {
+  width: 360px;
+}
+/* Translucent so the ring stays visible behind it; smaller type than the
+   section title so the hierarchy holds. */
+.proof-note {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 400px);
+  padding: 20px 24px;
+  border: 1px solid #b68a3566;
+  border-radius: 14px;
+  background: rgb(255 250 238 / 0.6);
+  backdrop-filter: blur(3px);
+  box-shadow: 0 12px 30px #12314e14;
+}
+.proof-note h3 {
+  margin: 0 0 8px;
+  font:
+    500 21px/1.25 'Playfair Display Variable',
+    'Playfair Display',
+    Georgia,
+    serif;
+  color: #12314e;
+}
+.proof-note p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #3f4b52;
+}
+/* Slides in from the right once, like the tarot portrait; its text follows
+   a beat behind (RevealOnce adds .is-revealed). */
+.proof-note,
+.proof-note > * {
+  transition:
+    opacity 1.4s ease-out,
+    transform 2.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.proof-note > h3 {
+  transition-delay: 0.15s;
+}
+.proof-note > p {
+  transition-delay: 0.3s;
+}
+html.js .proof-note:not(.is-revealed) {
+  opacity: 0;
+  transform: translate3d(180px, 0, 0);
+}
+html.js .proof-note:not(.is-revealed) > * {
+  opacity: 0;
+  transform: translate3d(60px, 0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .proof-note,
+  .proof-note > * {
+    transition: none;
+  }
+  html.js .proof-note:not(.is-revealed),
+  html.js .proof-note:not(.is-revealed) > * {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* Less air between the blocks. */
+.embedded-science .topic-nav {
+  margin: 0 auto 4px;
+}
+.embedded-science .topic-block {
+  margin-top: 40px;
+}
+.embedded-science .key-term-list > div {
+  padding: 12px 0;
+}
+.birth-details-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.embedded-science .birth-details-section {
+  padding: 36px 0 0;
+}
+.birth-details-arrow {
+  display: inline-block;
+  vertical-align: -3px;
+  color: #996b23;
+}
+.detail-name [lang='hi'] {
+  font-family: 'Studio Devanagari', 'Nirmala UI', serif;
+  font-weight: 500;
+}
+.detail-divider {
+  margin: 0 12px;
+  color: #b88b41;
+  font-weight: 400;
+}
+@media (max-width: 760px) {
+  .embedded-science .science-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .science-hero-art {
+    min-height: 300px;
+  }
+  .embedded-science .science-hero-art .chart-art {
+    width: 300px;
+    height: 300px;
+  }
+  .embedded-science .science-hero-art .chart-art > div:not(.chart-halo) {
+    width: 290px;
+  }
+  .proof-note {
+    padding: 18px 20px;
+  }
+  html.js .proof-note:not(.is-revealed) {
+    transform: translate3d(90px, 0, 0);
+  }
+}
+
+/* ---------- Default colour scheme: royal blue, indigo and emerald ----------
+   Royal blue carries the brand surfaces (header, readings, booking); indigo
+   opens the readings behind tarot; emerald holds the crystal collection.
+   Cream and gold stay as the light surfaces and accents; the logo is
+   untouched. The design lab's "Royal blue" palette restores the previous
+   all-blue look. */
+.readings-flow {
+  background:
+    radial-gradient(ellipse at 10% 6%, #4a4fa04d, transparent 58%),
+    radial-gradient(ellipse at 92% 30%, #2c2f7a40, transparent 55%),
+    linear-gradient(178deg, #181b45 0%, #1c2253 28%, #0d2f57 58%, #082c4b 100%);
+}
+.collection-invitation {
+  background: #0a2e26;
+}
+.collection-invitation > .section-atmosphere {
+  background-image:
+    radial-gradient(circle, #f7d58b55 0.7px, transparent 1px),
+    radial-gradient(ellipse at 20% 20%, #1f6b5640, transparent 60%),
+    linear-gradient(125deg, #0f3d32, #062019);
+  background-size:
+    137px 151px,
+    100% 100%,
+    100% 100%;
 }

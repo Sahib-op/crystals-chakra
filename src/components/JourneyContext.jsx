@@ -7,9 +7,9 @@ export const SECTION_LABELS = {
   tarot: 'Tarot Readings',
   services: 'Kundli Services',
   booking: 'Book a Reading',
+  collection: 'Shop',
   information: 'About Astrology',
   questions: 'Questions',
-  collection: 'Shop',
 };
 const JourneyContext = createContext(null);
 export function JourneyProvider({ children }) {

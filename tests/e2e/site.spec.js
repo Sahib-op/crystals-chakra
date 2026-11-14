@@ -325,6 +325,23 @@ test.describe('about astrology, FAQ and the reading guide', () => {
     await expect(page.locator('section#questions')).toHaveCount(1);
     await expect(page.locator('#questions a[href^="mailto:"]')).toBeVisible();
     await expect(page.locator('#questions .royal-faq details')).toHaveCount(4);
+    // The three-tab box is gone; the proof note sits beside the title.
+    await expect(page.locator('.chapter-tabs')).toHaveCount(0);
+    await expect(page.locator('.science-hero .proof-note h3')).toHaveText(
+      'Precision is not the same as proof.',
+    );
+    const birth = page.locator('#birth-details');
+    await expect(birth.locator('h3')).toContainText(
+      'For a full reading, you need',
+    );
+    for (const [hinglish, hindi] of [
+      ['Janam Tithi', 'जन्म तिथि'],
+      ['Janam Samay', 'जन्म समय'],
+      ['Janam Sthaan', 'जन्म स्थान'],
+    ]) {
+      await expect(birth.getByText(hinglish)).toBeVisible();
+      await expect(birth.getByText(hindi)).toBeVisible();
+    }
   });
 
   test('the reading guide has the full FAQ and never invents business facts', async ({
@@ -345,7 +362,7 @@ test.describe('about astrology, FAQ and the reading guide', () => {
 test.describe('design lab', () => {
   test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
 
-  test('hidden from visitors; ?lab=1 switches palette and section order', async ({
+  test('hidden from visitors; ?lab=1 switches palette; order is fixed', async ({
     page,
   }) => {
     await page.addInitScript(() =>
@@ -354,21 +371,19 @@ test.describe('design lab', () => {
         JSON.stringify({ palette: 'plum', sectionOrder: 'about-first' }),
       ),
     );
+    // Readings → Collection → About Astrology, whatever a browser saved.
+    const order = () =>
+      page.evaluate(() =>
+        ['tarot', 'services', 'collection', 'information'].map(
+          (id) => document.getElementById(id).getBoundingClientRect().top,
+        ),
+      );
+    const ascending = (tops) => tops.every((top, i) => !i || top > tops[i - 1]);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     await expect(page.locator('.design-lab')).toHaveCount(0);
     expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
-    const aboutFirst = () =>
-      page.evaluate(
-        () =>
-          !!(
-            document
-              .getElementById('information')
-              .compareDocumentPosition(document.getElementById('tarot')) &
-            Node.DOCUMENT_POSITION_FOLLOWING
-          ),
-      );
-    expect(await aboutFirst()).toBe(false);
+    expect(ascending(await order())).toBe(true);
 
     await page.goto('/?lab=1');
     await page.waitForLoadState('networkidle');
@@ -376,16 +391,82 @@ test.describe('design lab', () => {
     // Hydration can trail behind the software-rendered 3D scene on desktop CI.
     await expect(lab).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('html')).toHaveAttribute('data-palette', 'plum');
-    expect(await aboutFirst()).toBe(true);
-    await lab.getByRole('button', { name: /Emerald/ }).click();
+    await expect(lab.getByRole('combobox')).toHaveCount(0);
+    expect(ascending(await order())).toBe(true);
+    await lab.getByRole('button', { name: /Emerald & ivory/ }).click();
     await expect(page.locator('html')).toHaveAttribute(
       'data-palette',
       'emerald',
     );
+    await lab.getByRole('button', { name: /\(default\)/ }).click();
+    expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
     await lab.getByRole('button', { name: 'Close the lab' }).click();
     await expect(lab).toHaveCount(0);
     expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
-    expect(await aboutFirst()).toBe(false);
+  });
+});
+
+test.describe('welcome, cursor and side menu', () => {
+  test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
+
+  test('the 3D rings and the whole card row fit the first screen', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, 'desktop layout');
+    for (const [width, height] of [
+      [1280, 720],
+      [1366, 768],
+      [1920, 870],
+    ]) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/');
+      const fan = await page.locator('.tarot-fan').boundingBox();
+      expect(fan.y + fan.height).toBeLessThanOrEqual(height);
+      const art = await page.locator('.celestial-webgl').boundingBox();
+      expect(art.y).toBeGreaterThanOrEqual(60);
+    }
+  });
+
+  test('the custom cursor draws above the free-reading dialog', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, 'mouse only');
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await page.mouse.move(300, 300);
+    await page.mouse.move(320, 320, { steps: 4 });
+    const cursor = page.locator('.tarot-cursor');
+    await expect(cursor).toHaveCount(1, { timeout: 10_000 });
+    await page.getByRole('button', { name: /Free Cosmic Reading/ }).click();
+    await expect(page.locator('dialog[open]')).toHaveCount(1);
+    // Both are in the top layer; the cursor was raised after the dialog.
+    await expect
+      .poll(() => cursor.evaluate((el) => el.matches(':popover-open')))
+      .toBe(true);
+  });
+
+  test('the side menu stays open after a click until the mouse leaves', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, 'hover only');
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    const rail = page.locator('.morph-sidebar');
+    const box = await rail.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, {
+      steps: 6,
+    });
+    await expect(rail).toHaveClass(/is-expanded/);
+    await page
+      .locator('.morph-icons a[aria-label="About Astrology"]')
+      .click({ timeout: 10_000 });
+    await page.waitForTimeout(500);
+    await expect(rail).toHaveClass(/is-expanded/);
+    await page.mouse.move(800, 400, { steps: 6 });
+    await expect(rail).not.toHaveClass(/is-expanded/);
   });
 });
 

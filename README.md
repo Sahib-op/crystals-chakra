@@ -58,7 +58,7 @@ After starting and provisioning the isolated PostgreSQL database, run `npm run d
 
 ## Customer flows
 
-- One scrolling studio page: opening → tarot → astrology packages with one booking panel beneath them → About Astrology & Tarot (card meanings, key terms, birth details and a short FAQ, all linked both ways with the readings) → collection invitation. `/how-readings-work` is the full reading guide and FAQ. `/shop` and `/policies` are separate. Legacy `/services`, `/science`, `/book` and `/privacy` links redirect and preserve useful reading selection.
+- One scrolling studio page: opening → tarot → astrology packages with one booking panel beneath them → collection invitation → About Astrology & Tarot (card meanings, key terms, birth details and a short FAQ, all linked both ways with the readings). `/how-readings-work` is the full reading guide and FAQ. `/shop` and `/policies` are separate. Legacy `/services`, `/science`, `/book` and `/privacy` links redirect and preserve useful reading selection.
 - The booking section explains the four steps (choose, message, studio confirms date/time/price/payment, reading) and states that nothing is booked until the studio confirms.
 - `/policies` covers business details, privacy, reading terms, shipping, returns, product claims and the grievance officer, rendered from confirmed facts only.
 - Paid-reading actions open the configured studio WhatsApp number with a short package-specific message. The visitor sends it in WhatsApp. The persistent header offers Contact and Call; the contact section also exposes the number and a copy control.
@@ -71,7 +71,7 @@ After starting and provisioning the isolated PostgreSQL database, run `npm run d
 
 ### Design lab (hidden from visitors)
 
-Open any page with `?lab=1` to show a small panel for trying alternative colour palettes and section orders. The choice is stored only in that browser until `?lab=0` or “Close the lab”; visitors always get the default design, and the lab code loads as a separate chunk only when requested. Palettes live in `src/components/design-lab.css`, orders in `src/components/AppearanceContext.jsx`.
+Open any page with `?lab=1` to show a small panel for trying alternative colour palettes. The choice is stored only in that browser until `?lab=0` or “Close the lab”; visitors always get the default design, and the lab code loads as a separate chunk only when requested. The default scheme mixes royal blue (header, readings, booking), indigo (behind tarot) and emerald (the crystal collection) and lives in `src/refinements.css`; the alternatives live in `src/components/design-lab.css`. The section order is fixed: Readings → Collection → About Astrology.
 
 ## Structure and boundaries
 

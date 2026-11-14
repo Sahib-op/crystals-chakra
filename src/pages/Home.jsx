@@ -1,48 +1,24 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check, Sparkles } from 'lucide-react';
 import CelestialRings from '../components/CelestialRings';
 import ReadingOverlay from '../components/ReadingOverlay';
 import ScrollSection from '../components/ScrollSection';
+import RevealOnce from '../components/RevealOnce';
 import PageMeta from '../components/PageMeta';
 import ScienceOfAstrology from './ScienceOfAstrology';
 import Booking from './Booking';
 import { generateCosmicReading } from '../cosmicEngine';
 import { useJourney } from '../components/JourneyContext';
-import { useAppearance } from '../components/AppearanceContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { readingContact } from '../../shared/contact.js';
-// The portrait slides in once, the first time it scrolls into view. CSS does
-// the motion (.tarot-portrait in refinements.css), so prerendered HTML and
-// reduced-motion preferences always show it at rest.
+// The portrait slides in once, the first time it scrolls into view
+// (.tarot-portrait in refinements.css).
 function PortraitReveal({ children }) {
-  const ref = useRef(null);
-  const [revealed, setRevealed] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !('IntersectionObserver' in window)) {
-      setRevealed(true);
-      return undefined;
-    }
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.intersectionRatio >= 0.2) {
-          setRevealed(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: [0, 0.2] },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
   return (
-    <figure
-      ref={ref}
-      className={`tarot-portrait${revealed ? ' is-revealed' : ''}`}
-    >
+    <RevealOnce as="figure" className="tarot-portrait">
       {children}
-    </figure>
+    </RevealOnce>
   );
 }
 
@@ -87,7 +63,6 @@ function ReadingPackageCard({ service, featured, livePrices, onSelect }) {
 }
 
 export default function Home() {
-  const { sectionOrder } = useAppearance();
   const [snapshot, setSnapshot] = useState(false),
     [reading, setReading] = useState(null);
   const {
@@ -307,11 +282,10 @@ export default function Home() {
           <CelestialRings />
         </div>
       </ScrollSection>
-      {sectionOrder === 'collection-first'
-        ? [readings, collection, information]
-        : sectionOrder === 'about-first'
-          ? [information, readings, collection]
-          : [readings, information, collection]}
+      {/* Fixed order: Readings → Collection → About Astrology. */}
+      {readings}
+      {collection}
+      {information}
       <ReadingOverlay
         onRestart={() => setReading(null)}
         isOpen={snapshot}
