@@ -61,7 +61,10 @@ function CustomerNavigation() {
 }
 // Router-agnostic shell: BrowserRouter in the browser, StaticRouter when the
 // build prerenders public pages (src/entry-server.jsx).
-export function AppShell() {
+export function AppShell({ staticPages = {} }) {
+  const ShopPage = staticPages.Shop || Shop;
+  const PoliciesPage = staticPages.Policies || Policies;
+  const GuidePage = staticPages.HowReadingsWork || HowReadingsWork;
   return (
     <MotionConfig reducedMotion="user">
     <AppearanceProvider>
@@ -84,7 +87,7 @@ export function AppShell() {
               <Suspense
                 fallback={<PageLoading variant="shop" title="Opening the collection…" />}
               >
-                <Shop />
+                <ShopPage />
               </Suspense>
             }
           />
@@ -109,7 +112,7 @@ export function AppShell() {
           <Route path="/book" element={<LegacyBooking />} />
           <Route path="/how-readings-work" element={
             <Suspense fallback={<PageLoading title="Opening the reading guide…" />}>
-              <HowReadingsWork />
+              <GuidePage />
             </Suspense>
           } />
           <Route
@@ -118,7 +121,7 @@ export function AppShell() {
               <Suspense
                 fallback={<PageLoading title="Opening policies…" />}
               >
-                <Policies />
+                <PoliciesPage />
               </Suspense>
             }
           />

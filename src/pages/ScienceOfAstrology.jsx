@@ -3,7 +3,7 @@ import { ArrowRight, ChevronDown } from 'lucide-react';
 import PageMeta from '../components/PageMeta';
 import { SYMBOLS } from '../components/celestial/symbols';
 import { READING_FAQ, READING_TERMS } from './readingContent';
-import './reading-experience.css';
+
 
 export default function ScienceOfAstrology({ embedded = false }) {
   const Heading = embedded ? 'h2' : 'h1';

@@ -13,7 +13,7 @@ import { useJourney } from '../components/JourneyContext';
 import { useAppearance } from '../components/AppearanceContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { readingContact } from '../../shared/contact.js';
-import './reading-experience.css';
+
 
 function ReadingPackageCard({ service, selected, livePrices, onSelect }) {
   const { id, hindiTitle, title, description, features, price } = service;

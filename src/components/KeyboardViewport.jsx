@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import '../keyboard-viewport.css';
+
 
 const textField = 'textarea, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="hidden"]), [contenteditable="true"]';
 

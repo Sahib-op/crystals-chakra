@@ -16,7 +16,7 @@ async function watchCsp(page) {
 }
 
 test.describe('prerendered public HTML', () => {
-  for (const path of ['/', '/shop', '/policies']) {
+  for (const path of ['/', '/shop', '/policies', '/how-readings-work']) {
     test(`${path} works before JavaScript with security headers`, async ({
       request,
     }) => {
@@ -62,7 +62,7 @@ test.describe('welcome screen', () => {
     await page.goto('/');
     const intro = page.locator('#intro');
     await expect(intro).toBeVisible();
-    await expect(page.locator('.intro-card')).toBeFocused();
+    await expect(page.locator('.intro-enter')).toBeFocused();
     expect(
       await page.evaluate(() =>
         document.getElementById('root').hasAttribute('inert'),
@@ -70,10 +70,10 @@ test.describe('welcome screen', () => {
     ).toBe(true);
     await page.mouse.move(200, 200);
     await page.mouse.move(260, 240, { steps: 5 });
-    await page.locator('.intro-card').click({ force: true });
+    await page.locator('.intro-enter').click({ force: true });
     await expect(intro).toHaveCount(0, { timeout: 5000 });
     await expect(page.locator('#main')).toBeFocused();
-    await expect(page.locator('main h1')).toContainText('Unlock Your');
+    await expect(page.locator('main h1')).toContainText('Make Room for');
     await page.reload();
     await expect(page.locator('#intro')).toHaveCount(0);
     expect(await violations()).toEqual([]);
@@ -85,7 +85,7 @@ test.describe('welcome screen', () => {
     await expect(page.locator('#intro')).toHaveCount(0);
     await page.evaluate(() => sessionStorage.clear());
     await page.goto('/');
-    await page.getByRole('button', { name: 'Skip intro' }).click();
+    await page.mouse.wheel(0, 160);
     await expect(page.locator('#intro')).toHaveCount(0);
     for (const path of ['/#booking', '/shop', '/policies']) {
       await page.evaluate(() => sessionStorage.clear());
@@ -149,7 +149,7 @@ test.describe('booking path', () => {
 test.describe('pages', () => {
   test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
 
-  for (const path of ['/', '/shop', '/policies', '/studio']) {
+  for (const path of ['/', '/shop', '/policies', '/studio', '/how-readings-work']) {
     test(`${path} has no serious accessibility violations, CSP errors or overflow at 320px`, async ({
       page,
     }) => {

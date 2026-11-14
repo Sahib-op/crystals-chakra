@@ -42,7 +42,7 @@ for (const { name, schema } of schemas) {
     import.meta.url,
   );
   if (process.argv.includes('--check')) {
-    if ((await readFile(target, 'utf8')) !== output)
+    if ((await readFile(target, 'utf8')).replace(/\r\n/g, '\n') !== output)
       throw new Error(
         'Generated contract changed: ' +
           name +

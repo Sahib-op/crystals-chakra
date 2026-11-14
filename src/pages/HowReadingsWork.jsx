@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ChevronDown } from 'lucide-react';
 import PageMeta from '../components/PageMeta';
 import { READING_FAQ } from './readingContent';
-import './reading-experience.css';
+
 
 export default function HowReadingsWork() {
   return (

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import '../experience-motion.css';
+
 
 // Only the eligibility check enters the mobile bundle; the cursor is a separate chunk.
 const DesktopCursor = lazy(() => import('./DesktopCursor'));
