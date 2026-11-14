@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { X } from 'lucide-react';
+import { ArrowRight, X } from 'lucide-react';
 import { SYMBOLS } from './celestial/symbols';
 import { canAutoLoad3D } from './celestial/capability.js';
 
 export default function CelestialRings() {
   const host = useRef(null);
+  const sceneRef = useRef(null);
   const [requested, setRequested] = useState(false);
   const [selected, setSelected] = useState(null),
     [hovered, setHovered] = useState(null),
@@ -37,6 +38,7 @@ export default function CelestialRings() {
               onHover: setHovered,
               onError: () => setStatus('unavailable'),
             });
+            sceneRef.current = scene;
             setStatus('ready');
           } catch {
             setStatus('unavailable');
@@ -61,6 +63,14 @@ export default function CelestialRings() {
         window.addEventListener('load', schedule, { once: true });
         return;
       }
+      // Building the scene is one long task. While the welcome screen covers
+      // the page, wait for it to close so its exit stays smooth.
+      if (document.documentElement.classList.contains('intro-open')) {
+        window.addEventListener('crystals:intro-closed', schedule, {
+          once: true,
+        });
+        return;
+      }
       scheduled =
         'requestIdleCallback' in window
           ? window.requestIdleCallback(load, {
@@ -83,11 +93,17 @@ export default function CelestialRings() {
       observer.disconnect();
       document.removeEventListener('visibilitychange', schedule);
       window.removeEventListener('load', schedule);
+      window.removeEventListener('crystals:intro-closed', schedule);
       reduced.removeEventListener('change', schedule);
       connection?.removeEventListener('change', schedule);
       scene?.dispose();
+      sceneRef.current = null;
     };
   }, [requested]);
+  // The open card glows and the scene holds still while its story is shown.
+  useEffect(() => {
+    sceneRef.current?.setFocus(selected?.id);
+  }, [selected, status]);
   return (
     <div className="celestial-explorer real-celestial">
       <div
@@ -96,8 +112,8 @@ export default function CelestialRings() {
         role="img"
         aria-label={
           status === 'ready'
-            ? 'Three gold rings in 3D. Drag to look around and select a card or constellation.'
-            : 'Gold celestial rings with tarot and constellation symbols.'
+            ? 'Gold rings with orbiting tarot cards in 3D. Drag to look around and select a card.'
+            : 'Gold rings with orbiting tarot cards.'
         }
       >
         {status !== 'ready' && (
@@ -181,43 +197,48 @@ export default function CelestialRings() {
       )}
       {status === 'unavailable' && (
         <p className="celestial-status">
-          The 3D view is unavailable on this device. Explore the symbols below.
+          The 3D view is unavailable on this device. Choose a card below.
         </p>
       )}
-      <div className="celestial-selector">
-        <label className="sr-only" htmlFor="celestial-symbol">
-          Explore a tarot card or constellation
-        </label>
-        <select
-          id="celestial-symbol"
-          value={selected?.id || ''}
-          onChange={(e) =>
-            setSelected(SYMBOLS.find((s) => s.id === e.target.value) || null)
-          }
-        >
-          <option value="">Explore the symbols</option>
-          {SYMBOLS.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
-            </option>
-          ))}
-        </select>
-        <span className="celestial-hover" aria-hidden="true">
-          {hovered?.name || ''}
-        </span>
+      <div className="tarot-fan" role="group" aria-label="Tarot cards">
+        {SYMBOLS.map((item, index) => (
+          <button
+            key={item.id}
+            type="button"
+            className={`tarot-fan-card${hovered?.id === item.id ? ' is-hovered' : ''}`}
+            style={{ '--i': index - (SYMBOLS.length - 1) / 2 }}
+            aria-pressed={selected?.id === item.id}
+            onClick={() =>
+              setSelected((current) => (current?.id === item.id ? null : item))
+            }
+          >
+            <span className="tarot-fan-numeral" aria-hidden="true">
+              {item.numeral}
+            </span>
+            <span className="tarot-fan-name">{item.name}</span>
+          </button>
+        ))}
       </div>
       {selected && (
         <div
+          key={selected.id}
           className="celestial-description"
           role="region"
           aria-label={selected.name}
           aria-live="polite"
         >
           <div>
+            <p className="celestial-description-numeral" aria-hidden="true">
+              {selected.numeral}
+            </p>
             <h2>{selected.name}</h2>
             <p>{selected.text}</p>
+            <a className="celestial-description-link" href="#card-meanings">
+              More about the cards <ArrowRight size={16} aria-hidden="true" />
+            </a>
           </div>
           <button
+            type="button"
             aria-label="Close explanation"
             onClick={() => setSelected(null)}
           >

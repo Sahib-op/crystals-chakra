@@ -140,9 +140,9 @@ export default function Home() {
         <div className="welcome-grid">
           <div className="welcome-copy">
             <h1>
-              Unlock Your
+              Find Your
               <br />
-              <span>Destiny</span>
+              <span>Direction</span>
             </h1>
             <p>
               Personal tarot and Vedic astrology readings for the questions on

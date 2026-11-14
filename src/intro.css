@@ -1,20 +1,21 @@
-/* Welcome screen (index.html #intro, behaviour in public/intro.js). */
+/* Welcome screen (index.html #intro, behaviour in public/intro.js).
+   The words themselves are the way in: click, tap, scroll or swipe. */
 html.intro-open {
   overflow: hidden;
 }
 .intro {
   position: fixed;
   inset: 0;
-  /* Above the site's cursor halo (.royal-cursor, z-index 1000). */
+  /* Above the site's cursor layer. */
   z-index: 1100;
   display: grid;
   place-items: center;
   overflow: hidden;
   color: #f7ead0;
   background: radial-gradient(
-    ellipse at 50% 38%,
+    ellipse at 50% 42%,
     #163a66 0%,
-    #0a1d3a 45%,
+    #0a1d3a 48%,
     #040b18 100%
   );
 }
@@ -28,11 +29,13 @@ html.intro-open {
   height: 100%;
 }
 .intro-content {
+  --lean-x: 0px;
+  --lean-y: 0px;
   position: relative;
   display: grid;
   justify-items: center;
-  gap: clamp(14px, 2.6vh, 26px);
-  padding: 24px 20px 72px;
+  gap: clamp(18px, 3.5vh, 34px);
+  padding: 24px 20px 40px;
   text-align: center;
 }
 .intro-brand {
@@ -42,141 +45,120 @@ html.intro-open {
   margin: 0;
   font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
   font-size: 18px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   color: #efdcb0;
 }
-.intro-title {
-  margin: 0;
+.intro-enter {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  padding: 0.12em 0.3em 0.22em;
+  border: 0;
+  background: none;
+  color: inherit;
   font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
   font-weight: 500;
-  font-size: clamp(42px, 8.5vw, 92px);
-  line-height: 1.02;
-  text-shadow: 0 2px 30px #0008;
+  font-size: clamp(56px, 12.5vw, 150px);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  text-shadow: 0 4px 40px #000a;
+  cursor: pointer;
+  transform: translate3d(var(--lean-x), var(--lean-y), 0);
+  transition:
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    text-shadow 0.4s;
+  -webkit-tap-highlight-color: transparent;
 }
-.intro-title em {
-  display: block;
+.intro-enter em {
   color: #e2c47f;
   font-style: italic;
 }
-.intro-card {
-  --tilt-x: 0deg;
-  --tilt-y: 0deg;
-  position: relative;
-  width: clamp(132px, 19vh, 188px);
-  aspect-ratio: 2 / 3;
-  margin-top: 6px;
-  padding: 0;
-  border: 0;
-  border-radius: 14px;
-  background: none;
-  cursor: pointer;
-  perspective: 900px;
-  animation: intro-float 5.5s ease-in-out infinite;
-}
-.intro-card:focus-visible {
-  outline: 3px solid #e2c47f;
-  outline-offset: 8px;
-}
-.intro-card-inner {
+/* A gold line draws in under the words on hover and keyboard focus. */
+.intro-enter::after {
+  content: '';
   position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
-  transition: transform 0.25s ease-out;
+  left: 18%;
+  right: 18%;
+  bottom: 0.02em;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #e2c47f, transparent);
+  transform: scaleX(0);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.intro-card.is-revealed {
-  animation: none;
+.intro-enter:hover::after,
+.intro-enter:focus-visible::after {
+  transform: scaleX(1);
 }
-.intro-card.is-revealed .intro-card-inner {
-  transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1);
-  transform: rotateY(180deg) scale(1.12);
+.intro-enter:hover,
+.intro-enter:focus-visible {
+  text-shadow:
+    0 4px 40px #000a,
+    0 0 34px #e2c47f55;
 }
-.intro-card-face {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  backface-visibility: hidden;
-  box-shadow:
-    0 0 0 1px #e2c47f66,
-    0 18px 50px #000a,
-    0 0 40px #e2c47f33;
+/* Focus shows as the gold underline and glow above (the words receive focus
+   on load, so a box outline would frame them permanently). */
+.intro-enter:focus-visible {
+  outline: none;
 }
-.intro-card-face svg {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: #e2c47f;
-  stroke-width: 1.6;
-}
-.intro-card-face svg .fill {
-  fill: #e2c47f;
-  stroke: none;
-}
-.intro-card-back {
-  background:
-    radial-gradient(circle at 50% 50%, #1d4a7c 0%, #0b2547 70%), #0b2547;
-}
-.intro-card-front {
-  transform: rotateY(180deg);
-  background: linear-gradient(160deg, #fff6e2, #f0dcae);
-}
-.intro-card-front svg {
-  stroke: #a67c2e;
-}
-.intro-card-front svg .fill {
-  fill: #a67c2e;
-}
-.intro-card-name {
-  position: absolute;
-  bottom: 12%;
-  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
-  font-size: 16px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #092d48;
+.intro-line {
+  display: block;
 }
 .intro-hint {
-  margin: 4px 0 0;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  margin: 0;
   font-size: 16px;
   letter-spacing: 0.06em;
   color: #d9e2ef;
 }
-.intro-skip {
+.intro-chevron {
+  width: 14px;
+  height: 14px;
+  border-right: 2px solid #e2c47f;
+  border-bottom: 2px solid #e2c47f;
+  transform: rotate(45deg);
+  animation: intro-beckon 2.2s ease-in-out infinite;
+}
+.intro .sr-only {
   position: absolute;
-  right: max(18px, env(safe-area-inset-right));
-  bottom: max(18px, env(safe-area-inset-bottom));
-  min-height: 44px;
-  padding: 10px 18px;
-  border: 1px solid #e2c47f80;
-  border-radius: 999px;
-  background: #04101f99;
-  color: #f7ead0;
-  font-size: 15px;
-  cursor: pointer;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
-.intro-skip:hover,
-.intro-skip:focus-visible {
-  border-color: #e2c47f;
-  outline: none;
-  box-shadow: 0 0 0 3px #e2c47f55;
-}
+/* Leaving: the words lift and dissolve while the stars rush outward. */
 .intro.is-leaving {
-  animation: intro-leave 0.8s ease-in forwards;
+  animation: intro-leave 0.9s cubic-bezier(0.55, 0, 0.45, 1) forwards;
+  pointer-events: none;
+}
+.intro.is-leaving .intro-content {
+  animation: intro-lift 0.9s cubic-bezier(0.55, 0, 0.45, 1) forwards;
 }
 .intro.is-leaving-quick {
   animation: intro-fade 0.2s ease-out forwards;
+  pointer-events: none;
 }
-@keyframes intro-float {
+@keyframes intro-beckon {
   50% {
-    transform: translateY(-10px);
+    transform: translateY(7px) rotate(45deg);
+    opacity: 0.55;
   }
 }
 @keyframes intro-leave {
+  60% {
+    opacity: 1;
+  }
   to {
     opacity: 0;
-    transform: scale(1.06);
+  }
+}
+@keyframes intro-lift {
+  to {
+    opacity: 0;
+    transform: translate3d(0, -40px, 0) scale(1.08);
+    filter: blur(6px);
   }
 }
 @keyframes intro-fade {
@@ -184,22 +166,28 @@ html.intro-open {
     opacity: 0;
   }
 }
-@media (max-height: 560px) {
+@media (max-height: 520px) {
   .intro-brand {
     display: none;
   }
-  .intro-content {
-    padding-bottom: 64px;
+  .intro-enter {
+    font-size: clamp(44px, 11vw, 96px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .intro-card,
-  .intro-card.is-revealed .intro-card-inner {
-    animation: none;
+  .intro-enter,
+  .intro-enter::after {
     transition: none;
+    transform: none;
+  }
+  .intro-chevron {
+    animation: none;
   }
   .intro.is-leaving,
   .intro.is-leaving-quick {
     animation: intro-fade 0.2s linear forwards;
+  }
+  .intro.is-leaving .intro-content {
+    animation: none;
   }
 }

@@ -55,14 +55,18 @@ test.describe('prerendered public HTML', () => {
 });
 
 test.describe('welcome screen', () => {
-  test('appears on entry, follows the pointer and the card opens the site', async ({
+  test('the words open the site, the sky follows the pointer, and it shows once per session', async ({
     page,
   }) => {
     const violations = await watchCsp(page);
     await page.goto('/');
     const intro = page.locator('#intro');
     await expect(intro).toBeVisible();
-    await expect(page.locator('.intro-card')).toBeFocused();
+    const words = page.locator('.intro-enter');
+    await expect(words).toBeFocused();
+    await expect(words).toContainText('Step into');
+    // No card and no skip button: the words are the way in.
+    await expect(page.locator('.intro-card, .intro-skip')).toHaveCount(0);
     expect(
       await page.evaluate(() =>
         document.getElementById('root').hasAttribute('inert'),
@@ -70,23 +74,30 @@ test.describe('welcome screen', () => {
     ).toBe(true);
     await page.mouse.move(200, 200);
     await page.mouse.move(260, 240, { steps: 5 });
-    await page.locator('.intro-card').click({ force: true });
-    await expect(intro).toHaveCount(0, { timeout: 5000 });
+    await words.click();
+    // Software WebGL in CI can delay frames; on devices exit takes ~1 s.
+    await expect(intro).toHaveCount(0, { timeout: 10_000 });
     await expect(page.locator('#main')).toBeFocused();
-    await expect(page.locator('main h1')).toContainText('Unlock Your');
+    await expect(page.locator('main h1')).toContainText('Find Your');
     await page.reload();
     await expect(page.locator('#intro')).toHaveCount(0);
     expect(await violations()).toEqual([]);
   });
 
-  test('Escape, skip and deep links bypass it', async ({ page }) => {
+  test('scrolling, swiping keys and Escape enter the same way; deep links bypass it', async ({
+    page,
+  }) => {
     await page.goto('/');
-    await page.keyboard.press('Escape');
-    await expect(page.locator('#intro')).toHaveCount(0);
-    await page.evaluate(() => sessionStorage.clear());
-    await page.goto('/');
-    await page.getByRole('button', { name: 'Skip intro' }).click();
-    await expect(page.locator('#intro')).toHaveCount(0);
+    await expect(page.locator('.intro-enter')).toBeFocused();
+    await page.mouse.wheel(0, 200);
+    await expect(page.locator('#intro')).toHaveCount(0, { timeout: 10_000 });
+    for (const key of ['ArrowDown', 'Escape']) {
+      await page.evaluate(() => sessionStorage.clear());
+      await page.goto('/');
+      await expect(page.locator('.intro-enter')).toBeFocused();
+      await page.keyboard.press(key);
+      await expect(page.locator('#intro')).toHaveCount(0, { timeout: 10_000 });
+    }
     for (const path of ['/#booking', '/shop', '/policies']) {
       await page.evaluate(() => sessionStorage.clear());
       await page.goto(path);
@@ -102,6 +113,26 @@ test.describe('welcome screen', () => {
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
       .analyze();
     expect(results.violations).toEqual([]);
+  });
+});
+
+test.describe('welcome section', () => {
+  test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
+
+  test('choosing a tarot card opens its story with a link to the card meanings', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await expect(page.locator('#celestial-symbol')).toHaveCount(0);
+    await page.waitForLoadState('networkidle');
+    await page.getByRole('button', { name: 'The High Priestess' }).click();
+    const story = page.getByRole('region', { name: 'The High Priestess' });
+    await expect(story).toBeVisible();
+    await expect(
+      story.getByRole('link', { name: /More about the cards/ }),
+    ).toHaveAttribute('href', '#card-meanings');
+    await story.getByRole('button', { name: 'Close explanation' }).click();
+    await expect(story).toHaveCount(0);
   });
 });
 

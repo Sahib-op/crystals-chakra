@@ -1,13 +1,14 @@
 /*
  * Crystals Chakra welcome screen.
  *
- * Runs synchronously right after the #intro markup in index.html, before React,
- * so the title paints immediately and the card works before the app bundle
+ * Runs synchronously right after the #intro markup in index.html, before
+ * React, so the words paint immediately and work before the app bundle
  * loads. Without JavaScript the intro stays hidden and the site is shown.
  *
- * Shown only when entering the homepage without a section link, once per
- * browser session. Escape or "Skip intro" closes it at once; reduced-motion
- * preferences get a still sky and a short fade.
+ * The words are the way in. Click or tap them, scroll down, swipe up, or press
+ * Enter, Space, the down arrow, Page Down or Escape: every route runs the
+ * same transition. Shown only when entering the homepage without a section
+ * link, once per browser session.
  */
 (function () {
   'use strict';
@@ -35,11 +36,18 @@
 
   var reduced =
     window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var card = intro.querySelector('.intro-card');
-  var skip = intro.querySelector('.intro-skip');
+  // The glow and constellations follow a real mouse only.
+  var finePointer =
+    window.matchMedia &&
+    matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var enterButton = intro.querySelector('.intro-enter');
+  var content = intro.querySelector('.intro-content');
   var canvas = intro.querySelector('canvas');
+  var ctx = canvas.getContext && canvas.getContext('2d');
   var closed = false;
+  var finished = false;
   var frame = 0;
+  var timer = 0;
 
   intro.hidden = false;
   html.classList.add('intro-open');
@@ -49,27 +57,27 @@
     if (on) app.setAttribute('inert', '');
     else app.removeAttribute('inert');
   }
+  function ready() {
+    if (!closed) setInert(true);
+  }
   if (document.readyState === 'loading')
-    document.addEventListener('DOMContentLoaded', function () {
-      if (!closed) setInert(true);
-    });
-  else setInert(true);
+    document.addEventListener('DOMContentLoaded', ready);
+  else ready();
   try {
-    card.focus({ preventScroll: true });
+    enterButton.focus({ preventScroll: true });
   } catch (e) {}
 
   /* ---------- Star field that follows the pointer ---------- */
-  var ctx = canvas.getContext && canvas.getContext('2d');
   var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-  var width = 0,
-    height = 0,
-    stars = [];
-  var target = { x: 0, y: 0 },
-    eased = { x: 0, y: 0 };
+  var width = 0;
+  var height = 0;
+  var stars = [];
+  var target = { x: 0, y: 0 };
+  var eased = { x: 0, y: 0 };
   var cursor = { x: -9999, y: -9999, active: false };
-  var lastMove = 0,
-    warp = 0,
-    started = performance.now();
+  var lastMove = 0;
+  var warp = 0;
+  var started = performance.now();
 
   function seedStars() {
     var count = Math.round(
@@ -112,9 +120,8 @@
     eased.x += (target.x - eased.x) * 0.05;
     eased.y += (target.y - eased.y) * 0.05;
     ctx.clearRect(0, 0, width, height);
-
-    // Soft gold light that trails the pointer.
-    if (cursor.active) {
+    // A soft gold light trails the pointer.
+    if (cursor.active && !closed) {
       var glow = ctx.createRadialGradient(
         cursor.x,
         cursor.y,
@@ -128,26 +135,24 @@
       ctx.fillStyle = glow;
       ctx.fillRect(cursor.x - 180, cursor.y - 180, 360, 360);
     }
-
-    var cx = width / 2,
-      cy = height / 2;
+    var cx = width / 2;
+    var cy = height / 2;
     var near = [];
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i];
-      // Deeper (brighter, larger) stars move further toward the pointer: parallax.
+      // Nearer (brighter, larger) stars travel further with the pointer.
       var x = wrap(s.x + eased.x * s.z * 70, width);
       var y = wrap(s.y + eased.y * s.z * 50, height);
       if (warp > 0) {
-        var dx = x - cx,
-          dy = y - cy;
-        var k = 1 + warp * warp * 2.4 * s.z;
-        x = cx + dx * k;
-        y = cy + dy * k;
+        // Leaving: the sky rushes outward past the viewer.
+        var k = 1 + warp * warp * 2.6 * s.z;
+        x = cx + (x - cx) * k;
+        y = cy + (y - cy) * k;
       }
       var twinkle = reduced ? 1 : 0.7 + 0.3 * Math.sin(t * s.speed + s.phase);
       var alpha = (0.25 + 0.75 * s.z) * twinkle;
       var radius = s.r;
-      if (cursor.active) {
+      if (cursor.active && !closed) {
         var d = Math.hypot(x - cursor.x, y - cursor.y);
         if (d < 150) {
           var lift = 1 - d / 150;
@@ -156,7 +161,7 @@
           if (near.length < 14) near.push([x, y]);
         }
       }
-      ctx.globalAlpha = alpha * (1 - warp * 0.6);
+      ctx.globalAlpha = alpha * (1 - warp * 0.5);
       ctx.fillStyle = s.warm ? '#f3d896' : '#eef3ff';
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, Math.PI * 2);
@@ -169,127 +174,147 @@
       ctx.lineWidth = 0.7;
       ctx.beginPath();
       for (var a = 0; a < near.length; a++)
-        for (var b = a + 1; b < near.length; b++) {
-          var gap = Math.hypot(
-            near[a][0] - near[b][0],
-            near[a][1] - near[b][1],
-          );
-          if (gap < 95) {
+        for (var b = a + 1; b < near.length; b++)
+          if (
+            Math.hypot(near[a][0] - near[b][0], near[a][1] - near[b][1]) < 95
+          ) {
             ctx.moveTo(near[a][0], near[a][1]);
             ctx.lineTo(near[b][0], near[b][1]);
           }
-        }
       ctx.stroke();
     }
     ctx.globalAlpha = 1;
   }
   function loop(now) {
     frame = 0;
-    if (closed && warp >= 1) return;
-    if (closed) warp = Math.min(1, warp + 0.035);
+    if (closed) warp = Math.min(1, warp + 0.04);
     draw(now);
-    if (!document.hidden) frame = requestAnimationFrame(loop);
+    if (!finished && !document.hidden && !reduced)
+      frame = requestAnimationFrame(loop);
   }
   function onPointer(event) {
+    if (event.pointerType !== 'mouse' || !finePointer || reduced) return;
     cursor.x = event.clientX;
     cursor.y = event.clientY;
     cursor.active = true;
     lastMove = performance.now();
     target.x = (event.clientX / width - 0.5) * 2;
     target.y = (event.clientY / height - 0.5) * 2;
-    if (reduced) draw(lastMove);
+    // The words lean a few pixels toward the pointer.
+    content.style.setProperty('--lean-x', (target.x * 10).toFixed(1) + 'px');
+    content.style.setProperty('--lean-y', (target.y * 6).toFixed(1) + 'px');
   }
   function onVisibility() {
-    if (!document.hidden && !frame && !reduced && !closed)
+    if (!document.hidden && !frame && !reduced && !finished)
       frame = requestAnimationFrame(loop);
   }
 
-  /* ---------- Card tilt that follows the pointer ---------- */
-  function tilt(event) {
-    if (reduced || closed) return;
-    var box = card.getBoundingClientRect();
-    var rx = ((event.clientY - box.top) / box.height - 0.5) * -16;
-    var ry = ((event.clientX - box.left) / box.width - 0.5) * 18;
-    card.style.setProperty('--tilt-x', rx.toFixed(2) + 'deg');
-    card.style.setProperty('--tilt-y', ry.toFixed(2) + 'deg');
-  }
-  function untilt() {
-    card.style.setProperty('--tilt-x', '0deg');
-    card.style.setProperty('--tilt-y', '0deg');
-  }
-
   /* ---------- Entering the site ---------- */
+  function focusMain() {
+    var main = document.getElementById('main');
+    if (!main) return;
+    main.setAttribute('tabindex', '-1');
+    try {
+      main.focus({ preventScroll: true });
+    } catch (e) {}
+    main.addEventListener(
+      'blur',
+      function () {
+        main.removeAttribute('tabindex');
+      },
+      { once: true },
+    );
+  }
   function finish() {
+    if (finished) return;
+    finished = true;
+    clearTimeout(timer);
     if (frame) cancelAnimationFrame(frame);
     window.removeEventListener('pointermove', onPointer);
     window.removeEventListener('resize', resize);
+    window.removeEventListener('wheel', onWheel);
     document.removeEventListener('keydown', onKey);
     document.removeEventListener('visibilitychange', onVisibility);
+    document.removeEventListener('DOMContentLoaded', ready);
     if (intro.parentNode) intro.parentNode.removeChild(intro);
     html.classList.remove('intro-open');
     setInert(false);
-    var main = document.getElementById('main');
-    if (main) {
-      main.setAttribute('tabindex', '-1');
-      try {
-        main.focus({ preventScroll: true });
-      } catch (e) {}
-      main.addEventListener(
-        'blur',
-        function () {
-          main.removeAttribute('tabindex');
-        },
-        { once: true },
-      );
-    }
+    focusMain();
+    // Deferred work (the 3D scene) waits for this before starting.
+    window.dispatchEvent(new Event('crystals:intro-closed'));
   }
-  function enter(withCeremony) {
+  function enter() {
     if (closed) return;
     closed = true;
     try {
       sessionStorage.setItem(KEY, '1');
     } catch (e) {}
-    if (reduced || !withCeremony) {
-      intro.classList.add('is-leaving-quick');
-      setTimeout(finish, reduced ? 220 : 160);
+    intro.setAttribute('aria-busy', 'true');
+    intro.classList.add(reduced ? 'is-leaving-quick' : 'is-leaving');
+    // Finish when the exit animation ends; the timer only covers browsers or
+    // conditions where animation events never arrive.
+    intro.addEventListener('animationend', function (event) {
+      if (event.target === intro) finish();
+    });
+    timer = setTimeout(finish, reduced ? 400 : 1500);
+    if (!frame && !reduced) frame = requestAnimationFrame(loop);
+  }
+  var wheelDistance = 0;
+  function onWheel(event) {
+    if (event.deltaY <= 0) {
+      wheelDistance = 0;
       return;
     }
-    untilt();
-    card.classList.add('is-revealed');
-    intro.setAttribute('aria-busy', 'true');
-    if (!frame) frame = requestAnimationFrame(loop);
-    setTimeout(function () {
-      intro.classList.add('is-leaving');
-    }, 900);
-    setTimeout(finish, 1700);
+    wheelDistance +=
+      event.deltaY *
+      (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? height : 1);
+    if (wheelDistance > 30) enter();
   }
+  var touchStartY = null;
   function onKey(event) {
-    if (event.key === 'Escape') enter(false);
-    else if (event.key === 'Tab') {
-      // Keep keyboard focus inside the welcome screen while it is open.
-      var first = card,
-        last = skip;
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
+    if (
+      event.key === 'Escape' ||
+      event.key === 'ArrowDown' ||
+      event.key === 'PageDown' ||
+      event.key === 'End'
+    ) {
+      event.preventDefault();
+      enter();
+    } else if (event.key === 'Tab') {
+      // Keep focus on the only control while the welcome screen is open.
+      event.preventDefault();
+      enterButton.focus();
     }
   }
 
-  card.addEventListener('click', function () {
-    enter(true);
-  });
-  card.addEventListener('pointermove', tilt);
-  card.addEventListener('pointerleave', untilt);
-  skip.addEventListener('click', function () {
-    enter(false);
-  });
-  document.addEventListener('keydown', onKey);
+  enterButton.addEventListener('click', enter);
+  intro.addEventListener(
+    'touchstart',
+    function (event) {
+      touchStartY = event.touches[0] ? event.touches[0].clientY : null;
+    },
+    { passive: true },
+  );
+  intro.addEventListener(
+    'touchmove',
+    function (event) {
+      // An upward swipe is a scroll down: the same way in.
+      if (touchStartY !== null && touchStartY - event.touches[0].clientY > 36)
+        enter();
+    },
+    { passive: true },
+  );
+  intro.addEventListener(
+    'touchend',
+    function () {
+      touchStartY = null;
+    },
+    { passive: true },
+  );
+  window.addEventListener('wheel', onWheel, { passive: true });
   window.addEventListener('pointermove', onPointer, { passive: true });
   window.addEventListener('resize', resize, { passive: true });
+  document.addEventListener('keydown', onKey);
   document.addEventListener('visibilitychange', onVisibility);
   resize();
   if (!reduced) frame = requestAnimationFrame(loop);
