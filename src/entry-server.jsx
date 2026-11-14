@@ -11,7 +11,9 @@ export function render(url) {
   const helmetContext = {};
   const html = renderToString(
     <HelmetProvider context={helmetContext}>
-      <StaticRouter location={url}><AppShell staticPages={{ Shop, Policies, HowReadingsWork }} /></StaticRouter>
+      <StaticRouter location={url}>
+        <AppShell staticPages={{ Shop, Policies, HowReadingsWork }} />
+      </StaticRouter>
     </HelmetProvider>,
   );
   return { html, helmet: helmetContext.helmet };

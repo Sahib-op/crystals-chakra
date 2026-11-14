@@ -531,10 +531,22 @@
   .studio-page label > span {
     line-height: 1.5;
   }
-  .studio-auth-card { width: 100%; }
-  .studio-page :is(input, select, textarea) { scroll-margin-block: 100px 28px; }
-  .studio-view-toggle { width: 100%; }
-  .studio-view-toggle button { flex: 1; }
-  .studio-save-row { padding-bottom: env(safe-area-inset-bottom, 0px); }
-  .studio-workspace { overflow: clip; }
+  .studio-auth-card {
+    width: 100%;
+  }
+  .studio-page :is(input, select, textarea) {
+    scroll-margin-block: 100px 28px;
+  }
+  .studio-view-toggle {
+    width: 100%;
+  }
+  .studio-view-toggle button {
+    flex: 1;
+  }
+  .studio-save-row {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .studio-workspace {
+    overflow: clip;
+  }
 }

@@ -149,7 +149,13 @@ test.describe('booking path', () => {
 test.describe('pages', () => {
   test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
 
-  for (const path of ['/', '/shop', '/policies', '/studio', '/how-readings-work']) {
+  for (const path of [
+    '/',
+    '/shop',
+    '/policies',
+    '/studio',
+    '/how-readings-work',
+  ]) {
     test(`${path} has no serious accessibility violations, CSP errors or overflow at 320px`, async ({
       page,
     }) => {

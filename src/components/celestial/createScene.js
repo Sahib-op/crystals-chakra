@@ -22,7 +22,14 @@ function cardTexture(item) {
   ctx.font = '17px Georgia';
   ctx.fillText(item.name.toUpperCase(), 128, 327);
   ctx.font = '110px Georgia';
-  const glyph = { sun: '☉', moon: '☾', star: '✧', strength: '∞', hermit: '◇', world: '◎' };
+  const glyph = {
+    sun: '☉',
+    moon: '☾',
+    star: '✧',
+    strength: '∞',
+    hermit: '◇',
+    world: '◎',
+  };
   ctx.fillText(glyph[item.kind], 128, 165);
   if (item.kind === 'hermit') {
     ctx.strokeStyle = '#efdaaa';
@@ -33,7 +40,18 @@ function cardTexture(item) {
     ctx.stroke();
   }
   ctx.font = '15px Georgia';
-  ctx.fillText({ sun: 'XIX', moon: 'XVIII', star: 'XVII', strength: 'VIII', hermit: 'IX', world: 'XXI' }[item.kind], 128, 53);
+  ctx.fillText(
+    {
+      sun: 'XIX',
+      moon: 'XVIII',
+      star: 'XVII',
+      strength: 'VIII',
+      hermit: 'IX',
+      world: 'XXI',
+    }[item.kind],
+    128,
+    53,
+  );
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
@@ -117,11 +135,7 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
         roughness: 0.6,
         emissive: 0x000000,
       });
-      const geometry = new THREE.BoxGeometry(
-        0.5,
-        0.74,
-        0.045,
-      );
+      const geometry = new THREE.BoxGeometry(0.5, 0.74, 0.045);
       const mesh = new THREE.Mesh(geometry, [
         gold,
         gold,
@@ -211,7 +225,8 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
     const interval = innerWidth < 700 ? 1000 / 30 : 1000 / 45;
     if (time - lastPaint < interval) return;
     // Hold a card steady under the pointer, while dragging, or while reading it.
-    if (!hovered && !down && !paused) elapsed += last ? Math.min((time - last) / 1000, 0.08) : 0;
+    if (!hovered && !down && !paused)
+      elapsed += last ? Math.min((time - last) / 1000, 0.08) : 0;
     last = time;
     lastPaint = time;
     position();
@@ -299,7 +314,9 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
   draw();
   sync();
   return {
-    setPaused(value) { paused = value; },
+    setPaused(value) {
+      paused = value;
+    },
     dispose() {
       disposed = true;
       cancelAnimationFrame(frame);

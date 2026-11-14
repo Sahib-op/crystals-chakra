@@ -532,125 +532,126 @@ export default function Shop() {
             <span />✧<span />
           </div>
         </section>
-        <section className="shop-catalog-region" aria-label="Crystal collection">
-        {catalog?.mode === 'preview' && (
-          <div className="shop-preview-note">
-            <span className="preview-dot" />
-            <p>
-              <strong>A first look at the collection.</strong> Illustrative
-              previews and indicative prices. Online purchasing will open when
-              the collection is ready.
-            </p>
-          </div>
-        )}
-        {catalog?.mode === 'live' && (
-          <ShopCart
-            panelRef={cartPanel}
-            lines={cartLines}
-            updateQuantity={updateQuantity}
-            busy={checkingOut}
-            error={checkoutError}
-            onCheckout={checkout}
-          />
-        )}
-        {catalog && (
-          <div className="shop-toolbar">
-            <div>
-              <span className="product-count">
-                {products.length} {products.length === 1 ? 'piece' : 'pieces'}
-                {catalog.nextCursor ? ' in loaded results' : ''}
-              </span>
+        <section
+          className="shop-catalog-region"
+          aria-label="Crystal collection"
+        >
+          {catalog?.mode === 'preview' && (
+            <div className="shop-preview-note">
+              <span className="preview-dot" />
+              <p>
+                <strong>A first look at the collection.</strong> Illustrative
+                previews and indicative prices. Online purchasing will open when
+                the collection is ready.
+              </p>
             </div>
-            <div className="shop-controls">
-              <label className="sr-only" htmlFor="shop-search">
-                {catalog.nextCursor
-                  ? 'Search loaded products'
-                  : 'Search the collection'}
-              </label>
-              <input
-                id="shop-search"
-                placeholder={
-                  catalog.nextCursor
-                    ? 'Search loaded pieces…'
-                    : 'Find your crystal…'
-                }
-                type="search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-              />
-              <label className="sr-only" htmlFor="shop-sort">
-                Sort products
-              </label>
-              <select
-                id="shop-sort"
-                value={sort}
-                onChange={(event) => setSort(event.target.value)}
-              >
-                <option value="featured">Featured</option>
-                <option value="low">Price: low to high</option>
-                <option value="high">Price: high to low</option>
-              </select>
-            </div>
-          </div>
-        )}
-        {catalogError && (
-          <div role="alert" className="shop-error shop-catalog-error">
-            <ShoppingBag size={28} aria-hidden="true" />
-            <h2>The collection is taking a moment</h2>
-            <p>{catalogError}</p>
-            <button
-              type="button"
-              onClick={() => setReload((count) => count + 1)}
-            >
-              <RefreshCw size={14} aria-hidden="true" /> Retry collection
-            </button>
-          </div>
-        )}
-        {!catalog && !catalogError && (
-          <CollectionSkeleton />
-        )}
-        <p role="status" className="sr-only">
-          {message}
-        </p>
-        <div className="shop-grid">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              live={catalog.mode === 'live'}
-              cart={cart}
-              onAdd={addToCart}
-              onViewCart={viewCart}
+          )}
+          {catalog?.mode === 'live' && (
+            <ShopCart
+              panelRef={cartPanel}
+              lines={cartLines}
+              updateQuantity={updateQuantity}
               busy={checkingOut}
+              error={checkoutError}
+              onCheckout={checkout}
             />
-          ))}
-        </div>
-        {catalog && !products.length && (
-          <p className="collection-empty">
-            {term
-              ? catalog.nextCursor
-                ? 'No matches in the pieces loaded so far.'
-                : 'No pieces match your search.'
-              : 'The collection is empty right now.'}
+          )}
+          {catalog && (
+            <div className="shop-toolbar">
+              <div>
+                <span className="product-count">
+                  {products.length} {products.length === 1 ? 'piece' : 'pieces'}
+                  {catalog.nextCursor ? ' in loaded results' : ''}
+                </span>
+              </div>
+              <div className="shop-controls">
+                <label className="sr-only" htmlFor="shop-search">
+                  {catalog.nextCursor
+                    ? 'Search loaded products'
+                    : 'Search the collection'}
+                </label>
+                <input
+                  id="shop-search"
+                  placeholder={
+                    catalog.nextCursor
+                      ? 'Search loaded pieces…'
+                      : 'Find your crystal…'
+                  }
+                  type="search"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                />
+                <label className="sr-only" htmlFor="shop-sort">
+                  Sort products
+                </label>
+                <select
+                  id="shop-sort"
+                  value={sort}
+                  onChange={(event) => setSort(event.target.value)}
+                >
+                  <option value="featured">Featured</option>
+                  <option value="low">Price: low to high</option>
+                  <option value="high">Price: high to low</option>
+                </select>
+              </div>
+            </div>
+          )}
+          {catalogError && (
+            <div role="alert" className="shop-error shop-catalog-error">
+              <ShoppingBag size={28} aria-hidden="true" />
+              <h2>The collection is taking a moment</h2>
+              <p>{catalogError}</p>
+              <button
+                type="button"
+                onClick={() => setReload((count) => count + 1)}
+              >
+                <RefreshCw size={14} aria-hidden="true" /> Retry collection
+              </button>
+            </div>
+          )}
+          {!catalog && !catalogError && <CollectionSkeleton />}
+          <p role="status" className="sr-only">
+            {message}
           </p>
-        )}
-        {catalog?.nextCursor && (
-          <div className="shop-pagination">
-            {pageError && <p role="alert">{pageError}</p>}
-            <button
-              type="button"
-              className="shop-checkout"
-              disabled={loadingMore}
-              onClick={loadMore}
-            >
-              {loadingMore
-                ? 'Loading more…'
-                : pageError
-                  ? 'Retry next page'
-                  : 'Load more pieces'}
-            </button>
+          <div className="shop-grid">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                live={catalog.mode === 'live'}
+                cart={cart}
+                onAdd={addToCart}
+                onViewCart={viewCart}
+                busy={checkingOut}
+              />
+            ))}
           </div>
-        )}
+          {catalog && !products.length && (
+            <p className="collection-empty">
+              {term
+                ? catalog.nextCursor
+                  ? 'No matches in the pieces loaded so far.'
+                  : 'No pieces match your search.'
+                : 'The collection is empty right now.'}
+            </p>
+          )}
+          {catalog?.nextCursor && (
+            <div className="shop-pagination">
+              {pageError && <p role="alert">{pageError}</p>}
+              <button
+                type="button"
+                className="shop-checkout"
+                disabled={loadingMore}
+                onClick={loadMore}
+              >
+                {loadingMore
+                  ? 'Loading more…'
+                  : pageError
+                    ? 'Retry next page'
+                    : 'Load more pieces'}
+              </button>
+            </div>
+          )}
         </section>
         <p className="shop-claims-note">
           Crystals and tools are sold as decorative and personal items. We do

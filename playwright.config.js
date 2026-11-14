@@ -16,7 +16,9 @@ export default defineConfig({
   use: {
     baseURL: `http://127.0.0.1:${WEB}`,
     trace: 'off',
-    ...(process.env.PLAYWRIGHT_CHANNEL ? { channel: process.env.PLAYWRIGHT_CHANNEL } : {}),
+    ...(process.env.PLAYWRIGHT_CHANNEL
+      ? { channel: process.env.PLAYWRIGHT_CHANNEL }
+      : {}),
   },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },

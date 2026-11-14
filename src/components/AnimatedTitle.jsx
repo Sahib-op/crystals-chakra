@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { m, useReducedMotion } from 'motion/react';
 
 export default function AnimatedTitle({
   text,
@@ -39,7 +39,7 @@ export default function AnimatedTitle({
               key={l.index}
               className="overflow-hidden inline-flex relative leading-[1.2] pt-2 -mt-2"
             >
-              <motion.span
+              <m.span
                 className={`${l.isGold ? 'gold-gradient-text' : ''} inline-block`}
                 initial={{ y: reducedMotion ? '0%' : '100%' }}
                 animate={{ y: '0%' }}
@@ -52,7 +52,7 @@ export default function AnimatedTitle({
                 }}
               >
                 {l.char}
-              </motion.span>
+              </m.span>
             </span>
           ))}
         </span>

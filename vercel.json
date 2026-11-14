@@ -6,7 +6,10 @@
   "rewrites": [
     { "source": "/shop", "destination": "/shop/index.html" },
     { "source": "/policies", "destination": "/policies/index.html" },
-    { "source": "/how-readings-work", "destination": "/how-readings-work/index.html" },
+    {
+      "source": "/how-readings-work",
+      "destination": "/how-readings-work/index.html"
+    },
     {
       "source": "/((?!assets/|fonts/|images/|favicon\\.svg$|robots\\.txt$|sitemap\\.xml$|og-image\\.jpg$|intro\\.js$|shop/?$|policies/?$).+)",
       "destination": "/app.html"

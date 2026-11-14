@@ -41,7 +41,8 @@ export default function Booking({ embedded = false }) {
           form to fill in and nothing to pay on this website.
         </p>
         <Link className="reading-text-link" to="/how-readings-work">
-          Your first reading, explained <ArrowUpRight size={16} aria-hidden="true" />
+          Your first reading, explained{' '}
+          <ArrowUpRight size={16} aria-hidden="true" />
         </Link>
         <h3 className="booking-steps-title">How booking works</h3>
         <ol className="booking-steps">

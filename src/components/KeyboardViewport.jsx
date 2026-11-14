@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 
-
-const textField = 'textarea, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="hidden"]), [contenteditable="true"]';
+const textField =
+  'textarea, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="hidden"]), [contenteditable="true"]';
 
 export default function KeyboardViewport() {
   useEffect(() => {
     const viewport = window.visualViewport;
-    if (!viewport || !window.matchMedia('(any-pointer: coarse)').matches) return;
+    if (!viewport || !window.matchMedia('(any-pointer: coarse)').matches)
+      return;
     const root = document.documentElement;
     let expandedHeight = window.innerHeight;
     let frame = 0;
@@ -16,18 +17,32 @@ export default function KeyboardViewport() {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const field = document.activeElement;
-        const editing = field instanceof HTMLElement && field.matches(textField);
+        const editing =
+          field instanceof HTMLElement && field.matches(textField);
         // Pinch zoom must keep the browser's own viewport and panning behavior.
         if (Math.abs(viewport.scale - 1) > 0.05) {
           root.removeAttribute('data-keyboard-open');
           root.style.removeProperty('--keyboard-inset');
           return;
         }
-        if (!editing) expandedHeight = Math.max(window.innerHeight, viewport.height);
-        const inset = editing ? Math.max(0, expandedHeight - viewport.height - viewport.offsetTop) : 0;
+        if (!editing)
+          expandedHeight = Math.max(window.innerHeight, viewport.height);
+        const inset = editing
+          ? Math.max(0, expandedHeight - viewport.height)
+          : 0;
         const keyboardOpen = editing && inset > 120;
-        root.style.setProperty('--visual-viewport-height', `${Math.round(viewport.height)}px`);
-        root.style.setProperty('--keyboard-inset', `${keyboardOpen ? Math.round(inset) : 0}px`);
+        root.style.setProperty(
+          '--visual-viewport-height',
+          `${Math.round(viewport.height)}px`,
+        );
+        root.style.setProperty(
+          '--visual-viewport-top',
+          `${Math.round(viewport.offsetTop)}px`,
+        );
+        root.style.setProperty(
+          '--keyboard-inset',
+          `${keyboardOpen ? Math.round(inset) : 0}px`,
+        );
         root.toggleAttribute('data-keyboard-open', keyboardOpen);
         if (!keyboardOpen || !revealField) return;
 
@@ -37,13 +52,18 @@ export default function KeyboardViewport() {
         if (bounds.top < top || bounds.bottom > bottom) {
           // First reveal the field in any nested scroller, then account for
           // browsers whose layout viewport remains behind the keyboard.
-          field.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
+          field.scrollIntoView({
+            block: 'nearest',
+            inline: 'nearest',
+            behavior: 'instant',
+          });
           const visibleBounds = field.getBoundingClientRect();
-          const delta = visibleBounds.height > bottom - top
-            ? visibleBounds.top - top
-            : visibleBounds.bottom > bottom
-              ? visibleBounds.bottom - bottom
-              : Math.min(0, visibleBounds.top - top);
+          const delta =
+            visibleBounds.height > bottom - top
+              ? visibleBounds.top - top
+              : visibleBounds.bottom > bottom
+                ? visibleBounds.bottom - bottom
+                : Math.min(0, visibleBounds.top - top);
           if (delta) window.scrollBy({ top: delta, behavior: 'instant' });
         }
       });
@@ -54,8 +74,12 @@ export default function KeyboardViewport() {
       clearTimeout(focusTimer);
       focusTimer = window.setTimeout(() => update(true), 300);
     }
-    function onResize() { update(true); }
-    function onPan() { update(false); }
+    function onResize() {
+      update(true);
+    }
+    function onPan() {
+      update(false);
+    }
     function onOrientationChange() {
       expandedHeight = window.innerHeight;
       update(true);
@@ -78,6 +102,7 @@ export default function KeyboardViewport() {
       root.removeAttribute('data-keyboard-open');
       root.style.removeProperty('--keyboard-inset');
       root.style.removeProperty('--visual-viewport-height');
+      root.style.removeProperty('--visual-viewport-top');
     };
   }, []);
   return null;

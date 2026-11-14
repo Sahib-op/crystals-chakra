@@ -1,5 +1,5 @@
 import {
-  motion,
+  m,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -26,7 +26,7 @@ export default function ScrollHeader() {
   });
   const contact = readingContact(selectedService);
   return (
-    <motion.header
+    <m.header
       ref={headerRef}
       className={`scroll-header ${!studio || headerVisible ? 'is-pill' : 'is-masthead'}`}
       aria-label="Reading shortcuts"
@@ -74,7 +74,6 @@ export default function ScrollHeader() {
           </a>
         </div>
       </div>
-    </motion.header>
+    </m.header>
   );
 }
-

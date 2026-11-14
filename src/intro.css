@@ -1,5 +1,7 @@
 /* The entry words are the entire call to action. */
-html.intro-open { overflow: hidden; }
+html.intro-open {
+  overflow: hidden;
+}
 .intro {
   position: fixed;
   inset: 0;
@@ -8,17 +10,30 @@ html.intro-open { overflow: hidden; }
   place-items: center;
   overflow: hidden;
   color: #f7ead0;
-  background: radial-gradient(ellipse at 50% 38%, #163a66, #0a1d3a 45%, #040b18);
+  background: radial-gradient(
+    ellipse at 50% 38%,
+    #163a66,
+    #0a1d3a 45%,
+    #040b18
+  );
   touch-action: pan-y;
 }
-.intro[hidden] { display: none; }
-.intro canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.intro[hidden] {
+  display: none;
+}
+.intro canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
 .intro-content {
   position: relative;
   display: grid;
   justify-items: center;
   gap: clamp(18px, 4vh, 42px);
-  padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+  padding: max(24px, env(safe-area-inset-top)) 20px
+    max(24px, env(safe-area-inset-bottom));
   text-align: center;
   max-width: 1200px;
 }
@@ -27,8 +42,12 @@ html.intro-open { overflow: hidden; }
   align-items: center;
   gap: 10px;
   margin: 0;
-  font: 500 18px/1.4 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
-  letter-spacing: .04em;
+  font:
+    500 18px/1.4 'Playfair Display Variable',
+    'Playfair Display',
+    Georgia,
+    serif;
+  letter-spacing: 0.04em;
   color: #efdcb0;
 }
 .intro-enter {
@@ -38,31 +57,93 @@ html.intro-open { overflow: hidden; }
   color: #f7ead0;
   margin: 0;
   padding: 16px 8px;
-  font: 400 clamp(52px, 9.2vw, 132px)/1.05 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
-  letter-spacing: -.045em;
+  font:
+    400 clamp(52px, 9.2vw, 132px)/1.05 'Playfair Display Variable',
+    'Playfair Display',
+    Georgia,
+    serif;
+  letter-spacing: -0.045em;
   text-shadow: 0 2px 30px #0008;
   cursor: pointer;
-  transition: text-shadow .35s ease, transform .6s ease;
+  transition:
+    text-shadow 0.35s ease,
+    transform 0.6s ease;
 }
-.intro-enter em { display: block; color: #e2c47f; font-style: italic; }
-.intro-enter:hover { text-shadow: 0 0 45px #e2c47f55; }
-.intro-enter:focus-visible { outline: 2px solid #e2c47f; outline-offset: 10px; }
-.intro-hint { margin: 0; font-size: 15px; letter-spacing: .04em; color: #d9e2ef; }
-.intro-scroll-mark { font-size: 28px; color: #e2c47f; animation: intro-beckon 2.8s ease-in-out infinite; }
-.intro.is-leaving { animation: intro-leave .9s cubic-bezier(.3, 0, .5, 1) forwards; pointer-events: none; }
-.intro.is-leaving .intro-enter { transform: translateY(-16px); }
-.intro.is-leaving-quick { animation: intro-fade .18s ease-out forwards; pointer-events: none; }
-@keyframes intro-beckon { 50% { transform: translateY(8px); opacity: .55; } }
-@keyframes intro-leave { to { opacity: 0; transform: scale(1.035); } }
-@keyframes intro-fade { to { opacity: 0; } }
+.intro-enter em {
+  display: block;
+  color: #e2c47f;
+  font-style: italic;
+}
+.intro-enter:hover {
+  text-shadow: 0 0 45px #e2c47f55;
+}
+.intro-enter:focus-visible {
+  outline: 2px solid #e2c47f;
+  outline-offset: 10px;
+}
+.intro-hint {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: #d9e2ef;
+}
+.intro-scroll-mark {
+  font-size: 28px;
+  color: #e2c47f;
+  animation: intro-beckon 2.8s ease-in-out infinite;
+}
+.intro.is-leaving {
+  animation: intro-leave 0.9s cubic-bezier(0.3, 0, 0.5, 1) forwards;
+  pointer-events: none;
+}
+.intro.is-leaving .intro-enter {
+  transform: translateY(-16px);
+}
+.intro.is-leaving-quick {
+  animation: intro-fade 0.18s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes intro-beckon {
+  50% {
+    transform: translateY(8px);
+    opacity: 0.55;
+  }
+}
+@keyframes intro-leave {
+  to {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+}
+@keyframes intro-fade {
+  to {
+    opacity: 0;
+  }
+}
 @media (max-height: 560px) {
-  .intro-content { gap: 14px; }
-  .intro-brand { font-size: 15px; }
-  .intro-enter { font-size: clamp(40px, 12vh, 70px); padding-block: 5px; }
-  .intro-scroll-mark { display: none; }
+  .intro-content {
+    gap: 14px;
+  }
+  .intro-brand {
+    font-size: 15px;
+  }
+  .intro-enter {
+    font-size: clamp(40px, 12vh, 70px);
+    padding-block: 5px;
+  }
+  .intro-scroll-mark {
+    display: none;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .intro-scroll-mark { animation: none; }
-  .intro-enter { transition: none; }
-  .intro.is-leaving, .intro.is-leaving-quick { animation: intro-fade .18s linear forwards; }
+  .intro-scroll-mark {
+    animation: none;
+  }
+  .intro-enter {
+    transition: none;
+  }
+  .intro.is-leaving,
+  .intro.is-leaving-quick {
+    animation: intro-fade 0.18s linear forwards;
+  }
 }

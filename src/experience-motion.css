@@ -12,15 +12,21 @@
   background: #a9d7b40c;
 }
 .scroll-header .header-reading,
-.scroll-header .header-whatsapp { min-height: 44px; }
+.scroll-header .header-whatsapp {
+  min-height: 44px;
+}
 
 /* Tarot cards remain equally usable with a mouse, keyboard or touch. */
 .opening-section .celestial-explorer {
   max-width: 600px;
   align-self: center;
 }
-.opening-section .celestial-webgl { aspect-ratio: 1.06; }
-.opening-section .celestial-still { transform: scale(1.05); }
+.opening-section .celestial-webgl {
+  aspect-ratio: 1.06;
+}
+.opening-section .celestial-still {
+  transform: scale(1.05);
+}
 .tarot-card-picker {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -40,14 +46,33 @@
   background: color-mix(in srgb, var(--ink, #12314e) 3%, transparent);
   font-size: 12px;
   line-height: 1.4;
-  transition: border-color .2s, background .2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
-.tarot-card-picker button > span { font: 24px/1 Georgia, serif; color: var(--accent, #996b23); }
+.tarot-card-picker button > span {
+  font:
+    24px/1 Georgia,
+    serif;
+  color: var(--accent, #996b23);
+}
 .tarot-card-picker button[aria-pressed='true'],
-.tarot-card-picker button:hover { border-color: var(--accent, #996b23); background: color-mix(in srgb, var(--accent, #996b23) 12%, transparent); }
+.tarot-card-picker button:hover {
+  border-color: var(--accent, #996b23);
+  background: color-mix(in srgb, var(--accent, #996b23) 12%, transparent);
+}
 .tarot-card-picker button:focus-visible,
-.real-celestial .celestial-description a:focus-visible { outline: 2px solid var(--accent, #996b23); outline-offset: 3px; }
-.tarot-picker-hint { margin: 12px 0 0; font-size: 12px; text-align: center; color: var(--subtle, #5d655f); min-height: 20px; }
+.real-celestial .celestial-description a:focus-visible {
+  outline: 2px solid var(--accent, #996b23);
+  outline-offset: 3px;
+}
+.tarot-picker-hint {
+  margin: 12px 0 0;
+  font-size: 12px;
+  text-align: center;
+  color: var(--subtle, #5d655f);
+  min-height: 20px;
+}
 .real-celestial .celestial-description {
   position: relative;
   inset: auto;
@@ -59,7 +84,9 @@
   border-color: var(--rule, #b88b4155);
   box-shadow: 0 12px 32px #082c4b0d;
 }
-.real-celestial .celestial-description p { color: var(--ink, #12314e); }
+.real-celestial .celestial-description p {
+  color: var(--ink, #12314e);
+}
 .real-celestial .celestial-description a {
   display: inline-flex;
   align-items: center;
@@ -80,7 +107,10 @@
   border-radius: 50%;
   color: var(--ink, #12314e);
 }
-.real-celestial .celestial-status { top: auto; bottom: 160px; }
+.real-celestial .celestial-status {
+  top: auto;
+  bottom: 160px;
+}
 
 /* A quiet diya garland, suspended on a thin golden thread. */
 .journey-section > .royal-ornament.diya-breaker {
@@ -88,7 +118,7 @@
   align-items: flex-start;
   justify-content: space-around;
   height: 54px;
-  opacity: .8;
+  opacity: 0.8;
   overflow: visible;
   z-index: 2;
 }
@@ -98,24 +128,54 @@
   left: 0;
   right: 0;
   border-top: 1px solid currentColor;
-  opacity: .35;
+  opacity: 0.35;
 }
 .diya-pendant {
   display: block;
   width: 34px;
   transform-origin: 50% 0;
   animation: diya-sway 5.5s ease-in-out infinite alternate;
-  animation-delay: calc(var(--diya-index) * -.7s);
+  animation-delay: calc(var(--diya-index) * -0.7s);
   animation-play-state: paused;
 }
-.diya-pendant:nth-child(even) { width: 27px; margin-top: 1px; }
-.diya-pendant svg { display: block; width: 100%; height: auto; }
-.diya-flame { animation: diya-breathe 3s ease-in-out infinite alternate; animation-delay: calc(var(--diya-index) * -.4s); animation-play-state: paused; }
+.diya-pendant:nth-child(even) {
+  width: 27px;
+  margin-top: 1px;
+}
+.diya-pendant svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.diya-flame {
+  animation: diya-breathe 3s ease-in-out infinite alternate;
+  animation-delay: calc(var(--diya-index) * -0.4s);
+  animation-play-state: paused;
+}
 .is-inview > .diya-breaker .diya-pendant,
-.is-inview > .diya-breaker .diya-flame { animation-play-state: running; }
-.journey-section.welcome-section > .diya-breaker { top: auto; bottom: -27px; }
-@keyframes diya-sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
-@keyframes diya-breathe { from { opacity: .55; } to { opacity: 1; } }
+.is-inview > .diya-breaker .diya-flame {
+  animation-play-state: running;
+}
+.journey-section.welcome-section > .diya-breaker {
+  top: auto;
+  bottom: -27px;
+}
+@keyframes diya-sway {
+  from {
+    transform: rotate(-3deg);
+  }
+  to {
+    transform: rotate(3deg);
+  }
+}
+@keyframes diya-breathe {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
 /* A precise point, framed by a small faceted ring. Never intercept input. */
 .tarot-cursor {
@@ -128,7 +188,9 @@
   z-index: 1500;
   opacity: 0;
 }
-.tarot-cursor[data-visible='true'] { opacity: 1; }
+.tarot-cursor[data-visible='true'] {
+  opacity: 1;
+}
 .tarot-cursor > span {
   position: absolute;
   left: -11px;
@@ -140,7 +202,9 @@
   transform: rotate(45deg);
   box-shadow: 0 0 0 1px #fff5df55;
   background: #b9914110;
-  transition: transform .18s ease, background .18s ease;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease;
 }
 .tarot-cursor > i {
   position: absolute;
@@ -152,23 +216,55 @@
   background: #f4d291;
   box-shadow: 0 0 0 1px #082c4b;
 }
-.tarot-cursor[data-hover='true'] > span { transform: rotate(135deg) scale(1.35); background: #b9914122; }
-.tarot-cursor[data-pressed='true'] > span { transform: rotate(135deg) scale(.8); }
+.tarot-cursor[data-hover='true'] > span {
+  transform: rotate(135deg) scale(1.35);
+  background: #b9914122;
+}
+.tarot-cursor[data-pressed='true'] > span {
+  transform: rotate(135deg) scale(0.8);
+}
 @media (hover: hover) and (pointer: fine) and (min-width: 900px) {
   html.custom-cursor-active body,
-  html.custom-cursor-active body * { cursor: none !important; }
+  html.custom-cursor-active body * {
+    cursor: none !important;
+  }
 }
 @media (max-width: 760px) {
-  .opening-section .celestial-explorer { max-width: 460px; }
-  .tarot-card-picker { padding: 0; gap: 6px; }
-  .tarot-card-picker button { min-height: 48px; font-size: 11px; gap: 4px; }
-  .tarot-card-picker button > span { font-size: 21px; }
-  .real-celestial .celestial-description { margin-inline: 0; padding: 15px; }
-  .diya-pendant:nth-child(n+7) { display: none; }
-  .journey-section > .royal-ornament.diya-breaker { height: 44px; }
-  .diya-pendant { width: 28px; }
+  .opening-section .celestial-explorer {
+    max-width: 460px;
+  }
+  .tarot-card-picker {
+    padding: 0;
+    gap: 6px;
+  }
+  .tarot-card-picker button {
+    min-height: 48px;
+    font-size: 11px;
+    gap: 4px;
+  }
+  .tarot-card-picker button > span {
+    font-size: 21px;
+  }
+  .real-celestial .celestial-description {
+    margin-inline: 0;
+    padding: 15px;
+  }
+  .diya-pendant:nth-child(n + 7) {
+    display: none;
+  }
+  .journey-section > .royal-ornament.diya-breaker {
+    height: 44px;
+  }
+  .diya-pendant {
+    width: 28px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .diya-pendant, .diya-flame { animation: none; }
-  .tarot-cursor { display: none; }
+  .diya-pendant,
+  .diya-flame {
+    animation: none;
+  }
+  .tarot-cursor {
+    display: none;
+  }
 }

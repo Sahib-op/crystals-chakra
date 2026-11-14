@@ -48,7 +48,10 @@ export function JourneyProvider({ children }) {
         let current = 'home';
         // Follow actual DOM order, including the visitor's section preference.
         for (const el of document.querySelectorAll('.royal-journey [id]')) {
-          if (SECTION_LABELS[el.id] && el.getBoundingClientRect().top <= innerHeight * 0.35)
+          if (
+            SECTION_LABELS[el.id] &&
+            el.getBoundingClientRect().top <= innerHeight * 0.35
+          )
             current = el.id;
         }
         setActiveSection(current);

@@ -1,5 +1,7 @@
 export class RequestTimeoutError extends Error {
-  constructor(message = 'This is taking longer than expected. Please try again.') {
+  constructor(
+    message = 'This is taking longer than expected. Please try again.',
+  ) {
     super(message);
     this.name = 'RequestTimeoutError';
   }

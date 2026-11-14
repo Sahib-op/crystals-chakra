@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { SYMBOLS } from './celestial/symbols';
 import { canAutoLoad3D } from './celestial/capability.js';
@@ -194,7 +194,12 @@ export default function CelestialRings() {
           Choose a tarot card below to read its meaning.
         </p>
       )}
-      <div className="tarot-card-picker" ref={selectorRef} role="group" aria-label="Choose a tarot card">
+      <div
+        className="tarot-card-picker"
+        ref={selectorRef}
+        role="group"
+        aria-label="Choose a tarot card"
+      >
         {SYMBOLS.map((item) => (
           <button
             type="button"
@@ -203,44 +208,63 @@ export default function CelestialRings() {
             aria-controls={selected ? 'tarot-card-meaning' : undefined}
             onClick={() => setSelected(item)}
           >
-            <span aria-hidden="true">{({ sun: '☉', moon: '☾', star: '✧', strength: '∞', hermit: '◇', world: '◎' })[item.kind]}</span>
+            <span aria-hidden="true">
+              {
+                {
+                  sun: '☉',
+                  moon: '☾',
+                  star: '✧',
+                  strength: '∞',
+                  hermit: '◇',
+                  world: '◎',
+                }[item.kind]
+              }
+            </span>
             {item.name}
           </button>
         ))}
       </div>
-      <p className="tarot-picker-hint" aria-hidden="true">{hovered ? `${hovered.name} · select to discover` : 'Choose a card. Make a little space for reflection.'}</p>
+      <p className="tarot-picker-hint" aria-hidden="true">
+        {hovered
+          ? `${hovered.name} · select to discover`
+          : 'Choose a card. Make a little space for reflection.'}
+      </p>
       <AnimatePresence mode="wait">
-      {selected && (
-        <motion.div
-          key={selected.id}
-          id="tarot-card-meaning"
-          className="celestial-description"
-          role="region"
-          aria-label={selected.name}
-          aria-live="polite"
-          initial={{ opacity: 0, y: reducedMotion ? 0 : 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: reducedMotion ? 0 : -8 }}
-          transition={{ duration: reducedMotion ? 0 : 0.25 }}
-        >
-          <div>
-            <h2>{selected.name}</h2>
-            <p>{selected.text}</p>
-            <Link to="/#information">About Astrology & card meanings <span aria-hidden="true">↗</span></Link>
-          </div>
-          <button
-            aria-label="Close explanation"
-            onClick={() => {
-              selectorRef.current?.querySelector('[aria-pressed="true"]')?.focus();
-              setSelected(null);
-            }}
+        {selected && (
+          <m.div
+            key={selected.id}
+            id="tarot-card-meaning"
+            className="celestial-description"
+            role="region"
+            aria-label={selected.name}
+            aria-live="polite"
+            initial={{ opacity: 0, y: reducedMotion ? 0 : 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: reducedMotion ? 0 : -8 }}
+            transition={{ duration: reducedMotion ? 0 : 0.25 }}
           >
-            <X size={18} />
-          </button>
-        </motion.div>
-      )}
+            <div>
+              <h2>{selected.name}</h2>
+              <p>{selected.text}</p>
+              <Link to="/#information">
+                About Astrology & card meanings{' '}
+                <span aria-hidden="true">↗</span>
+              </Link>
+            </div>
+            <button
+              aria-label="Close explanation"
+              onClick={() => {
+                selectorRef.current
+                  ?.querySelector('[aria-pressed="true"]')
+                  ?.focus();
+                setSelected(null);
+              }}
+            >
+              <X size={18} />
+            </button>
+          </m.div>
+        )}
       </AnimatePresence>
     </div>
   );
 }
-
