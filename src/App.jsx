@@ -8,6 +8,7 @@ import {
   matchPath,
 } from 'react-router-dom';
 import { JourneyProvider } from './components/JourneyContext';
+import { AppearanceProvider } from './components/AppearanceContext';
 import { LazyMotion, MotionConfig, domAnimation } from 'motion/react';
 import PageLoading from './components/PageLoading';
 import KeyboardViewport from './components/KeyboardViewport';
@@ -67,90 +68,92 @@ export function AppShell({ staticPages = {} }) {
   return (
     <MotionConfig reducedMotion="user">
       <LazyMotion features={domAnimation} strict>
-        <JourneyProvider>
-          <div className="app-shell">
-            <NavigationEffects />
-            <KeyboardViewport />
-            <CustomerNavigation />
-            <nav aria-label="Skip link">
-              <a className="journey-skip" href="#main">
-                Skip to content
-              </a>
-            </nav>
-            <main id="main">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route
-                  path="/shop"
-                  element={
-                    <Suspense
-                      fallback={
-                        <PageLoading
-                          variant="shop"
-                          title="Opening the collection…"
-                        />
-                      }
-                    >
-                      <ShopPage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/studio"
-                  element={
-                    <Suspense
-                      fallback={
-                        <PageLoading
-                          variant="studio"
-                          title="Opening the studio…"
-                        />
-                      }
-                    >
-                      <StudioPage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/services"
-                  element={<Navigate replace to="/#services" />}
-                />
-                <Route
-                  path="/science"
-                  element={<Navigate replace to="/#information" />}
-                />
-                <Route path="/book" element={<LegacyBooking />} />
-                <Route
-                  path="/how-readings-work"
-                  element={
-                    <Suspense
-                      fallback={
-                        <PageLoading title="Opening the reading guide…" />
-                      }
-                    >
-                      <GuidePage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/policies"
-                  element={
-                    <Suspense
-                      fallback={<PageLoading title="Opening policies…" />}
-                    >
-                      <PoliciesPage />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/privacy"
-                  element={<Navigate replace to="/policies#privacy" />}
-                />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </JourneyProvider>
+        <AppearanceProvider>
+          <JourneyProvider>
+            <div className="app-shell">
+              <NavigationEffects />
+              <KeyboardViewport />
+              <CustomerNavigation />
+              <nav aria-label="Skip link">
+                <a className="journey-skip" href="#main">
+                  Skip to content
+                </a>
+              </nav>
+              <main id="main">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route
+                    path="/shop"
+                    element={
+                      <Suspense
+                        fallback={
+                          <PageLoading
+                            variant="shop"
+                            title="Opening the collection…"
+                          />
+                        }
+                      >
+                        <ShopPage />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/studio"
+                    element={
+                      <Suspense
+                        fallback={
+                          <PageLoading
+                            variant="studio"
+                            title="Opening the studio…"
+                          />
+                        }
+                      >
+                        <StudioPage />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/services"
+                    element={<Navigate replace to="/#services" />}
+                  />
+                  <Route
+                    path="/science"
+                    element={<Navigate replace to="/#information" />}
+                  />
+                  <Route path="/book" element={<LegacyBooking />} />
+                  <Route
+                    path="/how-readings-work"
+                    element={
+                      <Suspense
+                        fallback={
+                          <PageLoading title="Opening the reading guide…" />
+                        }
+                      >
+                        <GuidePage />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/policies"
+                    element={
+                      <Suspense
+                        fallback={<PageLoading title="Opening policies…" />}
+                      >
+                        <PoliciesPage />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/privacy"
+                    element={<Navigate replace to="/policies#privacy" />}
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          </JourneyProvider>
+        </AppearanceProvider>
       </LazyMotion>
     </MotionConfig>
   );

@@ -67,6 +67,14 @@ export default function CelestialRings() {
         window.addEventListener('load', schedule, { once: true });
         return;
       }
+      // Building the scene is one long task. While the welcome screen covers
+      // the page, wait for it to close so its exit animation stays smooth.
+      if (document.documentElement.classList.contains('intro-open')) {
+        window.addEventListener('crystals:intro-closed', schedule, {
+          once: true,
+        });
+        return;
+      }
       scheduled =
         'requestIdleCallback' in window
           ? window.requestIdleCallback(load, {
@@ -89,6 +97,7 @@ export default function CelestialRings() {
       observer.disconnect();
       document.removeEventListener('visibilitychange', schedule);
       window.removeEventListener('load', schedule);
+      window.removeEventListener('crystals:intro-closed', schedule);
       reduced.removeEventListener('change', schedule);
       connection?.removeEventListener('change', schedule);
       scene?.dispose();

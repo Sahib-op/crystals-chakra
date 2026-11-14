@@ -10,6 +10,7 @@ import ScienceOfAstrology from './ScienceOfAstrology';
 import Booking from './Booking';
 import { generateCosmicReading } from '../cosmicEngine';
 import { useJourney } from '../components/JourneyContext';
+import { useAppearance } from '../components/AppearanceContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { readingContact } from '../../shared/contact.js';
 
@@ -68,6 +69,7 @@ export default function Home() {
   const reduced = useReducedMotion();
   const [snapshot, setSnapshot] = useState(false);
   const [reading, setReading] = useState(null);
+  const { sectionOrder } = useAppearance();
   const {
     services,
     catalogueReady,
@@ -162,6 +164,7 @@ export default function Home() {
           <CelestialRings />
         </div>
       </ScrollSection>
+      {sectionOrder === 'about-first' && information}
       <div className="readings-flow">
         <ScrollSection id="tarot" theme="royal" className="tarot-section">
           <div className="tarot-layout">
@@ -241,7 +244,10 @@ export default function Home() {
               </div>
             )}
             {services.length ? (
-              <div className="royal-services reading-package-grid">
+              <div
+                className="royal-services reading-package-grid"
+                style={{ '--count': services.length }}
+              >
                 {services.map((service) => (
                   <ReadingPackageCard
                     key={service.id}
@@ -263,8 +269,11 @@ export default function Home() {
           </div>
         </ScrollSection>
       </div>
-      {information}
-      {collection}
+      {sectionOrder === 'collection-first'
+        ? [collection, information]
+        : sectionOrder === 'about-first'
+          ? collection
+          : [information, collection]}
       <ReadingOverlay
         onRestart={() => setReading(null)}
         isOpen={snapshot}

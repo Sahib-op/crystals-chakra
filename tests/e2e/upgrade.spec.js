@@ -6,6 +6,45 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
+test('the design lab is hidden unless requested, and switches palette and order', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  await expect(page.locator('.design-lab')).toHaveCount(0);
+
+  await page.goto('/?lab=1');
+  const lab = page.locator('.design-lab');
+  await expect(lab).toBeVisible();
+  await lab.getByRole('button', { name: /Saffron/ }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'saffron');
+  await lab.getByLabel('Section order').selectOption('about-first');
+  const aboutBeforeReadings = () =>
+    page.evaluate(
+      () =>
+        !!(
+          document
+            .getElementById('information')
+            .compareDocumentPosition(document.getElementById('tarot')) &
+          Node.DOCUMENT_POSITION_FOLLOWING
+        ),
+    );
+  expect(await aboutBeforeReadings()).toBe(true);
+
+  // The lab stays on in this browser across pages until it is closed.
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'saffron');
+  await page
+    .locator('.design-lab')
+    .getByRole('button', { name: 'Close the lab' })
+    .click();
+  await expect(page.locator('.design-lab')).toHaveCount(0);
+  expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
+  expect(await aboutBeforeReadings()).toBe(false);
+  await page.reload();
+  await expect(page.locator('.design-lab')).toHaveCount(0);
+});
+
 test('the production layout ignores saved appearance experiments', async ({
   page,
 }) => {

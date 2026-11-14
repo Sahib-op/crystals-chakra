@@ -115,67 +115,6 @@
   bottom: 160px;
 }
 
-/* A quiet diya garland, suspended on a thin golden thread. */
-.journey-section > .royal-ornament.diya-breaker {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-around;
-  height: 54px;
-  opacity: 0.8;
-  overflow: visible;
-  z-index: 2;
-}
-.diya-thread {
-  position: absolute;
-  top: 2px;
-  left: 0;
-  right: 0;
-  border-top: 1px solid currentColor;
-  opacity: 0.35;
-}
-.diya-pendant {
-  display: block;
-  width: 34px;
-  transform-origin: 50% 0;
-  animation: diya-sway 5.5s ease-in-out infinite alternate;
-  animation-delay: calc(var(--diya-index) * -0.7s);
-  animation-play-state: paused;
-}
-.diya-pendant:nth-child(even) {
-  width: 27px;
-  margin-top: 1px;
-}
-.diya-pendant svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.diya-flame {
-  animation: diya-breathe 3s ease-in-out infinite alternate;
-  animation-delay: calc(var(--diya-index) * -0.4s);
-  animation-play-state: paused;
-}
-.is-inview > .diya-breaker .diya-pendant,
-.is-inview > .diya-breaker .diya-flame {
-  animation-play-state: running;
-}
-@keyframes diya-sway {
-  from {
-    transform: rotate(-3deg);
-  }
-  to {
-    transform: rotate(3deg);
-  }
-}
-@keyframes diya-breathe {
-  from {
-    opacity: 0.55;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 /* A precise point, framed by a small faceted ring. Never intercept input. */
 .tarot-cursor {
   position: fixed;
@@ -248,22 +187,232 @@
     margin-inline: 0;
     padding: 15px;
   }
-  .diya-pendant:nth-child(n + 7) {
+}
+@media (prefers-reduced-motion: reduce) {
+  .tarot-cursor {
     display: none;
   }
-  .journey-section > .royal-ornament.diya-breaker {
-    height: 44px;
+}
+
+/* ---------- Section breaker: a toran of light (RoyalOrnament.jsx) ---------- */
+.journey-section > .royal-ornament.toran-breaker {
+  --toran-h: 92px;
+  --strand-h: 48px;
+  --swag-low: 24px;
+  --marigold: #eaa233;
+  --marigold-deep: #c46d17;
+  --leaf: #5f7d3d;
+  height: var(--toran-h);
+  opacity: 1;
+  overflow: visible;
+  z-index: 2;
+}
+.toran-strand {
+  position: absolute;
+  inset: 0 0 auto;
+  width: 100%;
+  height: var(--strand-h);
+  overflow: visible;
+}
+.toran-strand path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.toran-thread {
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.55;
+}
+/* Marigold beads: round caps on a zero-length dash pattern. */
+.toran-beads {
+  stroke: var(--marigold);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 0 7;
+  opacity: 0.9;
+}
+.toran-glint {
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 70 930;
+  stroke-dashoffset: 1000;
+  opacity: 0.85;
+  animation: toran-glint 9s linear infinite;
+  animation-play-state: paused;
+}
+.toran-defs {
+  position: absolute;
+}
+.toran-knot {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--marigold-deep) 0 28%, transparent 30%),
+    radial-gradient(circle, var(--marigold) 0 62%, transparent 64%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 45%, transparent);
+}
+.toran-pendant {
+  position: absolute;
+  top: var(--swag-low);
+  left: var(--x);
+  width: 36px;
+  margin-left: -18px;
+  transform-origin: 50% 0;
+  animation: toran-sway 4.8s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.6s);
+  animation-play-state: paused;
+}
+.toran-pendant.is-tassel {
+  width: 28px;
+  margin-left: -14px;
+  animation-duration: 3.9s;
+}
+/* Room for the garland: content always starts below the lowest lamp. */
+.journey-section:not(.welcome-section) > .journey-content {
+  margin-top: 28px;
+}
+.toran-cord {
+  display: block;
+  width: 1px;
+  height: 8px;
+  margin: 0 auto;
+  background: currentColor;
+  opacity: 0.6;
+}
+.toran-pendant:nth-child(4n + 1) .toran-cord {
+  height: 14px;
+}
+.toran-item {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.toran-bowl {
+  fill: color-mix(in srgb, currentColor 30%, #7a4e14);
+  stroke: currentColor;
+  stroke-width: 1.2;
+}
+.toran-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+.toran-bead {
+  fill: currentColor;
+}
+.toran-flame {
+  fill: #ffb83f;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: toran-flicker 1.6s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.37s);
+  animation-play-state: paused;
+}
+.toran-flame-core {
+  fill: #fff3cf;
+}
+.toran-glow {
+  opacity: 0.8;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: toran-glow 2.4s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.5s);
+  animation-play-state: paused;
+}
+.toran-marigold {
+  fill: var(--marigold);
+}
+.toran-marigold-dark {
+  fill: var(--marigold-deep);
+}
+.toran-leaf {
+  fill: var(--leaf);
+  opacity: 0.85;
+}
+.is-inview > .toran-breaker .toran-pendant,
+.is-inview > .toran-breaker .toran-flame,
+.is-inview > .toran-breaker .toran-glow,
+.is-inview > .toran-breaker .toran-glint {
+  animation-play-state: running;
+}
+/* Dark sections: lamps glow a little brighter against navy. */
+.theme-royal > .toran-breaker .toran-glow,
+.theme-midnight > .toran-breaker .toran-glow {
+  opacity: 1;
+}
+@keyframes toran-sway {
+  from {
+    transform: rotate(-4deg);
   }
-  .diya-pendant {
-    width: 28px;
+  to {
+    transform: rotate(4deg);
+  }
+}
+@keyframes toran-flicker {
+  0% {
+    transform: scale(1, 1) skewX(0deg);
+  }
+  35% {
+    transform: scale(0.94, 1.08) skewX(-3deg);
+  }
+  70% {
+    transform: scale(1.04, 0.95) skewX(2deg);
+  }
+  100% {
+    transform: scale(0.97, 1.05) skewX(-1deg);
+  }
+}
+@keyframes toran-glow {
+  from {
+    opacity: 0.55;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+@keyframes toran-glint {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (max-width: 760px) {
+  .journey-section > .royal-ornament.toran-breaker {
+    --toran-h: 70px;
+    --strand-h: 36px;
+    --swag-low: 18px;
+  }
+  .toran-pendant {
+    width: 26px;
+    margin-left: -13px;
+  }
+  .toran-pendant.is-tassel {
+    width: 20px;
+    margin-left: -10px;
+  }
+  .journey-section:not(.welcome-section) > .journey-content {
+    margin-top: 30px;
+  }
+  .toran-beads {
+    stroke-width: 5;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .diya-pendant,
-  .diya-flame {
+  .toran-pendant,
+  .toran-flame,
+  .toran-glow,
+  .toran-glint {
     animation: none;
   }
-  .tarot-cursor {
+  .toran-glint {
     display: none;
   }
 }

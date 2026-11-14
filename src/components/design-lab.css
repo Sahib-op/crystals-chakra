@@ -1,0 +1,144 @@
+/* Loaded only when the design lab is on (AppearanceContext.jsx). */
+:root[data-palette='saffron'] {
+  --page-light: #fcf0da;
+  --page-paper: #f4dfc2;
+  --page-dark: #4b263e;
+  --page-deep: #2e192f;
+  --page-ink: #492c3d;
+  --page-muted: #6d575c;
+  --page-gold: #925424;
+  --page-bright: #f1c27a;
+}
+:root[data-palette='forest'] {
+  --page-light: #f1f0dd;
+  --page-paper: #e3e7d1;
+  --page-dark: #203e35;
+  --page-deep: #142c28;
+  --page-ink: #1f3d34;
+  --page-muted: #566752;
+  --page-gold: #806421;
+  --page-bright: #e4ce8d;
+}
+:root[data-palette='temple'] {
+  --page-light: #fbf1e3;
+  --page-paper: #f3e1c9;
+  --page-dark: #5a1620;
+  --page-deep: #3a0e15;
+  --page-ink: #4a1a20;
+  --page-muted: #6e5652;
+  --page-gold: #9a6a1c;
+  --page-bright: #f0c96e;
+}
+.design-lab {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 950;
+  max-width: min(360px, calc(100vw - 32px));
+  font:
+    14px/1.5 'Inter Variable',
+    Inter,
+    system-ui,
+    sans-serif;
+  color: #12314e;
+}
+.design-lab summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #b58932;
+  border-radius: 999px;
+  background: #fff8e8;
+  box-shadow: 0 6px 20px #0003;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+}
+.design-lab summary::-webkit-details-marker {
+  display: none;
+}
+.design-lab-panel {
+  margin-top: 10px;
+  padding: 18px;
+  border: 1px solid #b58932;
+  border-radius: 14px;
+  background: #fff8e8;
+  box-shadow: 0 12px 34px #0004;
+}
+.design-lab-panel p {
+  margin: 0 0 14px;
+}
+.design-lab fieldset {
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+}
+.design-lab legend,
+.design-lab label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.design-lab-palettes {
+  display: grid;
+  gap: 8px;
+}
+.design-lab button,
+.design-lab select {
+  min-height: 44px;
+  border: 1px solid #b5893266;
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+.design-lab-palettes button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.design-lab-palettes button[aria-pressed='true'] {
+  border-color: #12314e;
+  box-shadow: inset 0 0 0 1px #12314e;
+}
+.design-lab select {
+  width: 100%;
+  padding: 0 10px;
+}
+.design-lab-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.design-lab-actions button {
+  flex: 1;
+  padding: 0 10px;
+  cursor: pointer;
+}
+.lab-swatch {
+  width: 34px;
+  height: 20px;
+  border-radius: 6px;
+  flex: none;
+}
+.swatch-royal {
+  background: linear-gradient(90deg, #082c4b 50%, #f8efd9 50%);
+}
+.swatch-saffron {
+  background: linear-gradient(90deg, #4b263e 50%, #fcf0da 50%);
+}
+.swatch-forest {
+  background: linear-gradient(90deg, #203e35 50%, #f1f0dd 50%);
+}
+.swatch-temple {
+  background: linear-gradient(90deg, #5a1620 50%, #fbf1e3 50%);
+}
+.design-lab :focus-visible {
+  outline: 2px solid #12314e;
+  outline-offset: 2px;
+}

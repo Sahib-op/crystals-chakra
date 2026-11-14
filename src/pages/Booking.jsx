@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Check, Copy, Phone } from 'lucide-react';
+import { ArrowUpRight, Check, Copy, Mail, Phone } from 'lucide-react';
 import { useJourney } from '../components/JourneyContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { readingContact } from '../../shared/contact.js';
 import { fact } from '../../shared/business.js';
+import { SUPPORT_EMAIL } from '../constants';
 
 export default function Booking({ embedded = false }) {
   const Heading = embedded ? 'h2' : 'h1';
@@ -129,6 +130,12 @@ export default function Booking({ embedded = false }) {
               ? 'Select the phone number above to copy it.'
               : ''}
         </p>
+        <a className="contact-email" href={`mailto:${SUPPORT_EMAIL}`}>
+          <Mail size={16} aria-hidden="true" />
+          <span>
+            Prefer email? <strong>{SUPPORT_EMAIL}</strong>
+          </span>
+        </a>
       </div>
     </section>
   );

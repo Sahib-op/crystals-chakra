@@ -71,7 +71,7 @@ test.describe('welcome screen', () => {
     await page.mouse.move(200, 200);
     await page.mouse.move(260, 240, { steps: 5 });
     await page.locator('.intro-enter').click({ force: true });
-    await expect(intro).toHaveCount(0, { timeout: 5000 });
+    await expect(intro).toHaveCount(0, { timeout: 10_000 });
     await expect(page.locator('#main')).toBeFocused();
     await expect(page.locator('main h1')).toContainText('Make Room for');
     await page.reload();
@@ -84,11 +84,12 @@ test.describe('welcome screen', () => {
     // The intro script has run once it holds focus; only then press Escape.
     await expect(page.locator('.intro-enter')).toBeFocused();
     await page.keyboard.press('Escape');
-    await expect(page.locator('#intro')).toHaveCount(0);
+    // Software WebGL in CI can delay frames; on devices exit takes ~1 s.
+    await expect(page.locator('#intro')).toHaveCount(0, { timeout: 10_000 });
     await page.evaluate(() => sessionStorage.clear());
     await page.goto('/');
     await page.mouse.wheel(0, 160);
-    await expect(page.locator('#intro')).toHaveCount(0);
+    await expect(page.locator('#intro')).toHaveCount(0, { timeout: 10_000 });
     for (const path of ['/#booking', '/shop', '/policies']) {
       await page.evaluate(() => sessionStorage.clear());
       await page.goto(path);
