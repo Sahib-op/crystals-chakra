@@ -1,0 +1,86 @@
+.policies-page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 128px 24px 96px;
+  color: #25485e;
+  font-size: 17px;
+  line-height: 1.7;
+}
+.policies-page h1,
+.policies-page h2 {
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  color: #092d48;
+  line-height: 1.2;
+}
+.policies-page h1 {
+  font-size: clamp(34px, 6vw, 52px);
+  margin: 18px 0 16px;
+}
+.policies-page h2 {
+  font-size: clamp(25px, 4vw, 32px);
+  margin: 0 0 14px;
+}
+.policies-page h3 {
+  margin: 22px 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #092d48;
+}
+.policies-page section {
+  padding: 36px 0;
+  border-top: 1px solid #ba8c3755;
+  scroll-margin-top: 96px;
+}
+.policies-page ul {
+  display: grid;
+  gap: 8px;
+  padding-left: 22px;
+  list-style: disc;
+}
+.policies-page a {
+  color: #0b4f74;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.policies-back {
+  font-size: 15px;
+}
+.policies-status {
+  padding: 14px 18px;
+  border: 1px solid #ba8c37;
+  border-radius: 8px;
+  background: #fff8e8;
+}
+.policies-toc {
+  margin: 24px 0 8px;
+}
+.policy-facts {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) 1fr;
+  gap: 10px 20px;
+  margin: 16px 0;
+}
+.policy-facts dt {
+  font-weight: 600;
+  color: #092d48;
+}
+.policy-facts dd {
+  margin: 0;
+}
+.policy-pending {
+  font-style: italic;
+  color: #8a5a10;
+}
+@media (max-width: 600px) {
+  .policies-page {
+    padding-top: 104px;
+    font-size: 16px;
+  }
+  .policy-facts {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .policy-facts dd {
+    margin-bottom: 12px;
+  }
+}

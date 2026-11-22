@@ -3,7 +3,7 @@
   padding: 48px 56px 64px;
   background: #f7eed7;
   color: #17384e;
-  font-family: Inter, Arial, sans-serif;
+  font-family: 'Inter Variable', Inter, Arial, sans-serif;
 }
 .studio-page > * {
   max-width: 1320px;
@@ -14,7 +14,7 @@
 .studio-page h2,
 .studio-page h3,
 .studio-page h4 {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
   color: #12334c;
   line-height: 1.2;
 }
@@ -421,7 +421,7 @@
 }
 .studio-preview-price {
   display: block;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display Variable', 'Playfair Display', serif;
   font-size: 32px;
   margin: 24px 0;
   color: #f5d78e;

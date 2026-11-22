@@ -1,0 +1,193 @@
+/* Welcome screen (index.html #intro, behaviour in public/intro.js).
+   The words themselves are the way in: click, tap, scroll or swipe. */
+html.intro-open {
+  overflow: hidden;
+}
+.intro {
+  position: fixed;
+  inset: 0;
+  /* Above the site's cursor layer. */
+  z-index: 1100;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: #f7ead0;
+  background: radial-gradient(
+    ellipse at 50% 42%,
+    #163a66 0%,
+    #0a1d3a 48%,
+    #040b18 100%
+  );
+}
+.intro[hidden] {
+  display: none;
+}
+.intro canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.intro-content {
+  --lean-x: 0px;
+  --lean-y: 0px;
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: clamp(18px, 3.5vh, 34px);
+  padding: 24px 20px 40px;
+  text-align: center;
+}
+.intro-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  color: #efdcb0;
+}
+.intro-enter {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  padding: 0.12em 0.3em 0.22em;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(56px, 12.5vw, 150px);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  text-shadow: 0 4px 40px #000a;
+  cursor: pointer;
+  transform: translate3d(var(--lean-x), var(--lean-y), 0);
+  transition:
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    text-shadow 0.4s;
+  -webkit-tap-highlight-color: transparent;
+}
+.intro-enter em {
+  color: #e2c47f;
+  font-style: italic;
+}
+/* A gold line draws in under the words on hover and keyboard focus. */
+.intro-enter::after {
+  content: '';
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 0.02em;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #e2c47f, transparent);
+  transform: scaleX(0);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.intro-enter:hover::after,
+.intro-enter:focus-visible::after {
+  transform: scaleX(1);
+}
+.intro-enter:hover,
+.intro-enter:focus-visible {
+  text-shadow:
+    0 4px 40px #000a,
+    0 0 34px #e2c47f55;
+}
+/* Focus shows as the gold underline and glow above (the words receive focus
+   on load, so a box outline would frame them permanently). */
+.intro-enter:focus-visible {
+  outline: none;
+}
+.intro-line {
+  display: block;
+}
+.intro-hint {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  color: #d9e2ef;
+}
+.intro-chevron {
+  width: 14px;
+  height: 14px;
+  border-right: 2px solid #e2c47f;
+  border-bottom: 2px solid #e2c47f;
+  transform: rotate(45deg);
+  animation: intro-beckon 2.2s ease-in-out infinite;
+}
+.intro .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+/* Leaving: the words lift and dissolve while the stars rush outward. */
+.intro.is-leaving {
+  animation: intro-leave 0.9s cubic-bezier(0.55, 0, 0.45, 1) forwards;
+  pointer-events: none;
+}
+.intro.is-leaving .intro-content {
+  animation: intro-lift 0.9s cubic-bezier(0.55, 0, 0.45, 1) forwards;
+}
+.intro.is-leaving-quick {
+  animation: intro-fade 0.2s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes intro-beckon {
+  50% {
+    transform: translateY(7px) rotate(45deg);
+    opacity: 0.55;
+  }
+}
+@keyframes intro-leave {
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes intro-lift {
+  to {
+    opacity: 0;
+    transform: translate3d(0, -40px, 0) scale(1.08);
+    filter: blur(6px);
+  }
+}
+@keyframes intro-fade {
+  to {
+    opacity: 0;
+  }
+}
+@media (max-height: 520px) {
+  .intro-brand {
+    display: none;
+  }
+  .intro-enter {
+    font-size: clamp(44px, 11vw, 96px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-enter,
+  .intro-enter::after {
+    transition: none;
+    transform: none;
+  }
+  .intro-chevron {
+    animation: none;
+  }
+  .intro.is-leaving,
+  .intro.is-leaving-quick {
+    animation: intro-fade 0.2s linear forwards;
+  }
+  .intro.is-leaving .intro-content {
+    animation: none;
+  }
+}

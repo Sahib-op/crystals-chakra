@@ -28,7 +28,8 @@ export default function ScrollSection({ id, theme, children, className = '' }) {
           </div>
         )}
       </div>
-      <RoyalOrnament />
+      {/* The hero has none: the next section's garland marks the boundary. */}
+      {id !== 'home' && <RoyalOrnament />}
       <div className="journey-content">{children}</div>
     </section>
   );

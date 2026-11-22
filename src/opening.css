@@ -10,7 +10,7 @@
   align-items: center;
 }
 .opening-section .welcome-copy h1 {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
   font-size: clamp(48px, 5.5vw, 76px);
   font-weight: 400;
   line-height: 1.08;
@@ -83,24 +83,48 @@
   position: relative;
   min-width: 0;
   width: 100%;
-  max-width: 470px;
+  max-width: 600px;
   justify-self: center;
 }
 .celestial-webgl {
   position: relative;
   width: 100%;
   aspect-ratio: 1;
+  overflow: hidden;
+  contain: layout paint;
   background: radial-gradient(ellipse, #f9e0a44d, transparent 70%);
 }
-.celestial-webgl canvas {
+/* Both layers fill the reserved square, so swapping the illustration for the
+   WebGL canvas never changes layout (previously CLS 0.2–0.37). */
+.celestial-webgl canvas,
+.celestial-still {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
 }
-.celestial-still {
-  display: block;
-  width: 100%;
-  height: 100%;
+.still-orbit {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: still-orbit 60s linear infinite;
+}
+.still-orbit-b {
+  animation-duration: 84s;
+  animation-direction: reverse;
+}
+.still-orbit-c {
+  animation-duration: 46s;
+}
+@keyframes still-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .still-orbit {
+    animation: none;
+  }
 }
 .celestial-load {
   display: block;
@@ -205,7 +229,7 @@
   border-radius: 16px;
   background: #0a192e;
   color: #f3eee3;
-  font-family: Inter, system-ui, sans-serif;
+  font-family: 'Inter Variable', Inter, system-ui, sans-serif;
   box-shadow: 0 24px 80px #0006;
   overflow-y: auto;
   color-scheme: dark;
@@ -246,7 +270,8 @@
 }
 .reading-dialog-body h2 {
   font:
-    400 32px/1.25 'Playfair Display',
+    400 32px/1.25 'Playfair Display Variable',
+    'Playfair Display',
     Georgia,
     serif;
   color: #e9ce92;
@@ -272,7 +297,8 @@
   padding: 13px 14px;
   width: 100%;
   font:
-    400 16px Inter,
+    400 16px 'Inter Variable',
+    Inter,
     system-ui,
     sans-serif;
   color: #f5eddc;
@@ -330,7 +356,8 @@
 }
 .result-heading h3 {
   font:
-    400 44px/1.15 'Playfair Display',
+    400 44px/1.15 'Playfair Display Variable',
+    'Playfair Display',
     Georgia,
     serif;
   color: #efd28d;
@@ -424,7 +451,7 @@
     gap: 12px;
   }
   .celestial-explorer {
-    max-width: 390px;
+    max-width: 470px;
   }
 }
 @media (max-width: 760px) {
@@ -460,7 +487,7 @@
     font-size: 14px;
   }
   .celestial-explorer {
-    max-width: 360px;
+    max-width: 400px;
     margin: 0 auto;
   }
   .celestial-hover {
@@ -510,5 +537,145 @@
   .reading-dialog-body,
   .celestial-description {
     animation: none !important;
+  }
+}
+
+/* Tarot card fan: the accessible (keyboard, touch, no-3D) way to pick a card. */
+.tarot-fan {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 18px 4px 6px;
+}
+.tarot-fan-card {
+  --tilt: calc(var(--i) * 4deg);
+  display: grid;
+  align-content: space-between;
+  justify-items: center;
+  width: 74px;
+  min-height: 104px;
+  padding: 10px 4px 9px;
+  border: 1px solid #b28c45;
+  border-radius: 8px;
+  background: linear-gradient(170deg, #0c3352, #082c4b);
+  box-shadow:
+    inset 0 0 0 3px #082c4b,
+    inset 0 0 0 4px #d4af3766,
+    0 6px 14px #12314e26;
+  color: #f1dfb9;
+  transform: translateY(calc(var(--i) * var(--i) * 2px)) rotate(var(--tilt));
+  transform-origin: 50% 120%;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s;
+  cursor: pointer;
+}
+.tarot-fan-numeral {
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  color: #e2c47f;
+}
+.tarot-fan-name {
+  font-size: 12px;
+  line-height: 1.25;
+  text-align: center;
+}
+.tarot-fan-card:hover,
+.tarot-fan-card.is-hovered,
+.tarot-fan-card:focus-visible,
+.tarot-fan-card[aria-pressed='true'] {
+  transform: translateY(-10px) rotate(var(--tilt));
+  box-shadow:
+    inset 0 0 0 3px #082c4b,
+    inset 0 0 0 4px #e2c47f,
+    0 12px 22px #12314e40;
+}
+.tarot-fan-card:focus-visible {
+  outline: 2px solid #99722c;
+  outline-offset: 3px;
+}
+/* The explanation unfolds from the fan below. */
+.celestial-description {
+  bottom: 136px;
+  transform-origin: 50% 100%;
+  animation: card-story-open 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.celestial-description-numeral {
+  margin: 0 0 2px;
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  color: #99722c;
+}
+.celestial-description-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #12314e;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@keyframes card-story-open {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+    clip-path: inset(60% 0 0 0 round 8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0 round 8px);
+  }
+}
+@media (max-width: 760px) {
+  .tarot-fan {
+    gap: 4px;
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+  .tarot-fan-card {
+    width: calc((100% - 10px) / 3);
+    max-width: 104px;
+    min-height: 74px;
+    transform: none;
+  }
+  .tarot-fan-card:hover,
+  .tarot-fan-card.is-hovered,
+  .tarot-fan-card:focus-visible,
+  .tarot-fan-card[aria-pressed='true'] {
+    transform: translateY(-4px);
+  }
+  .celestial-description {
+    bottom: auto;
+    top: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tarot-fan-card {
+    transition: none;
+  }
+  .celestial-description {
+    animation: none;
+  }
+}
+
+/* Desktop: the 3D rings and the whole card row fit in the first screen.
+   The square sizes from the viewport height (header ~92px above, card row
+   ~120px below) so nothing is cut off on shorter laptop screens. */
+@media (min-width: 761px) {
+  #home.opening-section {
+    padding-bottom: 20px;
+  }
+  .opening-section .celestial-webgl {
+    width: min(100%, max(340px, calc(100vh - 212px)));
+    width: min(100%, max(340px, calc(100svh - 212px)));
+    margin-inline: auto;
+  }
+  .opening-section .tarot-fan {
+    padding-top: 6px;
   }
 }

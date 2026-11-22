@@ -9,7 +9,12 @@ export interface ApiConfig {
   port: number;
   frontendOrigin: string;
   logLevel: 'silent' | 'fatal' | 'error' | 'warn' | 'info' | 'debug';
-  shopify: { domain?: string; token?: string; checkoutHost?: string };
+  shopify: {
+    domain?: string;
+    token?: string;
+    checkoutHost?: string;
+    webhookSecret?: string;
+  };
   database: DatabaseSettings | null;
   auth: AuthSettings | null;
 }
@@ -65,6 +70,14 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     throw new Error(
       'SHOPIFY_CHECKOUT_HOST must be an exact hostname for the configured shop',
     );
+  const webhookSecret = env.SHOPIFY_WEBHOOK_SECRET?.trim();
+  if (
+    webhookSecret &&
+    (!domain || !/^[\x21-\x7e]{32,256}$/.test(webhookSecret))
+  )
+    throw new Error(
+      'SHOPIFY_WEBHOOK_SECRET must be the shop webhook signing key (32–256 visible characters)',
+    );
   return {
     nodeEnv: nodeEnv as ApiConfig['nodeEnv'],
     host,
@@ -75,6 +88,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
       ...(domain ? { domain } : {}),
       ...(token ? { token } : {}),
       ...(checkoutHost ? { checkoutHost } : {}),
+      ...(webhookSecret ? { webhookSecret } : {}),
     },
     database: databaseSettings(env),
     auth: authSettings(env),

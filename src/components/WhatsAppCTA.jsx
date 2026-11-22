@@ -12,7 +12,7 @@ export default function WhatsAppCTA({
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-3 bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:from-[#128C7E] hover:to-[#075E54] text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-bold shadow-lg shadow-[#25D366]/30 transform transition-all hover:scale-105 active:scale-95"
+      className="inline-flex items-center gap-3 bg-linear-to-r from-[#25D366] to-[#128C7E] hover:from-[#128C7E] hover:to-[#075E54] text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-bold shadow-lg shadow-[#25D366]/30 transform transition-all hover:scale-105 active:scale-95"
     >
       <WhatsAppIcon size={22} />
       <div className="flex flex-col text-left">

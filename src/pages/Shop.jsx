@@ -10,11 +10,15 @@ import PageMeta from '../components/PageMeta';
 import CosmicBackground from '../components/CosmicBackground';
 import AnimatedTitle from '../components/AnimatedTitle';
 import { request } from '../lib/api';
+import { takePrefetchedProducts } from '../lib/prefetch';
 import { productEnquiryHref } from '../../shared/contact.js';
+import {
+  loadCart,
+  saveCart,
+  MAX_CART_LINES,
+  MAX_LINE_QUANTITY,
+} from '../lib/cartStorage.js';
 import './shop-commerce.css';
-
-const MAX_CART_LINES = 20;
-const MAX_LINE_QUANTITY = 10;
 
 function formatPrice(amount, currency) {
   const value = Number(amount);
@@ -239,6 +243,11 @@ function ShopCart({
                   </strong>
                 </p>
                 <p>Shipping and final total appear in Shopify checkout.</p>
+                <p>
+                  Read our <Link to="/policies#shipping">shipping</Link> and{' '}
+                  <Link to="/policies#returns">returns</Link> information before
+                  you pay.
+                </p>
               </div>
               <button
                 type="button"
@@ -315,8 +324,10 @@ export default function Shop() {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('featured');
   const [cart, setCart] = useState({});
+  const cartRestored = useRef(false);
   const [message, setMessage] = useState('');
   const [loadingMore, setLoadingMore] = useState(false);
+  const [slowCatalog, setSlowCatalog] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
   const [reload, setReload] = useState(0);
   const cartPanel = useRef(null);
@@ -326,15 +337,36 @@ export default function Shop() {
   useEffect(() => {
     const controller = new AbortController();
     setCatalogError('');
-    request('products', undefined, controller.signal)
+    setSlowCatalog(false);
+    // A cold API host can take a while to wake; say so instead of going quiet.
+    const slow = setTimeout(() => setSlowCatalog(true), 4000);
+    (
+      (reload === 0 && takePrefetchedProducts()) ||
+      request('products', undefined, controller.signal)
+    )
       .then((result) => {
         if (!controller.signal.aborted) setCatalog(result);
       })
       .catch((error) => {
         if (!controller.signal.aborted) setCatalogError(error.message);
-      });
-    return () => controller.abort();
+      })
+      .finally(() => clearTimeout(slow));
+    return () => {
+      clearTimeout(slow);
+      controller.abort();
+    };
   }, [reload]);
+
+  // Save runs before restore on mount, so the initial empty cart never
+  // overwrites what is stored. Restoring after mount keeps the prerendered HTML
+  // and the first client render identical.
+  useEffect(() => {
+    if (cartRestored.current) saveCart(cart);
+  }, [cart]);
+  useEffect(() => {
+    cartRestored.current = true;
+    setCart(loadCart());
+  }, []);
 
   useEffect(
     () => () => {
@@ -455,6 +487,9 @@ export default function Shop() {
       ) {
         throw new Error('Checkout could not open. Please try again.');
       }
+      // Shopify's checkout now holds these lines; clear the local copy so a
+      // completed order does not reappear here later.
+      saveCart({});
       // The API checks the exact merchant checkout host before returning the URL.
       window.location.assign(destination.href);
     } catch (error) {
@@ -579,14 +614,20 @@ export default function Shop() {
           </div>
         )}
         {!catalog && !catalogError && (
-          <div
-            className="shop-grid"
-            aria-label="Loading collection"
-            aria-busy="true"
-          >
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="product-skeleton" />
-            ))}
+          <div className="shop-loading">
+            <p role="status" className="shop-loading-label">
+              <span className="shop-loading-spark" aria-hidden="true">
+                ✧
+              </span>
+              {slowCatalog
+                ? 'Still gathering the collection. The first visit after a quiet spell can take a few seconds.'
+                : 'Gathering the collection…'}
+            </p>
+            <div className="shop-grid" aria-hidden="true">
+              {[1, 2, 3].map((item) => (
+                <div key={item} className="product-skeleton" />
+              ))}
+            </div>
           </div>
         )}
         <p role="status" className="sr-only">
@@ -631,6 +672,11 @@ export default function Shop() {
             </button>
           </div>
         )}
+        <p className="shop-claims-note">
+          Crystals and tools are sold as decorative and personal items. We do
+          not claim that any product heals, cures or guarantees a result.{' '}
+          <Link to="/policies#products">About our products</Link>
+        </p>
       </div>
     </div>
   );

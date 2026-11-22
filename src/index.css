@@ -1,31 +1,147 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-html,
-body,
-#root {
-  min-height: 100%;
+@theme {
+  --color-chakra-bg: #0a0514;
+  --color-chakra-surface: #150a21;
+  --color-chakra-ring: #2a1b42;
+  --color-chakra-cyan: #25a9ba;
+  --color-chakra-blue: #14467d;
+  --color-chakra-gold: #d4af37;
+  --color-chakra-goldLight: #f3e5ab;
+  --color-chakra-text: #f8fafc;
+  --color-chakra-muted: #94a3b8;
+
+  --font-sans: 'Inter Variable', Inter, system-ui, sans-serif;
+  --font-serif: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+
+  --animate-twinkle: twinkle 4s ease-in-out infinite;
+  --animate-glow-pulse: glowpulse 7s ease-in-out infinite;
+  --animate-align: align 6s ease-in-out infinite;
+  --animate-glow-line-pulse: glow-line-pulse 4s ease-in-out infinite;
+  --animate-star-drift: star-drift 8s ease-in-out infinite;
+  --animate-logo-float: logo-float 10s ease-in-out infinite;
+
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.15;
+    }
+    50% {
+      opacity: 0.9;
+    }
+  }
+  @keyframes glowpulse {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.94);
+    }
+    50% {
+      opacity: 0.65;
+      transform: scale(1.06);
+    }
+  }
+  @keyframes align {
+    0%,
+    100% {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+    45%,
+    55% {
+      opacity: 0.2;
+      transform: scale(1.2);
+    }
+  }
+  @keyframes glow-line-pulse {
+    0%,
+    100% {
+      opacity: 0.3;
+      stroke-width: 1.5;
+    }
+    50% {
+      opacity: 0.7;
+      stroke-width: 2.5;
+    }
+  }
+  @keyframes star-drift {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes logo-float {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    33% {
+      transform: translateY(-8px) rotate(1deg);
+    }
+    66% {
+      transform: translateY(4px) rotate(-0.5deg);
+    }
+  }
 }
 
-body {
-  margin: 0;
-  background: #0a0514;
-  color: #f8fafc;
-  font-family: 'Inter', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  -webkit-user-select: text;
-  user-select: text;
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+  /* Tailwind v3 placeholder colour (v4 defaults to 50% of the text colour). */
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-gray-400);
+  }
+  /* Tailwind v3 gave buttons a pointer cursor; v4's preflight does not. */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@utility glass-panel {
+  @apply bg-chakra-surface/60 backdrop-blur-md border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)];
+}
+
+@utility gold-gradient-text {
+  @apply bg-clip-text text-transparent bg-linear-to-r from-chakra-goldLight via-chakra-gold to-chakra-goldLight;
 }
 
 @layer utilities {
-  .glass-panel {
-    @apply bg-chakra-surface/60 backdrop-blur-md border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)];
+  html,
+  body,
+  #root {
+    min-height: 100%;
   }
-  .gold-gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-chakra-goldLight via-chakra-gold to-chakra-goldLight;
+
+  body {
+    margin: 0;
+    background: #0a0514;
+    color: #f8fafc;
+    font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-user-select: text;
+    user-select: text;
   }
 }
 
@@ -83,7 +199,7 @@ body {
 }
 .booking-page h1,
 .privacy-page h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display Variable', 'Playfair Display', serif;
   font-weight: 700;
   font-size: clamp(2.3rem, 4vw, 3.5rem);
   line-height: 1.15;
@@ -123,7 +239,8 @@ body {
 }
 .booking-panel h2 {
   font:
-    700 1.8rem 'Playfair Display',
+    700 1.8rem 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   color: #d4af37;
   margin-bottom: 12px;
@@ -223,7 +340,8 @@ body {
 }
 .privacy-page h3 {
   font:
-    700 1.3rem 'Playfair Display',
+    700 1.3rem 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   color: #d4af37;
   margin: 32px 0 12px;
@@ -287,7 +405,8 @@ textarea,
 }
 .site-brand > span {
   font:
-    700 20px 'Playfair Display',
+    700 20px 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   color: #25a9ba;
   letter-spacing: 0.02em;
@@ -298,7 +417,8 @@ textarea,
 .site-brand small {
   display: block;
   font:
-    500 8px 'Inter',
+    500 8px 'Inter Variable',
+    'Inter',
     sans-serif;
   color: #bcad83;
   letter-spacing: 0.32em;
@@ -371,7 +491,8 @@ textarea,
 }
 .chapter-label {
   font:
-    500 10px 'Inter',
+    500 10px 'Inter Variable',
+    'Inter',
     sans-serif;
   color: #c5a965;
   letter-spacing: 0.18em;
@@ -476,7 +597,7 @@ textarea,
 .chart-caption {
   position: absolute;
   bottom: 0;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.25em;
   color: #9eacbc;
 }
@@ -505,93 +626,10 @@ textarea,
   gap: 20px;
 }
 .section-overline > span {
-  font-size: 11px;
+  font-size: 14px;
   color: #748297;
 }
-.chapter-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-bottom: 1px solid #ffffff1a;
-  gap: 12px;
-}
-.chapter-tabs button {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  text-align: left;
-  padding: 18px 4px;
-  color: #94a3b8;
-  font-size: 13px;
-  border-bottom: 2px solid transparent;
-}
-.chapter-tabs button > span {
-  font:
-    16px 'Playfair Display',
-    serif;
-  color: #677588;
-}
-.chapter-tabs button svg {
-  margin-left: auto;
-  opacity: 0;
-}
-.chapter-tabs button[aria-pressed='true'] {
-  border-color: #d4af37;
-  color: #f3e5ab;
-}
-.chapter-tabs button[aria-pressed='true'] svg {
-  opacity: 1;
-}
-.chapter-tabs button[aria-pressed='true'] > span {
-  color: #d4af37;
-}
-.chapter-panel {
-  display: grid;
-  grid-template-columns: 0.65fr 1.4fr;
-  gap: 48px;
-  align-items: center;
-  padding: 44px;
-  background: linear-gradient(125deg, #10283b99, #150a2199);
-  border: 1px solid #ffffff12;
-  border-radius: 0 0 14px 14px;
-}
-.chapter-visual {
-  min-height: 220px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 22px;
-  color: #d4af37;
-  border: 1px solid #d4af3730;
-  border-radius: 50% 50% 8px 8px;
-  background: radial-gradient(circle, #14467d26, transparent);
-}
-.chapter-visual > span {
-  font:
-    12px 'Inter',
-    sans-serif;
-  letter-spacing: 0.2em;
-  color: #a99464;
-}
-.chapter-panel h2 {
-  font:
-    600 32px 'Playfair Display',
-    serif;
-  margin: 12px 0 18px;
-}
-.chapter-panel p:not(.chapter-label) {
-  font-size: 14px;
-  line-height: 1.9;
-  color: #b1bdcd;
-}
-.chapter-note {
-  font-size: 12px;
-  color: #baaa84;
-  border-left: 2px solid #d4af3780;
-  margin-top: 22px;
-  padding-left: 16px;
-  line-height: 1.85;
-}
+
 .birth-details-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -600,7 +638,8 @@ textarea,
 }
 .section-title {
   font:
-    600 clamp(30px, 3.4vw, 44px)/1.2 'Playfair Display',
+    600 clamp(30px, 3.4vw, 44px)/1.2 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   margin: 18px 0 22px;
 }
@@ -610,14 +649,14 @@ textarea,
   line-height: 1.9;
   max-width: 350px;
 }
-.birth-details-list > div {
+.birth-details-list > li {
   display: flex;
   align-items: center;
   gap: 20px;
   padding: 22px 0;
   border-bottom: 1px solid #ffffff15;
 }
-.birth-details-list > div:first-child {
+.birth-details-list > li:first-child {
   padding-top: 0;
 }
 .detail-icon {
@@ -632,7 +671,8 @@ textarea,
 }
 .birth-details-list h3 {
   font:
-    600 18px 'Playfair Display',
+    600 18px 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   margin-bottom: 6px;
 }
@@ -642,45 +682,13 @@ textarea,
 }
 .detail-index {
   font:
-    13px 'Playfair Display',
+    13px 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   color: #786b53;
   margin-left: auto;
 }
-.parchment-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 30px;
-  padding: 36px 40px;
-  background: radial-gradient(ellipse at top left, #fff4db, #e8d6ad);
-  border: 1px solid #d4af37;
-  border-radius: 12px;
-  color: #142f4e;
-  box-shadow:
-    inset 0 0 0 5px #efe1c455,
-    inset 0 0 0 6px #b98b3c45;
-}
-.note-sigil {
-  font-size: 50px;
-  color: #9a6e28;
-  line-height: 1;
-}
-.parchment-note .chapter-label {
-  color: #88682d;
-  font-weight: 600;
-}
-.parchment-note h2 {
-  font:
-    600 27px 'Playfair Display',
-    serif;
-  margin: 12px 0;
-}
-.parchment-note p:not(.chapter-label) {
-  color: #555a5b;
-  font-size: 13px;
-  line-height: 1.9;
-  max-width: 790px;
-}
+
 .science-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -739,7 +747,7 @@ textarea,
   background: #d4af3706;
   padding: 15px 20px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.8;
   color: #99a7bb;
 }
@@ -767,7 +775,7 @@ textarea,
   gap: 16px;
 }
 .product-count {
-  font-size: 10px;
+  font-size: 13px;
   color: #8490a1;
 }
 .shop-controls {
@@ -781,7 +789,7 @@ textarea,
   border-radius: 6px;
   padding: 11px 12px;
   color: #b7c2cf;
-  font-size: 11px;
+  font-size: 14px;
   min-width: 0;
   color-scheme: dark;
 }
@@ -842,7 +850,7 @@ textarea,
   position: absolute;
   top: 25px;
   left: 25px;
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.15em;
   color: #d7c99f;
   background: #0b1428aa;
@@ -854,11 +862,12 @@ textarea,
   padding: 24px;
 }
 .product-content .chapter-label {
-  font-size: 8px;
+  font-size: 12px;
 }
 .product-content h2 {
   font:
-    600 22px/1.35 'Playfair Display',
+    600 22px/1.35 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   margin: 10px 0 12px;
 }
@@ -888,14 +897,14 @@ textarea,
   align-items: center;
   gap: 8px;
   color: #25a9ba;
-  font-size: 11px;
+  font-size: 14px;
   padding: 8px 0;
 }
 .product-purchase button:disabled {
   opacity: 0.45;
 }
 .variant-caption {
-  font-size: 10px;
+  font-size: 13px;
   color: #94a3b8;
 }
 .shop-care {
@@ -919,7 +928,8 @@ textarea,
 }
 .shop-care h3 {
   font:
-    500 18px 'Playfair Display',
+    500 18px 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   margin: 10px 0;
 }
@@ -990,7 +1000,8 @@ textarea,
 }
 .tarot-bridge h2 {
   font:
-    600 25px 'Playfair Display',
+    600 25px 'Playfair Display Variable',
+    'Playfair Display',
     serif;
   margin: 7px 0;
 }
@@ -1020,22 +1031,19 @@ textarea,
     gap: 18px;
   }
   .desktop-links a {
-    font-size: 11px;
+    font-size: 14px;
   }
   .site-brand > span {
     font-size: 17px;
   }
   .header-book {
-    font-size: 11px;
+    font-size: 14px;
     gap: 8px;
   }
   .science-hero {
     gap: 20px;
   }
-  .chapter-panel {
-    gap: 30px;
-    padding: 32px;
-  }
+
   .birth-details-section,
   .science-bottom {
     gap: 45px;
@@ -1102,7 +1110,7 @@ textarea,
   }
   .tarot-bridge a {
     padding: 13px;
-    font-size: 11px;
+    font-size: 14px;
   }
 }
 @media (max-width: 640px) {
@@ -1118,7 +1126,7 @@ textarea,
     font-size: 15px;
   }
   .site-brand small {
-    font-size: 6px;
+    font-size: 12px;
     letter-spacing: 0.23em;
   }
   .site-brand > div {
@@ -1163,7 +1171,7 @@ textarea,
   }
   .chart-caption {
     bottom: 0;
-    font-size: 7px;
+    font-size: 12px;
   }
   .star-top {
     right: 10px;
@@ -1180,50 +1188,10 @@ textarea,
     display: none;
   }
   .chapter-label {
-    font-size: 9px;
+    font-size: 12px;
     letter-spacing: 0.13em;
   }
-  .chapter-tabs {
-    gap: 5px;
-  }
-  .chapter-tabs button {
-    font-size: 11px;
-    padding: 14px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 7px;
-  }
-  .chapter-tabs button svg {
-    display: none;
-  }
-  .chapter-tabs button > span {
-    font-size: 13px;
-  }
-  .chapter-panel {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 24px 20px;
-  }
-  .chapter-visual {
-    min-height: 120px;
-    border-radius: 8px;
-    flex-direction: row;
-    gap: 32px;
-  }
-  .chapter-visual svg {
-    width: 45px;
-    height: 45px;
-  }
-  .chapter-panel h2 {
-    font-size: 27px;
-  }
-  .chapter-panel p:not(.chapter-label) {
-    font-size: 13px;
-  }
-  .chapter-note {
-    font-size: 11px;
-  }
+
   .birth-details-section {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -1232,23 +1200,10 @@ textarea,
   .section-title {
     font-size: 32px;
   }
-  .birth-details-list > div {
+  .birth-details-list > li {
     padding: 19px 0;
   }
-  .parchment-note {
-    padding: 27px 23px;
-    gap: 14px;
-  }
-  .note-sigil {
-    font-size: 28px;
-  }
-  .parchment-note h2 {
-    font-size: 24px;
-    line-height: 1.3;
-  }
-  .parchment-note p:not(.chapter-label) {
-    font-size: 12px;
-  }
+
   .science-bottom {
     grid-template-columns: 1fr;
     gap: 10px;
@@ -1265,7 +1220,7 @@ textarea,
   }
   .shop-preview-note {
     padding: 14px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .shop-grid {
     grid-template-columns: 1fr;
@@ -1285,7 +1240,7 @@ textarea,
     font-size: 13px;
   }
   .product-badge {
-    font-size: 8px;
+    font-size: 12px;
   }
   .shop-toolbar {
     margin-top: 30px;

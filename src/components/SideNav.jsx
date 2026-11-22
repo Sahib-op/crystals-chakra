@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useJourney } from './JourneyContext';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   Home,
   Sparkles,
@@ -15,9 +15,9 @@ const SECTIONS = [
   ['home', 'Welcome', Home],
   ['tarot', 'Tarot Readings', Moon],
   ['services', 'Kundli Services', Sparkles],
+  ['booking', 'Book a Reading', CalendarDays],
   ['collection', 'Shop', ShoppingBag],
-  ['information', 'The Science', BookOpen],
-  ['booking', 'Contact the Studio', CalendarDays],
+  ['information', 'About Astrology', BookOpen],
   ['questions', 'Questions', HelpCircle],
 ];
 export default function SideNav() {
@@ -35,9 +35,14 @@ export default function SideNav() {
     document.addEventListener('pointerdown', outside);
     return () => document.removeEventListener('pointerdown', outside);
   }, []);
+  const lastPointer = useRef('mouse');
   function go(id) {
-    setReady(false);
-    setOpen(false);
+    // With a mouse the rail stays open after a click and closes when the
+    // pointer leaves it; touch and keyboard close it straight away.
+    if (lastPointer.current !== 'mouse') {
+      setReady(false);
+      setOpen(false);
+    }
     if (pathname === '/' && id !== 'collection')
       document
         .getElementById(id)
@@ -50,10 +55,17 @@ export default function SideNav() {
       onPointerEnter={(e) => {
         if (e.pointerType === 'mouse') setOpen(true);
       }}
+      onPointerDown={(e) => {
+        lastPointer.current = e.pointerType;
+      }}
+      onKeyDownCapture={() => {
+        lastPointer.current = 'keyboard';
+      }}
       onPointerLeave={(e) => {
+        // Keyboard focus keeps it open; a mouse click's focus does not.
         if (
           e.pointerType === 'mouse' &&
-          !root.current?.contains(document.activeElement)
+          !root.current?.querySelector(':focus-visible')
         )
           setOpen(false);
       }}
@@ -97,7 +109,7 @@ export default function SideNav() {
           id="section-icons"
           aria-label="Page sections"
           className="morph-icons"
-          inert={!(open && ready) ? '' : undefined}
+          inert={!(open && ready)}
           aria-hidden={!(open && ready)}
         >
           {SECTIONS.map(([id, label, Icon], i) => (

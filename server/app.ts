@@ -13,10 +13,13 @@ import { readingRoutes } from './routes/readings.ts';
 import { commerceRoutes, type CommercePort } from './routes/commerce.ts';
 import { createCommerce } from './commerce.js';
 import { createDatabase, type Database } from './database/pool.ts';
+import { shopifyWebhookRoutes, type WebhookStore } from './routes/webhooks.ts';
 
 interface AppOptions {
   config?: ApiConfig;
   commerce?: CommercePort;
+  /** Test seam: replaces the database-backed webhook store. */
+  webhookStore?: WebhookStore;
   logging?: boolean;
   logStream?: Writable;
 }
@@ -214,6 +217,59 @@ export async function createApp(options: AppOptions = {}) {
           }),
         config.shopify,
       ),
+    );
+    await app.register(async (instance) =>
+      shopifyWebhookRoutes(
+        instance,
+        options.webhookStore ?? database,
+        config.shopify,
+      ),
+    );
+    app.get(
+      '/api/ready',
+      {
+        schema: {
+          summary: 'Readiness: the database answers through the runtime role',
+          response: {
+            200: {
+              type: 'object',
+              additionalProperties: false,
+              required: ['status', 'database'],
+              properties: {
+                status: { type: 'string', enum: ['ready'] },
+                database: { type: 'string', enum: ['ok', 'not_configured'] },
+              },
+            },
+            503: {
+              type: 'object',
+              additionalProperties: false,
+              required: ['error', 'code', 'requestId'],
+              properties: {
+                error: { type: 'string' },
+                code: { type: 'string' },
+                requestId: { type: 'string' },
+              },
+            },
+          },
+        },
+      },
+      async (request, reply) => {
+        if (!database) return { status: 'ready', database: 'not_configured' };
+        try {
+          await database.ping();
+          return { status: 'ready', database: 'ok' };
+        } catch {
+          request.log.warn(
+            { failureCode: 'DATABASE_UNAVAILABLE' },
+            'Not ready',
+          );
+          return reply.code(503).send({
+            error: 'The service is starting or degraded.',
+            code: 'NOT_READY',
+            requestId: request.id,
+          });
+        }
+      },
     );
     app.get(
       '/api/studio-config',

@@ -33,6 +33,22 @@ To stop the project-local database deliberately:
 ./scripts/stop-local-postgres.ps1
 ```
 
+## Linux and macOS
+
+`scripts/start-local-postgres.sh` and `scripts/stop-local-postgres.sh` create and manage the same isolated cluster: `work/database/cluster`, the `chakra_test_admin` controller with SCRAM authentication, loopback port 55432 and ignored `work/database/.env`. They use `--bin-dir`/`PG_BIN` when given, otherwise `/opt/pg17/bin` if present, otherwise the `pg_ctl` on `PATH`; `--port`/`PG_PORT` changes the port. The start script warns if the server is not PostgreSQL 17 and refuses to replace an existing `.env` whose cluster is missing.
+
+PostgreSQL will not run as root. When a script is started as root (for example in a container) the server runs as the `postgres` system user, or the user named in `PG_RUN_AS`; that user must be able to reach the project folder.
+
+```sh
+scripts/start-local-postgres.sh
+npm run db:local:setup
+npm run dev:api
+# In another terminal:
+npm run dev -- --host localhost --port 5175 --strictPort
+# Later:
+scripts/stop-local-postgres.sh
+```
+
 ## Tests and a fresh checkout
 
 ```sh

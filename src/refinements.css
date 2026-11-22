@@ -14,7 +14,6 @@
   --scroll-header-height: 60px;
 }
 .journey-section,
-#understand,
 #privacy {
   scroll-margin-top: calc(
     var(--scroll-header-height) + env(safe-area-inset-top, 0px) + 16px
@@ -22,6 +21,9 @@
 }
 .scroll-header {
   --header-morph: 0;
+  /* Text colours switch cleanly halfway through the morph (with a short
+     crossfade) instead of passing through low-contrast in-between shades. */
+  --header-ink: 0;
   --header-open-left: 76px;
   --header-open-right: 40px;
   --header-pill-edge: 20px;
@@ -71,12 +73,15 @@
   filter: none !important;
 }
 .scroll-header-brand > span {
+  /* The self-hosted family; the old name fell back to Georgia mid-morph. */
   font:
-    600 20px/1.1 'Playfair Display',
+    600 20px/1.1 'Playfair Display Variable',
+    'Playfair Display',
     Georgia,
     serif;
   white-space: nowrap;
-  color: color-mix(in srgb, #123852, #f1dfb9 calc(100% * var(--header-morph)));
+  color: color-mix(in srgb, #123852, #f1dfb9 calc(100% * var(--header-ink)));
+  transition: color 0.2s;
 }
 .scroll-header-brand b {
   font-weight: inherit;
@@ -104,12 +109,12 @@
     border-color 0.2s;
 }
 .header-whatsapp {
-  color: color-mix(in srgb, #1a5b48, #c0e0c8 calc(100% * var(--header-morph)));
+  color: color-mix(in srgb, #1a5b48, #c0e0c8 calc(100% * var(--header-ink)));
   border: 1px solid rgb(86 141 112 / 0.45);
   background: color-mix(
     in srgb,
     #ffffff30,
-    #a9d7b408 calc(100% * var(--header-morph))
+    #a9d7b408 calc(100% * var(--header-ink))
   );
 }
 .header-whatsapp:hover {
@@ -127,15 +132,15 @@
 .header-reading-short {
   display: none;
 }
-.scroll-header-progress {
-  position: absolute;
-  bottom: 0;
-  left: 30px;
-  right: 30px;
-  height: 1px;
-  background: #e8c77c;
-  transform-origin: left;
-  opacity: calc(0.7 * var(--header-morph));
+@supports (width: round(nearest, 0.4px, 1px)) {
+  .scroll-header {
+    --header-ink: round(nearest, var(--header-morph), 1);
+  }
+}
+@supports not (width: round(nearest, 0.4px, 1px)) {
+  .scroll-header {
+    --header-ink: var(--header-morph);
+  }
 }
 .scroll-header :focus-visible {
   outline: 2px solid #b18b42;
@@ -144,7 +149,7 @@
 
 /* Both opening actions share the same edges and centre line. */
 #home.opening-section {
-  padding-top: 106px;
+  padding-top: 92px;
 }
 .opening-section .journey-actions {
   width: min(100%, 330px);
@@ -278,7 +283,7 @@
   margin-top: 6px;
 }
 .services-section .service-price > span {
-  font-size: 11px;
+  font-size: 14px;
 }
 .collection-invitation h2 {
   margin-top: 0;
@@ -305,29 +310,7 @@
   width: min(100%, 265px);
   max-width: 100%;
 }
-.embedded-science .chapter-tabs button {
-  padding: 16px 6px;
-  font-size: 14px;
-}
-.embedded-science .chapter-panel {
-  grid-template-columns: 120px minmax(0, 1fr);
-  padding: 24px;
-  gap: 28px;
-}
-.embedded-science .chapter-visual {
-  min-height: 110px;
-  border: 0;
-  background: none;
-}
-.embedded-science .chapter-panel h3 {
-  font-size: 27px;
-  margin: 0 0 14px;
-  line-height: 1.25;
-}
-.embedded-science .chapter-panel p {
-  font-size: 15px;
-  line-height: 1.8;
-}
+
 .embedded-science .birth-details-section {
   padding: 28px 0;
   gap: 5%;
@@ -337,28 +320,18 @@
   font-size: 28px;
   margin: 0;
 }
-.embedded-science .birth-details-list > div {
+.embedded-science .birth-details-list > li {
   padding: 12px 0;
   gap: 16px;
 }
-.embedded-science .birth-details-list h4 {
+.embedded-science .birth-details-list .detail-name {
   font:
-    500 17px 'Playfair Display',
+    500 17px 'Playfair Display Variable',
+    'Playfair Display',
     Georgia,
     serif;
 }
-.embedded-science .parchment-note {
-  padding: 24px 28px;
-}
-.embedded-science .parchment-note h3 {
-  font-size: 25px;
-  margin: 0 0 14px;
-  line-height: 1.25;
-}
-.embedded-science .parchment-note p {
-  font-size: 15px;
-  line-height: 1.8;
-}
+
 .booking-page > div > h2 {
   margin-top: 0;
 }
@@ -390,28 +363,26 @@
   user-select: none;
 }
 .reading-hindi-title {
-  position: absolute;
-  top: -26px;
-  left: -8px;
-  z-index: -1;
-  font-size: clamp(48px, 6vw, 82px);
-  line-height: 1.6;
+  /* Its own line above the English heading: overlapping strokes produced
+     bright specks where Devanagari crossed the cream letters. */
+  display: block;
+  margin-bottom: 4px;
+  font-size: clamp(22px, 2.3vw, 30px);
+  line-height: 1.5;
   color: #e6c88b;
-  opacity: 0.13;
+  opacity: 0.78;
   white-space: nowrap;
 }
 .package-hindi-title {
-  position: absolute;
-  top: 7px;
-  right: 12px;
-  left: 12px;
-  font-size: clamp(25px, 2.7vw, 35px);
-  line-height: 1.7;
-  text-align: right;
+  display: block;
+  margin-bottom: 2px;
+  font-size: clamp(18px, 1.6vw, 21px);
+  line-height: 1.5;
   color: #f3d89d;
-  opacity: 0.14;
+  opacity: 0.72;
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 .royal-services .royal-service > h3 {
   position: relative;
@@ -595,59 +566,109 @@
 }
 
 /* Keep the native pointer; a fine gold orbit supplies the interaction feedback. */
-.royal-cursor {
-  display: none;
+/* Custom cursor (components/cursor/tarotCursor.js): desktop, fine pointer
+   only. The system cursor is hidden only while the custom one is visible;
+   text fields keep the native text cursor. */
+html.custom-cursor,
+html.custom-cursor *,
+html.custom-cursor ::backdrop {
+  cursor: none !important;
+}
+html.custom-cursor :is(input, textarea, [contenteditable='true']) {
+  cursor: text !important;
+}
+.tarot-cursor {
   position: fixed;
-  left: 0;
-  top: 0;
+  inset: 0 auto auto 0;
+  z-index: 1200;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  /* Undo the browser's popover box (it lives in the top layer). */
   width: 0;
   height: 0;
-  z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.18s;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
 }
-.royal-cursor span {
+.tarot-cursor.is-visible {
+  opacity: 1;
+}
+.tarot-cursor-ring,
+.tarot-cursor-star {
   position: absolute;
-  left: -13px;
-  top: -13px;
-  width: 26px;
-  height: 26px;
-  border: 1px solid #b7954ca6;
+  left: 0;
+  top: 0;
+  will-change: transform;
+}
+.tarot-cursor-ring::before {
+  content: '';
+  position: absolute;
+  left: -17px;
+  top: -17px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #c9a24f;
   border-radius: 50%;
+  box-shadow:
+    0 0 0 1px #fff6,
+    0 0 12px #e2c47f33;
   transition:
-    transform 0.22s,
-    background 0.22s,
-    border-color 0.22s;
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.3s,
+    border-color 0.3s;
 }
-.royal-cursor i {
+/* Four compass ticks around the ring. */
+.tarot-cursor-ring i {
   position: absolute;
-  left: -2px;
-  top: -2px;
-  width: 4px;
-  height: 4px;
-  background: #b99548;
-  transform: rotate(45deg);
-  transition: transform 0.25s;
+  left: -0.5px;
+  top: -23px;
+  width: 1px;
+  height: 6px;
+  background: #c9a24f;
+  transform-origin: 0.5px 23px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.royal-cursor[data-hover='true'] span {
-  transform: scale(1.6);
-  background: #d9b86a0a;
-  border-color: #d0ae66;
+.tarot-cursor-ring i:nth-child(2) {
+  transform: rotate(90deg);
 }
-.royal-cursor[data-hover='true'] i {
-  transform: rotate(135deg);
+.tarot-cursor-ring i:nth-child(3) {
+  transform: rotate(180deg);
 }
-.royal-cursor[data-pressed='true'] span {
-  transform: scale(0.75);
+.tarot-cursor-ring i:nth-child(4) {
+  transform: rotate(270deg);
 }
-.royal-cursor[data-pressed='true'] i {
-  transform: rotate(225deg);
+.tarot-cursor-star {
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  fill: #b8862f;
+  stroke: #fff8e8;
+  stroke-width: 1.4;
+  paint-order: stroke;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .royal-cursor {
-    display: block;
-  }
+/* Over links, buttons and cards: the ring opens and turns. */
+.tarot-cursor[data-state='hover'] .tarot-cursor-ring::before {
+  transform: scale(1.5);
+  border-color: #e2c47f;
+  background: #e2c47f1a;
+}
+.tarot-cursor[data-state='hover'] .tarot-cursor-ring i:nth-child(1) {
+  transform: rotate(45deg) translateY(-6px);
+}
+.tarot-cursor[data-state='hover'] .tarot-cursor-ring i:nth-child(2) {
+  transform: rotate(135deg) translateY(-6px);
+}
+.tarot-cursor[data-state='hover'] .tarot-cursor-ring i:nth-child(3) {
+  transform: rotate(225deg) translateY(-6px);
+}
+.tarot-cursor[data-state='hover'] .tarot-cursor-ring i:nth-child(4) {
+  transform: rotate(315deg) translateY(-6px);
+}
+.tarot-cursor[data-pressed='true'] .tarot-cursor-ring::before {
+  transform: scale(0.72);
 }
 
 @media (max-width: 900px) {
@@ -769,35 +790,12 @@
     max-width: 100%;
     justify-self: center;
   }
-  .embedded-science .chapter-tabs {
-    gap: 6px;
-  }
-  .embedded-science .chapter-tabs button {
-    font-size: 12px;
-    padding: 14px 3px;
-    line-height: 1.5;
-  }
-  .embedded-science .chapter-panel {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 22px;
-    gap: 0;
-  }
-  .embedded-science .chapter-visual {
-    display: none;
-  }
-  .embedded-science .chapter-panel h3 {
-    font-size: 25px;
-  }
+
   .embedded-science .birth-details-section {
     gap: 18px;
     padding: 26px 0;
   }
-  .embedded-science .parchment-note {
-    padding: 22px;
-  }
-  .embedded-science .parchment-note h3 {
-    font-size: 24px;
-  }
+
   .royal-shop .cosmic-page {
     padding-top: 88px;
   }
@@ -811,10 +809,795 @@
   .theme-parchment > .section-atmosphere {
     transform: none;
   }
-  .royal-cursor {
-    display: none;
-  }
   .scroll-header * {
     transition: none;
   }
+}
+
+/* Booking path: explicit steps so nobody assumes a click books or pays. */
+.booking-steps-title {
+  margin: 30px 0 12px;
+  font-family: 'Inter Variable', Inter, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #092d48;
+}
+.booking-steps {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: booking-step;
+  max-width: 460px;
+}
+.booking-steps li {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding-left: 46px;
+  counter-increment: booking-step;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #25485e;
+}
+.booking-steps li::before {
+  content: counter(booking-step);
+  position: absolute;
+  left: 0;
+  top: -1px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ba8c37;
+  border-radius: 50%;
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  color: #8a6420;
+  background: #fff8e8;
+}
+.booking-steps strong {
+  color: #092d48;
+  font-weight: 600;
+}
+.booking-hours {
+  margin-top: 18px;
+  font-size: 15px;
+  color: #25485e;
+}
+
+.royal-footer {
+  font-size: 14px;
+}
+.royal-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+}
+
+/* AnimatedTitle: each letter rises into place (same timing as before). */
+.title-char {
+  animation: title-rise 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes title-rise {
+  from {
+    transform: translateY(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .title-char {
+    animation: none;
+  }
+}
+
+/* Tarot portrait: slides in from the right once, the first time it is seen
+   (PortraitReveal in Home.jsx). Slow and long by request. */
+.tarot-portrait {
+  transition:
+    opacity 1.8s ease-out,
+    transform 2.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+html.js .tarot-portrait:not(.is-revealed) {
+  opacity: 0;
+  transform: translate3d(240px, 0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tarot-portrait {
+    transition: none;
+  }
+  html.js .tarot-portrait:not(.is-revealed) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Tarot section background: drifting aurora and twinkling star dust.
+   Transform/opacity only; runs only while on screen (.is-inview). */
+.tarot-section > .section-atmosphere::before,
+.tarot-section > .section-atmosphere::after {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  animation-play-state: paused;
+}
+.tarot-section > .section-atmosphere::before {
+  background:
+    radial-gradient(ellipse 38% 30% at 22% 30%, #e9c98a26, transparent 70%),
+    radial-gradient(ellipse 34% 28% at 78% 62%, #8c3a4f2e, transparent 72%);
+  animation: tarot-aurora 26s ease-in-out infinite alternate;
+}
+.tarot-section > .section-atmosphere::after {
+  background-image:
+    radial-gradient(circle, #fff2cc99 0.9px, transparent 1.4px),
+    radial-gradient(circle, #f3e5ab66 0.7px, transparent 1.1px);
+  background-size:
+    181px 173px,
+    97px 113px;
+  background-position:
+    0 0,
+    40px 60px;
+  animation:
+    tarot-dust-drift 60s linear infinite,
+    tarot-dust-twinkle 5s ease-in-out infinite alternate;
+}
+.tarot-section.is-inview > .section-atmosphere::before,
+.tarot-section.is-inview > .section-atmosphere::after {
+  animation-play-state: running;
+}
+@keyframes tarot-aurora {
+  from {
+    transform: translate3d(-4%, -2%, 0) scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: translate3d(6%, 4%, 0) scale(1.12);
+    opacity: 1;
+  }
+}
+@keyframes tarot-dust-drift {
+  to {
+    transform: translate3d(-181px, -173px, 0);
+  }
+}
+@keyframes tarot-dust-twinkle {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tarot-section > .section-atmosphere::before,
+  .tarot-section > .section-atmosphere::after {
+    animation: none;
+  }
+}
+
+/* Readings: count-aware cards with centred incomplete rows, so adding or
+   removing readings never leaves one pinned to a side. --count is set from
+   the number of readings. */
+.services-section .reading-grid {
+  --gap: 20px;
+  --cols: min(var(--count, 3), 3);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: var(--gap);
+}
+.services-section .reading-grid > .royal-service {
+  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+/* Price and action align at the bottom of every card in a row. */
+.services-section .reading-grid .service-price {
+  margin-top: auto;
+}
+@media (max-width: 1050px) {
+  .services-section .reading-grid {
+    --cols: min(var(--count, 3), 2);
+  }
+}
+@media (max-width: 680px) {
+  .services-section .reading-grid {
+    --cols: 1;
+    --gap: 16px;
+  }
+}
+
+/* The permanent booking panel: the former Book section as a cream sheet
+   directly under the reading cards, as wide as the card grid. */
+.booking-sheet {
+  --ink: #12314e;
+  --subtle: #5d655f;
+  --accent: #996b23;
+  --rule: #b88b4140;
+  margin-top: 40px;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid #d4af3766;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 90% 0%, #f9e0a455, transparent 60%), #f8efd9;
+  color: var(--ink);
+  box-shadow:
+    0 0 0 6px #082c4b,
+    0 0 0 7px #d4af3740,
+    0 18px 40px #0005;
+  scroll-margin-top: calc(var(--scroll-header-height) + 28px);
+}
+.booking-sheet .booking-page {
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+}
+.tarot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 22px;
+}
+.tarot-direct-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: #f1dfb9;
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ---------- About Astrology & Tarot: skimmable reference ---------- */
+.topic-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 8px auto 36px;
+}
+.topic-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #b88b4166;
+  border-radius: 999px;
+  background: #fffaf0b3;
+  color: #12314e;
+  font-size: 14px;
+  font-weight: 500;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.topic-nav a:hover,
+.topic-nav a:focus-visible {
+  border-color: #996b23;
+  background: #fff;
+}
+.topic-block {
+  margin: 56px 0 0;
+  scroll-margin-top: calc(var(--scroll-header-height) + 28px);
+}
+.topic-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-bottom: 10px;
+}
+.topic-heading h3 {
+  margin: 0;
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 500;
+  color: #12314e;
+}
+.topic-heading-link,
+.reading-learn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #12314e;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.topic-intro {
+  max-width: 640px;
+  margin: 0 0 22px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: #3f4b52;
+}
+.card-meaning-grid {
+  display: grid;
+  /* Three across (six cards: two even rows), two on tablets, one on phones. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.card-meaning-grid li {
+  position: relative;
+  padding: 20px 20px 22px;
+  border: 1px solid #b88b4155;
+  border-radius: 12px;
+  background: #fffaf0cc;
+  scroll-margin-top: calc(var(--scroll-header-height) + 28px);
+}
+.card-meaning-grid li:target {
+  border-color: #996b23;
+  box-shadow: 0 0 0 3px #e2c47f66;
+}
+.card-meaning-numeral {
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  color: #996b23;
+}
+.card-meaning-grid h4 {
+  margin: 4px 0 6px;
+  font-family: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #12314e;
+}
+.card-meaning-grid p,
+.key-term-list dd {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #3f4b52;
+}
+.key-term-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 40px;
+  margin: 16px 0 0;
+}
+.key-term-list > div {
+  padding: 16px 0;
+  border-top: 1px solid #b88b4140;
+  scroll-margin-top: calc(var(--scroll-header-height) + 28px);
+}
+.key-term-list dt {
+  margin-bottom: 4px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #12314e;
+}
+.topic-readings {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+.topic-readings > span:first-child {
+  color: #6b6f6a;
+}
+.topic-readings a {
+  display: inline-block;
+  padding: 6px 0;
+  color: #12314e;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.short-questions-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 32px 48px;
+  align-items: start;
+}
+.short-questions-contact > p {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #3f4b52;
+}
+/* Learn links from the readings back into the reference material. */
+.reading-learn-link {
+  margin-top: 6px;
+  color: #f1dfb9;
+}
+.reading-learn-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 22px;
+  margin-top: 26px;
+  font-size: 15px;
+  color: #d9e2ef;
+}
+.reading-learn-row a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #f1dfb9;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@media (max-width: 980px) {
+  .card-meaning-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .card-meaning-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .key-term-list,
+  .short-questions-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .topic-nav {
+    justify-content: flex-start;
+  }
+}
+.booking-guide-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #12314e;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ---------- Page loading: hold the layout, give loading a place ---------- */
+/* Main always fills the viewport, so a short loading state can never pull the
+   footer up into the middle of the screen. */
+#main {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+.route-loading {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 120px 24px 80px;
+  text-align: center;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+.route-loading p {
+  margin: 0;
+}
+.route-loading-ivory {
+  background: #f8efd9;
+  color: #12314e;
+}
+.route-loading-parchment {
+  background: #f7eed7;
+  color: #17384e;
+}
+.route-loading-midnight {
+  background: #071e35;
+  color: #f0d49c;
+}
+.route-loading-note {
+  max-width: 34ch;
+  font-size: 14px;
+  opacity: 0.8;
+}
+.route-loading-mark {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+.route-loading-mark span {
+  position: absolute;
+  inset: 0;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.35;
+}
+.route-loading-mark span:nth-child(2) {
+  inset: 12px;
+  border-color: #d4af37;
+  border-top-color: transparent;
+  opacity: 0.9;
+  animation: route-loading-turn 1.6s linear infinite;
+}
+.route-loading-mark i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #d4af37;
+  box-shadow: 0 0 12px #d4af37aa;
+}
+@keyframes route-loading-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.shop-loading-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  margin: 0 0 14px;
+  color: #d8c79e;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.shop-loading-spark {
+  color: #d4af37;
+  animation: route-loading-glow 1.8s ease-in-out infinite;
+}
+@keyframes route-loading-glow {
+  50% {
+    opacity: 0.35;
+  }
+}
+/* Studio checks sign-in before showing anything; keep that space reserved. */
+.studio-page > .studio-loading {
+  display: grid;
+  place-content: center;
+  min-height: 60vh;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-loading-mark span:nth-child(2),
+  .shop-loading-spark {
+    animation: none;
+  }
+}
+
+/* ---------- Touch: every tap target at least 44px ---------- */
+@media (pointer: coarse) {
+  /* Invisible hit-area extensions: the controls look exactly the same. */
+  .scroll-header-brand,
+  .header-whatsapp,
+  .header-reading {
+    position: relative;
+  }
+  .scroll-header-brand::after,
+  .header-whatsapp::after,
+  .header-reading::after {
+    content: '';
+    position: absolute;
+    inset: -6px -2px;
+  }
+  /* The handle sits at the screen edge, so it extends inward. */
+  .morph-trigger::after {
+    content: '';
+    position: absolute;
+    inset: 0 -20px 0 -10px;
+  }
+  /* Underlined "back" links keep their underline close to the text. */
+  .policies-back,
+  .shop-return > a:first-child {
+    position: relative;
+  }
+  .policies-back::after,
+  .shop-return > a:first-child::after {
+    content: '';
+    position: absolute;
+    inset: -14px -4px;
+  }
+  /* Stacked links and disclosures get a full-height row. */
+  .contact-phone-row > a,
+  .topic-readings a,
+  .policies-toc a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .short-questions-contact .contact-link,
+  .privacy-disclosure > summary {
+    min-height: 44px;
+  }
+  .short-questions-contact .contact-link {
+    margin: 6px 0;
+  }
+}
+
+/* ---------- On-screen keyboard (see src/lib/keyboardViewport.js) ---------- */
+input,
+textarea,
+select {
+  scroll-margin-top: 96px;
+  scroll-margin-bottom: 24px;
+}
+/* The reading dialog moves into the visible area above the keyboard and
+   scrolls inside it, so the date field and the submit button stay reachable. */
+html.keyboard-open .cosmic-reading-dialog {
+  top: calc(var(--vv-top, 0px) + 12px);
+  bottom: auto;
+  margin-top: 0;
+  max-height: calc(var(--vv-height, 100dvh) - 24px);
+}
+/* While typing on a phone, the fixed side handle steps aside so it never sits
+   over a field; it returns when the keyboard closes. */
+html.keyboard-open .morph-sidebar {
+  visibility: hidden;
+}
+
+/* ---------- About Astrology: compact hero, note over the ring ---------- */
+.embedded-science .science-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 0;
+  gap: 32px;
+  margin-bottom: 10px;
+}
+.science-hero-art {
+  display: grid;
+  place-items: center;
+  min-height: 380px;
+}
+.science-hero-art > * {
+  grid-area: 1 / 1;
+}
+.embedded-science .science-hero-art .chart-art {
+  width: 380px;
+  height: 380px;
+}
+.embedded-science .science-hero-art .chart-art > div:not(.chart-halo) {
+  width: 360px;
+}
+/* Translucent so the ring stays visible behind it; smaller type than the
+   section title so the hierarchy holds. */
+.proof-note {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 400px);
+  padding: 20px 24px;
+  border: 1px solid #b68a3566;
+  border-radius: 14px;
+  background: rgb(255 250 238 / 0.6);
+  backdrop-filter: blur(3px);
+  box-shadow: 0 12px 30px #12314e14;
+}
+.proof-note h3 {
+  margin: 0 0 8px;
+  font:
+    500 21px/1.25 'Playfair Display Variable',
+    'Playfair Display',
+    Georgia,
+    serif;
+  color: #12314e;
+}
+.proof-note p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #3f4b52;
+}
+/* Slides in from the right once, like the tarot portrait; its text follows
+   a beat behind (RevealOnce adds .is-revealed). */
+.proof-note,
+.proof-note > * {
+  transition:
+    opacity 1.4s ease-out,
+    transform 2.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.proof-note > h3 {
+  transition-delay: 0.15s;
+}
+.proof-note > p {
+  transition-delay: 0.3s;
+}
+html.js .proof-note:not(.is-revealed) {
+  opacity: 0;
+  transform: translate3d(180px, 0, 0);
+}
+html.js .proof-note:not(.is-revealed) > * {
+  opacity: 0;
+  transform: translate3d(60px, 0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .proof-note,
+  .proof-note > * {
+    transition: none;
+  }
+  html.js .proof-note:not(.is-revealed),
+  html.js .proof-note:not(.is-revealed) > * {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* Less air between the blocks. */
+.embedded-science .topic-nav {
+  margin: 0 auto 4px;
+}
+.embedded-science .topic-block {
+  margin-top: 40px;
+}
+.embedded-science .key-term-list > div {
+  padding: 12px 0;
+}
+.birth-details-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.embedded-science .birth-details-section {
+  padding: 36px 0 0;
+}
+.birth-details-arrow {
+  display: inline-block;
+  vertical-align: -3px;
+  color: #996b23;
+}
+.detail-name [lang='hi'] {
+  font-family: 'Studio Devanagari', 'Nirmala UI', serif;
+  font-weight: 500;
+}
+.detail-divider {
+  margin: 0 12px;
+  color: #b88b41;
+  font-weight: 400;
+}
+@media (max-width: 760px) {
+  .embedded-science .science-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .science-hero-art {
+    min-height: 300px;
+  }
+  .embedded-science .science-hero-art .chart-art {
+    width: 300px;
+    height: 300px;
+  }
+  .embedded-science .science-hero-art .chart-art > div:not(.chart-halo) {
+    width: 290px;
+  }
+  .proof-note {
+    padding: 18px 20px;
+  }
+  html.js .proof-note:not(.is-revealed) {
+    transform: translate3d(90px, 0, 0);
+  }
+}
+
+/* ---------- Default colour scheme: royal blue, indigo and emerald ----------
+   Royal blue carries the brand surfaces (header, readings, booking); indigo
+   opens the readings behind tarot; emerald holds the crystal collection.
+   Cream and gold stay as the light surfaces and accents; the logo is
+   untouched. The design lab's "Royal blue" palette restores the previous
+   all-blue look. */
+.readings-flow {
+  background:
+    radial-gradient(ellipse at 10% 6%, #4a4fa04d, transparent 58%),
+    radial-gradient(ellipse at 92% 30%, #2c2f7a40, transparent 55%),
+    linear-gradient(178deg, #181b45 0%, #1c2253 28%, #0d2f57 58%, #082c4b 100%);
+}
+.collection-invitation {
+  background: #0a2e26;
+}
+.collection-invitation > .section-atmosphere {
+  background-image:
+    radial-gradient(circle, #f7d58b55 0.7px, transparent 1px),
+    radial-gradient(ellipse at 20% 20%, #1f6b5640, transparent 60%),
+    linear-gradient(125deg, #0f3d32, #062019);
+  background-size:
+    137px 151px,
+    100% 100%,
+    100% 100%;
 }
