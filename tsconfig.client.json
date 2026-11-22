@@ -9,7 +9,7 @@
   "include": [
     "src/features/studio/**/*.ts",
     "src/features/studio/**/*.tsx",
-    "src/lib/catalogue.ts"
+    "src/lib/**/*.ts"
   ],
   "exclude": []
 }

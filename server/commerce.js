@@ -3,10 +3,10 @@ import {
   CheckoutRequestSchema,
   ProductCatalogueSchema,
   ProductQuerySchema,
-  SHOP_CART_MAX_LINES,
   SHOP_PAGE_SIZE,
   SHOP_VARIANTS_PER_PRODUCT,
 } from '../shared/contracts.ts';
+import { SHOP_CART_MAX_LINES } from '../shared/cart.ts';
 import { HttpError } from './http.ts';
 
 const PREVIEW = [

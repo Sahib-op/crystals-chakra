@@ -1,5 +1,9 @@
 // Tarot cards that orbit in the welcome scene. Each explanation is a short,
 // reflective starting point; About Astrology & Tarot has fuller meanings.
+export function tarotArtwork(id) {
+  return `/images/tarot/${id}.jpg`;
+}
+
 export const SYMBOLS = [
   {
     id: 'sun',

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, X } from 'lucide-react';
-import { SYMBOLS } from './celestial/symbols';
+import { SYMBOLS, tarotArtwork } from './celestial/symbols';
 import { canAutoLoad3D } from './celestial/capability.js';
 
 export default function CelestialRings() {
@@ -227,6 +227,13 @@ export default function CelestialRings() {
           aria-label={selected.name}
           aria-live="polite"
         >
+          <img
+            className="celestial-card-art"
+            src={tarotArtwork(selected.id)}
+            alt={`${selected.name} illustrated tarot card`}
+            width="96"
+            height="140"
+          />
           <div>
             <p className="celestial-description-numeral" aria-hidden="true">
               {selected.numeral}

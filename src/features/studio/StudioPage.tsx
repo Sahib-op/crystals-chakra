@@ -12,6 +12,7 @@ import type { StudioConfiguration } from '../../../shared/studio-contracts.ts';
 import { studioAuth } from './auth.ts';
 import { PasswordSignIn, Authenticator } from './SignIn.tsx';
 import ReadingWorkspace from './ReadingWorkspace.tsx';
+import OrdersWorkspace from './OrdersWorkspace.tsx';
 import { useJourney } from '../../components/JourneyContext.jsx';
 import './studio.css';
 
@@ -229,13 +230,64 @@ function OwnerArea({
       )}
       {gate === 'mfa' && <Authenticator client={client} />}
       {gate === 'ready' && session && (
-        <ReadingWorkspace
-          token={session.access_token}
-          userId={session.user.id}
+        <StudioWorkspace
+          key={session.user.id}
+          session={session}
           onAccessError={accessError}
           onPublishedChange={retryServices}
         />
       )}
+    </>
+  );
+}
+
+function StudioWorkspace({
+  session,
+  onAccessError,
+  onPublishedChange,
+}: {
+  session: Session;
+  onAccessError: (error: unknown) => void;
+  onPublishedChange: () => void;
+}) {
+  const [section, setSection] = useState<'readings' | 'orders'>('readings');
+  return (
+    <>
+      <nav className="studio-section-switch" aria-label="Studio sections">
+        <button
+          type="button"
+          aria-pressed={section === 'readings'}
+          aria-controls="studio-readings"
+          onClick={() => setSection('readings')}
+        >
+          Readings
+        </button>
+        <button
+          type="button"
+          aria-pressed={section === 'orders'}
+          aria-controls="studio-orders"
+          onClick={() => setSection('orders')}
+        >
+          Orders
+        </button>
+      </nav>
+      <div id="studio-readings" hidden={section !== 'readings'}>
+        <ReadingWorkspace
+          token={session.access_token}
+          userId={session.user.id}
+          onAccessError={onAccessError}
+          onPublishedChange={onPublishedChange}
+        />
+      </div>
+      <div id="studio-orders" hidden={section !== 'orders'}>
+        {section === 'orders' && (
+          <OrdersWorkspace
+            token={session.access_token}
+            userId={session.user.id}
+            onAccessError={onAccessError}
+          />
+        )}
+      </div>
     </>
   );
 }

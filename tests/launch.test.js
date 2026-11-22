@@ -5,7 +5,7 @@ import {
   saveCart,
   sanitizeCart,
   MAX_CART_LINES,
-} from '../src/lib/cartStorage.js';
+} from '../src/lib/cartStorage.ts';
 import { BUSINESS, missingBusinessFacts, fact } from '../shared/business.js';
 import { canAutoLoad3D } from '../src/components/celestial/capability.js';
 
@@ -25,12 +25,20 @@ test('cart storage keeps only bounded variant ids and quantities', () => {
   assert.deepEqual(loadCart(storage, 2000), {
     'gid://shopify/ProductVariant/1': 2,
   });
+  const variant = (id) => 'gid://shopify/ProductVariant/' + id;
   assert.deepEqual(
-    sanitizeCart({ a: 0, b: 11, c: 1.5, d: '2', ['x'.repeat(201)]: 1, ok: 3 }),
-    { ok: 3 },
+    sanitizeCart({
+      [variant(1)]: 0,
+      [variant(2)]: 11,
+      [variant(3)]: 1.5,
+      [variant(4)]: '2',
+      invalid: 1,
+      [variant(5)]: 3,
+    }),
+    { [variant(5)]: 3 },
   );
   const many = Object.fromEntries(
-    Array.from({ length: 30 }, (_, i) => ['v' + i, 1]),
+    Array.from({ length: 30 }, (_, i) => [variant(i), 1]),
   );
   assert.equal(Object.keys(sanitizeCart(many)).length, MAX_CART_LINES);
   for (const value of [null, [], 'x', 5])
@@ -39,12 +47,18 @@ test('cart storage keeps only bounded variant ids and quantities', () => {
 
 test('cart storage expires, tolerates corruption and empty carts clear the key', () => {
   const storage = memoryStorage();
-  saveCart({ v: 1 }, storage, 0);
+  const cart = { 'gid://shopify/ProductVariant/1': 1 };
+  saveCart(cart, storage, 0);
   assert.deepEqual(loadCart(storage, 8 * 24 * 60 * 60 * 1000), {});
   assert.equal(storage.map.size, 0);
   storage.setItem('crystals-chakra:cart:v1', '{not json');
   assert.deepEqual(loadCart(storage), {});
-  saveCart({ v: 1 }, storage, 5);
+  storage.setItem(
+    'crystals-chakra:cart:v1',
+    '{"savedAt":1e999,"lines":{"gid://shopify/ProductVariant/1":1}}',
+  );
+  assert.deepEqual(loadCart(storage), {});
+  saveCart(cart, storage, 5);
   saveCart({}, storage, 6);
   assert.equal(storage.map.size, 0);
   const throwing = {
@@ -59,7 +73,7 @@ test('cart storage expires, tolerates corruption and empty carts clear the key',
     },
   };
   assert.deepEqual(loadCart(throwing), {});
-  assert.doesNotThrow(() => saveCart({ v: 1 }, throwing));
+  assert.doesNotThrow(() => saveCart(cart, throwing));
   assert.deepEqual(loadCart(undefined), {});
 });
 

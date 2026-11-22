@@ -124,10 +124,20 @@ test.describe('welcome section', () => {
   }) => {
     await page.goto('/');
     await expect(page.locator('#celestial-symbol')).toHaveCount(0);
+    await expect(
+      page.getByRole('group', { name: 'Tarot cards' }).locator('img'),
+    ).toHaveCount(0);
     await page.waitForLoadState('networkidle');
     await page.getByRole('button', { name: 'The High Priestess' }).click();
     const story = page.getByRole('region', { name: 'The High Priestess' });
     await expect(story).toBeVisible();
+    const illustratedCard = story.getByRole('img', {
+      name: 'The High Priestess illustrated tarot card',
+    });
+    await expect(illustratedCard).toBeVisible();
+    await expect
+      .poll(() => illustratedCard.evaluate((image) => image.naturalWidth))
+      .toBe(192);
     await expect(
       story.getByRole('link', { name: /More about the cards/ }),
     ).toHaveAttribute('href', '#card-meanings');
@@ -138,6 +148,33 @@ test.describe('welcome section', () => {
 
 test.describe('booking path', () => {
   test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
+
+  test('unsure visitors can add a question to the WhatsApp draft', async ({
+    page,
+  }) => {
+    await page.goto('/#booking');
+    const select = page.getByLabel('Which reading interests you?');
+    const question = page.getByLabel('What would you like to ask?');
+    const panel = page.locator('.contact-panel');
+    const whatsapp = panel.getByRole('link', { name: 'Chat on WhatsApp' });
+    await expect(select.locator('option:checked')).toHaveText('Choose here');
+    await expect(question).toHaveCount(0);
+    const height = (await panel.boundingBox()).height;
+    await select.selectOption({ label: 'I’m not sure yet' });
+    await expect(question).toBeVisible();
+    expect((await panel.boundingBox()).height).toBeGreaterThan(height);
+    const note = 'नमस्ते! Can we talk about work & family?';
+    await question.fill(note);
+    const message = () =>
+      whatsapp
+        .getAttribute('href')
+        .then((href) => new URL(href).searchParams.get('text'));
+    await expect.poll(message).toContain(note);
+    await select.selectOption('birhaat');
+    await expect(question).toHaveCount(0);
+    expect(await message()).not.toContain(note);
+    expect(await message()).toContain('Birhaat Kundli');
+  });
 
   test('a package opens WhatsApp with that reading, and the hub explains booking', async ({
     page,
@@ -225,6 +262,9 @@ test.describe('pages', () => {
   }) => {
     await page.goto('/shop');
     await expect(
+      page.getByRole('link', { name: /Back to site/ }),
+    ).toHaveAttribute('href', '/#collection');
+    await expect(
       page.getByText('A first look at the collection.'),
     ).toBeVisible();
     await expect(
@@ -233,6 +273,69 @@ test.describe('pages', () => {
     await expect(page.getByRole('button', { name: /checkout/i })).toHaveCount(
       0,
     );
+  });
+
+  test('a restored sold-out cart line can be removed before checkout', async ({
+    page,
+  }) => {
+    const sold = 'gid://shopify/ProductVariant/10';
+    const available = 'gid://shopify/ProductVariant/11';
+    await page.addInitScript(
+      ({ sold, available }) => {
+        localStorage.setItem(
+          'crystals-chakra:cart:v1',
+          JSON.stringify({
+            savedAt: Date.now(),
+            lines: { [sold]: 1, [available]: 1 },
+          }),
+        );
+      },
+      { sold, available },
+    );
+    await page.route('**/api/products', (route) =>
+      route.fulfill({
+        json: {
+          mode: 'live',
+          nextCursor: null,
+          products: [
+            {
+              id: 'rose',
+              title: 'Rose Quartz Band',
+              variantId: sold,
+              available: false,
+            },
+            {
+              id: 'amethyst',
+              title: 'Amethyst Band',
+              variantId: available,
+              available: true,
+            },
+          ].map((product) => ({
+            ...product,
+            image: null,
+            description: 'Test product.',
+            currency: 'INR',
+            amount: '1200',
+            variants: [
+              {
+                id: product.variantId,
+                available: product.available,
+                title: 'Default Title',
+                amount: '1200',
+                currency: 'INR',
+              },
+            ],
+          })),
+        },
+      }),
+    );
+    await page.goto('/shop');
+    await page.getByText('Your cart', { exact: true }).click();
+    await expect(page.getByText('Sold out · remove to continue')).toBeVisible();
+    const checkout = page.getByRole('button', { name: 'Continue to checkout' });
+    await expect(checkout).toBeDisabled();
+    await page.getByRole('button', { name: 'Remove Rose Quartz Band' }).click();
+    await expect(checkout).toBeEnabled();
   });
 });
 
@@ -268,6 +371,11 @@ test.describe('readings and booking', () => {
     await expect(page.getByLabel('Which reading interests you?')).toHaveValue(
       'tarot',
     );
+    if (page.viewportSize().width >= 761) {
+      const booking = page.locator('#booking');
+      const box = await booking.boundingBox();
+      expect(box.height).toBeLessThan(page.viewportSize().height - 96);
+    }
   });
 
   test('the header morphs on scroll and the portrait slides in once', async ({
@@ -284,10 +392,9 @@ test.describe('readings and booking', () => {
     expect(await morph()).toBe('0');
     await page.evaluate(() => scrollTo(0, 600));
     await expect.poll(morph, { timeout: 5000 }).toBe('1');
-    await page.evaluate(() =>
-      document.querySelector('.tarot-portrait').scrollIntoView(),
-    );
-    await expect(page.locator('.tarot-portrait')).toHaveClass(/is-revealed/);
+    const trigger = page.locator('.tarot-portrait-trigger');
+    await trigger.evaluate((element) => element.scrollIntoView());
+    await expect(trigger).toHaveClass(/is-revealed/);
   });
 });
 
@@ -359,18 +466,19 @@ test.describe('about astrology, FAQ and the reading guide', () => {
   });
 });
 
-test.describe('design lab', () => {
+test.describe('site palette', () => {
   test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
 
-  test('hidden from visitors; ?lab=1 switches palette; order is fixed', async ({
+  test('the ivory palette and section order ignore old design-lab preferences', async ({
     page,
   }) => {
-    await page.addInitScript(() =>
+    await page.addInitScript(() => {
       localStorage.setItem(
         'crystals-chakra:appearance:v1',
         JSON.stringify({ palette: 'plum', sectionOrder: 'about-first' }),
-      ),
-    );
+      );
+      localStorage.setItem('crystals-chakra:design-lab', '1');
+    });
     // Readings → Collection → About Astrology, whatever a browser saved.
     const order = () =>
       page.evaluate(() =>
@@ -379,52 +487,91 @@ test.describe('design lab', () => {
         ),
       );
     const ascending = (tops) => tops.every((top, i) => !i || top > tops[i - 1]);
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await expect(page.locator('.design-lab')).toHaveCount(0);
-    expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
-    expect(ascending(await order())).toBe(true);
-
     await page.goto('/?lab=1');
     await page.waitForLoadState('networkidle');
-    const lab = page.locator('.design-lab');
-    // Hydration can trail behind the software-rendered 3D scene on desktop CI.
-    await expect(lab).toBeVisible({ timeout: 15_000 });
-    await expect(page.locator('html')).toHaveAttribute('data-palette', 'plum');
-    await expect(lab.getByRole('combobox')).toHaveCount(0);
-    expect(ascending(await order())).toBe(true);
-    await lab.getByRole('button', { name: /Emerald & ivory/ }).click();
-    await expect(page.locator('html')).toHaveAttribute(
-      'data-palette',
-      'emerald',
+    await expect(page.getByText('Design lab', { exact: false })).toHaveCount(0);
+    expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
+    await expect(page.locator('#home')).toHaveCSS(
+      'background-image',
+      /rgb\(255, 254, 248\).*rgb\(239, 237, 228\)/,
     );
-    await lab.getByRole('button', { name: /\(default\)/ }).click();
-    expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
-    await lab.getByRole('button', { name: 'Close the lab' }).click();
-    await expect(lab).toHaveCount(0);
-    expect(await page.locator('html').getAttribute('data-palette')).toBeNull();
+    expect(ascending(await order())).toBe(true);
   });
 });
 
 test.describe('welcome, cursor and side menu', () => {
   test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
 
+  test('the 3D rings use their own drawings and illustration loads on selection', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, 'desktop WebGL scene');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    const loaded = new Set();
+    page.on('response', (response) => {
+      const name = new URL(response.url()).pathname;
+      if (response.ok() && name.startsWith('/images/tarot/')) loaded.add(name);
+    });
+    await page.getByRole('button', { name: 'Explore in 3D' }).click();
+    await expect(page.locator('.celestial-webgl canvas')).toBeVisible();
+    expect(loaded.size).toBe(0);
+    await page.getByRole('button', { name: 'The Moon' }).click();
+    await expect(
+      page.getByRole('img', { name: 'The Moon illustrated tarot card' }),
+    ).toBeVisible();
+    await expect.poll(() => [...loaded]).toEqual(['/images/tarot/moon.jpg']);
+  });
+
   test('the 3D rings and the whole card row fit the first screen', async ({
     page,
     isMobile,
   }) => {
     test.skip(isMobile, 'desktop layout');
-    for (const [width, height] of [
-      [1280, 720],
-      [1366, 768],
-      [1920, 870],
-    ]) {
+    const viewports = [
+      [800, 600, 'no-preference'],
+      [1024, 576, 'no-preference'],
+      [1280, 720, 'no-preference'],
+      [1366, 768, 'no-preference'],
+      [1920, 880, 'no-preference'],
+      [800, 600, 'reduce'],
+      [1280, 720, 'reduce'],
+    ];
+    for (const [width, height, reducedMotion] of viewports) {
+      await page.emulateMedia({ reducedMotion });
       await page.setViewportSize({ width, height });
       await page.goto('/');
-      const fan = await page.locator('.tarot-fan').boundingBox();
-      expect(fan.y + fan.height).toBeLessThanOrEqual(height);
+      await page.evaluate(() => document.fonts.ready);
+      if (reducedMotion === 'reduce')
+        await expect(
+          page.getByRole('button', { name: 'Explore in 3D' }),
+        ).toBeVisible();
+      const cards = page
+        .getByRole('group', { name: 'Tarot cards' })
+        .getByRole('button');
+      await expect(cards).toHaveCount(6);
+      for (const card of await cards.all()) {
+        const box = await card.boundingBox();
+        expect(box.y + box.height).toBeLessThanOrEqual(height);
+        expect(box.x).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width).toBeLessThanOrEqual(width);
+      }
       const art = await page.locator('.celestial-webgl').boundingBox();
       expect(art.y).toBeGreaterThanOrEqual(60);
+      if (width === 1920) expect(art.width / art.height).toBeGreaterThan(1.1);
+      if (height >= 720) {
+        const lamp = page.locator('#tarot .toran-flame').first();
+        await expect
+          .poll(
+            async () => {
+              const box = await lamp.boundingBox();
+              return box.y + box.height;
+            },
+            { message: `Lamp at ${width}×${height} (${reducedMotion})` },
+          )
+          .toBeLessThanOrEqual(height);
+      }
     }
   });
 
@@ -472,6 +619,26 @@ test.describe('welcome, cursor and side menu', () => {
 
 test.describe('loading and touch', () => {
   test.beforeEach(async ({ page }) => page.addInitScript(SKIP_INTRO));
+
+  test('legacy privacy link scrolls after the policies page loads', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.route(/\/assets\/Policies-.*\.js$/, async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 700));
+      await route.continue();
+    });
+    await page.goto('/privacy');
+    await expect(page).toHaveURL(/\/policies#privacy$/);
+    await expect(page.locator('#privacy')).toBeInViewport();
+  });
+
+  test('malformed paths return 400 without stopping the preview', async ({
+    request,
+  }) => {
+    expect((await request.get('/bad%ZZ')).status()).toBe(400);
+    expect((await request.get('/')).ok()).toBe(true);
+  });
 
   test('the footer stays below the fold while the shop loads', async ({
     page,

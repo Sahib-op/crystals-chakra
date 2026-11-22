@@ -20,6 +20,6 @@
     "server/**/*.ts",
     "shared/**/*.ts",
     "scripts/**/*.ts",
-    "src/lib/catalogue.ts"
+    "vite.config.ts"
   ]
 }

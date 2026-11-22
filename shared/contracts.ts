@@ -1,8 +1,33 @@
 import { Type, type Static } from 'typebox';
+import { READING_COLOR_HEX } from './reading-layout.ts';
+import {
+  SHOP_CART_MAX_LINES,
+  SHOP_CART_MAX_QUANTITY,
+  SHOP_VARIANT_ID_MAX_LENGTH,
+  SHOP_VARIANT_ID_PATTERN,
+} from './cart.ts';
 
 const plain = (maxLength: number) =>
   Type.String({ minLength: 1, maxLength, pattern: '\\S' });
 const objectOptions = { additionalProperties: false } as const;
+
+export const ReadingCardSizeSchema = Type.Union([
+  Type.Literal('compact'),
+  Type.Literal('standard'),
+  Type.Literal('wide'),
+]);
+export const ReadingCardColorSchema = Type.Union([
+  Type.Literal('default'),
+  Type.Literal('navy'),
+  Type.Literal('burgundy'),
+  Type.Literal('emerald'),
+  Type.Literal('indigo'),
+  Type.String({
+    pattern: `^${READING_COLOR_HEX.source}$`,
+    minLength: 7,
+    maxLength: 7,
+  }),
+]);
 
 export const ReadingSchema = Type.Object(
   {
@@ -21,6 +46,8 @@ export const ReadingSchema = Type.Object(
       Type.Object({ name: plain(100) }, objectOptions),
     ),
     features: Type.Array(plain(240), { minItems: 1, maxItems: 12 }),
+    cardSize: Type.Optional(ReadingCardSizeSchema),
+    cardColor: Type.Optional(ReadingCardColorSchema),
   },
   objectOptions,
 );
@@ -51,12 +78,10 @@ export const RetiredReadingSchema = Type.Object(
 );
 export const SHOP_PAGE_SIZE = 24;
 export const SHOP_VARIANTS_PER_PRODUCT = 20;
-export const SHOP_CART_MAX_LINES = 20;
-export const SHOP_CART_MAX_QUANTITY = 10;
 
 const VariantIdSchema = Type.String({
-  pattern: '^gid://shopify/ProductVariant/[0-9]+$',
-  maxLength: 120,
+  pattern: SHOP_VARIANT_ID_PATTERN,
+  maxLength: SHOP_VARIANT_ID_MAX_LENGTH,
 });
 const ShopifyCursor = Type.String({
   pattern: '^[A-Za-z0-9_+/=-]+$',

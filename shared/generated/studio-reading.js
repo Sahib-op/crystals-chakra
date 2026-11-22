@@ -70,6 +70,136 @@ const schema11 = {
       ],
     },
     sortOrder: { type: 'integer', minimum: 0, maximum: 9999 },
+    cardSize: {
+      anyOf: [
+        { type: 'string', const: 'compact' },
+        { type: 'string', const: 'standard' },
+        { type: 'string', const: 'wide' },
+      ],
+    },
+    cardColor: {
+      anyOf: [
+        { type: 'string', const: 'default' },
+        { type: 'string', const: 'navy' },
+        { type: 'string', const: 'burgundy' },
+        { type: 'string', const: 'emerald' },
+        { type: 'string', const: 'indigo' },
+        {
+          type: 'string',
+          pattern: '^#[0-9a-fA-F]{6}$',
+          minLength: 7,
+          maxLength: 7,
+        },
+      ],
+    },
+    draft: {
+      type: 'object',
+      required: [
+        'type',
+        'title',
+        'hindiTitle',
+        'description',
+        'features',
+        'priceMinor',
+        'practitionerId',
+        'status',
+        'sortOrder',
+      ],
+      properties: {
+        type: {
+          anyOf: [
+            { type: 'string', const: 'tarot' },
+            { type: 'string', const: 'astrology' },
+          ],
+        },
+        title: { type: 'string', minLength: 1, maxLength: 120, pattern: '\\S' },
+        hindiTitle: {
+          anyOf: [
+            { type: 'null' },
+            { type: 'string', minLength: 1, maxLength: 160, pattern: '\\S' },
+          ],
+        },
+        description: {
+          type: 'string',
+          minLength: 1,
+          maxLength: 600,
+          pattern: '\\S',
+        },
+        features: {
+          type: 'array',
+          items: {
+            type: 'string',
+            minLength: 1,
+            maxLength: 240,
+            pattern: '\\S',
+          },
+          minItems: 1,
+          maxItems: 12,
+        },
+        priceMinor: {
+          anyOf: [
+            { type: 'null' },
+            {
+              type: 'integer',
+              minimum: 0,
+              maximum: 1000000000,
+              multipleOf: 100,
+            },
+          ],
+        },
+        practitionerId: {
+          anyOf: [
+            { type: 'null' },
+            {
+              type: 'string',
+              pattern:
+                '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$',
+            },
+          ],
+        },
+        status: {
+          anyOf: [
+            { type: 'string', const: 'draft' },
+            { type: 'string', const: 'published' },
+            { type: 'string', const: 'archived' },
+          ],
+        },
+        sortOrder: { type: 'integer', minimum: 0, maximum: 9999 },
+        cardSize: {
+          anyOf: [
+            { type: 'string', const: 'compact' },
+            { type: 'string', const: 'standard' },
+            { type: 'string', const: 'wide' },
+          ],
+        },
+        cardColor: {
+          anyOf: [
+            { type: 'string', const: 'default' },
+            { type: 'string', const: 'navy' },
+            { type: 'string', const: 'burgundy' },
+            { type: 'string', const: 'emerald' },
+            { type: 'string', const: 'indigo' },
+            {
+              type: 'string',
+              pattern: '^#[0-9a-fA-F]{6}$',
+              minLength: 7,
+              maxLength: 7,
+            },
+          ],
+        },
+        placeBefore: {
+          anyOf: [
+            { type: 'null' },
+            {
+              type: 'string',
+              pattern: '^[a-z][a-z0-9-]{0,47}$',
+              maxLength: 48,
+            },
+          ],
+        },
+      },
+      additionalProperties: false,
+    },
     revision: { type: 'integer', minimum: 1 },
     updatedAt: { type: 'string', minLength: 1, maxLength: 40, pattern: '\\S' },
   },
@@ -98,6 +228,7 @@ const pattern5 = new RegExp(
   '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$',
   'u',
 );
+const pattern6 = new RegExp('^#[0-9a-fA-F]{6}$', 'u');
 function validate10(
   data,
   { instancePath = '', parentData, parentDataProperty, rootData = data } = {},
@@ -1139,47 +1270,145 @@ function validate10(
                               var valid0 = true;
                             }
                             if (valid0) {
-                              if (data.revision !== undefined) {
-                                let data11 = data.revision;
+                              if (data.cardSize !== undefined) {
+                                let data11 = data.cardSize;
                                 const _errs46 = errors;
-                                if (!(
-                                  typeof data11 == 'number' &&
-                                  !(data11 % 1) &&
-                                  !isNaN(data11) &&
-                                  isFinite(data11)
-                                )) {
-                                  validate10.errors = [
-                                    {
-                                      instancePath: instancePath + '/revision',
-                                      schemaPath: '#/properties/revision/type',
-                                      keyword: 'type',
-                                      params: { type: 'integer' },
-                                      message: 'must be integer',
-                                    },
-                                  ];
-                                  return false;
+                                const _errs47 = errors;
+                                let valid7 = false;
+                                const _errs48 = errors;
+                                if (typeof data11 !== 'string') {
+                                  const err28 = {
+                                    instancePath: instancePath + '/cardSize',
+                                    schemaPath:
+                                      '#/properties/cardSize/anyOf/0/type',
+                                    keyword: 'type',
+                                    params: { type: 'string' },
+                                    message: 'must be string',
+                                  };
+                                  if (vErrors === null) {
+                                    vErrors = [err28];
+                                  } else {
+                                    vErrors.push(err28);
+                                  }
+                                  errors++;
                                 }
-                                if (errors === _errs46) {
-                                  if (
-                                    typeof data11 == 'number' &&
-                                    isFinite(data11)
-                                  ) {
-                                    if (data11 < 1 || isNaN(data11)) {
-                                      validate10.errors = [
-                                        {
-                                          instancePath:
-                                            instancePath + '/revision',
-                                          schemaPath:
-                                            '#/properties/revision/minimum',
-                                          keyword: 'minimum',
-                                          params: {
-                                            comparison: '>=',
-                                            limit: 1,
-                                          },
-                                          message: 'must be >= 1',
-                                        },
-                                      ];
-                                      return false;
+                                if ('compact' !== data11) {
+                                  const err29 = {
+                                    instancePath: instancePath + '/cardSize',
+                                    schemaPath:
+                                      '#/properties/cardSize/anyOf/0/const',
+                                    keyword: 'const',
+                                    params: { allowedValue: 'compact' },
+                                    message: 'must be equal to constant',
+                                  };
+                                  if (vErrors === null) {
+                                    vErrors = [err29];
+                                  } else {
+                                    vErrors.push(err29);
+                                  }
+                                  errors++;
+                                }
+                                var _valid5 = _errs48 === errors;
+                                valid7 = valid7 || _valid5;
+                                if (!valid7) {
+                                  const _errs50 = errors;
+                                  if (typeof data11 !== 'string') {
+                                    const err30 = {
+                                      instancePath: instancePath + '/cardSize',
+                                      schemaPath:
+                                        '#/properties/cardSize/anyOf/1/type',
+                                      keyword: 'type',
+                                      params: { type: 'string' },
+                                      message: 'must be string',
+                                    };
+                                    if (vErrors === null) {
+                                      vErrors = [err30];
+                                    } else {
+                                      vErrors.push(err30);
+                                    }
+                                    errors++;
+                                  }
+                                  if ('standard' !== data11) {
+                                    const err31 = {
+                                      instancePath: instancePath + '/cardSize',
+                                      schemaPath:
+                                        '#/properties/cardSize/anyOf/1/const',
+                                      keyword: 'const',
+                                      params: { allowedValue: 'standard' },
+                                      message: 'must be equal to constant',
+                                    };
+                                    if (vErrors === null) {
+                                      vErrors = [err31];
+                                    } else {
+                                      vErrors.push(err31);
+                                    }
+                                    errors++;
+                                  }
+                                  var _valid5 = _errs50 === errors;
+                                  valid7 = valid7 || _valid5;
+                                  if (!valid7) {
+                                    const _errs52 = errors;
+                                    if (typeof data11 !== 'string') {
+                                      const err32 = {
+                                        instancePath:
+                                          instancePath + '/cardSize',
+                                        schemaPath:
+                                          '#/properties/cardSize/anyOf/2/type',
+                                        keyword: 'type',
+                                        params: { type: 'string' },
+                                        message: 'must be string',
+                                      };
+                                      if (vErrors === null) {
+                                        vErrors = [err32];
+                                      } else {
+                                        vErrors.push(err32);
+                                      }
+                                      errors++;
+                                    }
+                                    if ('wide' !== data11) {
+                                      const err33 = {
+                                        instancePath:
+                                          instancePath + '/cardSize',
+                                        schemaPath:
+                                          '#/properties/cardSize/anyOf/2/const',
+                                        keyword: 'const',
+                                        params: { allowedValue: 'wide' },
+                                        message: 'must be equal to constant',
+                                      };
+                                      if (vErrors === null) {
+                                        vErrors = [err33];
+                                      } else {
+                                        vErrors.push(err33);
+                                      }
+                                      errors++;
+                                    }
+                                    var _valid5 = _errs52 === errors;
+                                    valid7 = valid7 || _valid5;
+                                  }
+                                }
+                                if (!valid7) {
+                                  const err34 = {
+                                    instancePath: instancePath + '/cardSize',
+                                    schemaPath: '#/properties/cardSize/anyOf',
+                                    keyword: 'anyOf',
+                                    params: {},
+                                    message: 'must match a schema in anyOf',
+                                  };
+                                  if (vErrors === null) {
+                                    vErrors = [err34];
+                                  } else {
+                                    vErrors.push(err34);
+                                  }
+                                  errors++;
+                                  validate10.errors = vErrors;
+                                  return false;
+                                } else {
+                                  errors = _errs47;
+                                  if (vErrors !== null) {
+                                    if (_errs47) {
+                                      vErrors.length = _errs47;
+                                    } else {
+                                      vErrors = null;
                                     }
                                   }
                                 }
@@ -1188,78 +1417,3303 @@ function validate10(
                                 var valid0 = true;
                               }
                               if (valid0) {
-                                if (data.updatedAt !== undefined) {
-                                  let data12 = data.updatedAt;
-                                  const _errs48 = errors;
-                                  if (errors === _errs48) {
-                                    if (typeof data12 === 'string') {
-                                      if (func3(data12) > 40) {
-                                        validate10.errors = [
-                                          {
-                                            instancePath:
-                                              instancePath + '/updatedAt',
-                                            schemaPath:
-                                              '#/properties/updatedAt/maxLength',
-                                            keyword: 'maxLength',
-                                            params: { limit: 40 },
-                                            message:
-                                              'must NOT have more than 40 characters',
-                                          },
-                                        ];
-                                        return false;
+                                if (data.cardColor !== undefined) {
+                                  let data12 = data.cardColor;
+                                  const _errs54 = errors;
+                                  const _errs55 = errors;
+                                  let valid8 = false;
+                                  const _errs56 = errors;
+                                  if (typeof data12 !== 'string') {
+                                    const err35 = {
+                                      instancePath: instancePath + '/cardColor',
+                                      schemaPath:
+                                        '#/properties/cardColor/anyOf/0/type',
+                                      keyword: 'type',
+                                      params: { type: 'string' },
+                                      message: 'must be string',
+                                    };
+                                    if (vErrors === null) {
+                                      vErrors = [err35];
+                                    } else {
+                                      vErrors.push(err35);
+                                    }
+                                    errors++;
+                                  }
+                                  if ('default' !== data12) {
+                                    const err36 = {
+                                      instancePath: instancePath + '/cardColor',
+                                      schemaPath:
+                                        '#/properties/cardColor/anyOf/0/const',
+                                      keyword: 'const',
+                                      params: { allowedValue: 'default' },
+                                      message: 'must be equal to constant',
+                                    };
+                                    if (vErrors === null) {
+                                      vErrors = [err36];
+                                    } else {
+                                      vErrors.push(err36);
+                                    }
+                                    errors++;
+                                  }
+                                  var _valid6 = _errs56 === errors;
+                                  valid8 = valid8 || _valid6;
+                                  if (!valid8) {
+                                    const _errs58 = errors;
+                                    if (typeof data12 !== 'string') {
+                                      const err37 = {
+                                        instancePath:
+                                          instancePath + '/cardColor',
+                                        schemaPath:
+                                          '#/properties/cardColor/anyOf/1/type',
+                                        keyword: 'type',
+                                        params: { type: 'string' },
+                                        message: 'must be string',
+                                      };
+                                      if (vErrors === null) {
+                                        vErrors = [err37];
                                       } else {
-                                        if (func3(data12) < 1) {
+                                        vErrors.push(err37);
+                                      }
+                                      errors++;
+                                    }
+                                    if ('navy' !== data12) {
+                                      const err38 = {
+                                        instancePath:
+                                          instancePath + '/cardColor',
+                                        schemaPath:
+                                          '#/properties/cardColor/anyOf/1/const',
+                                        keyword: 'const',
+                                        params: { allowedValue: 'navy' },
+                                        message: 'must be equal to constant',
+                                      };
+                                      if (vErrors === null) {
+                                        vErrors = [err38];
+                                      } else {
+                                        vErrors.push(err38);
+                                      }
+                                      errors++;
+                                    }
+                                    var _valid6 = _errs58 === errors;
+                                    valid8 = valid8 || _valid6;
+                                    if (!valid8) {
+                                      const _errs60 = errors;
+                                      if (typeof data12 !== 'string') {
+                                        const err39 = {
+                                          instancePath:
+                                            instancePath + '/cardColor',
+                                          schemaPath:
+                                            '#/properties/cardColor/anyOf/2/type',
+                                          keyword: 'type',
+                                          params: { type: 'string' },
+                                          message: 'must be string',
+                                        };
+                                        if (vErrors === null) {
+                                          vErrors = [err39];
+                                        } else {
+                                          vErrors.push(err39);
+                                        }
+                                        errors++;
+                                      }
+                                      if ('burgundy' !== data12) {
+                                        const err40 = {
+                                          instancePath:
+                                            instancePath + '/cardColor',
+                                          schemaPath:
+                                            '#/properties/cardColor/anyOf/2/const',
+                                          keyword: 'const',
+                                          params: { allowedValue: 'burgundy' },
+                                          message: 'must be equal to constant',
+                                        };
+                                        if (vErrors === null) {
+                                          vErrors = [err40];
+                                        } else {
+                                          vErrors.push(err40);
+                                        }
+                                        errors++;
+                                      }
+                                      var _valid6 = _errs60 === errors;
+                                      valid8 = valid8 || _valid6;
+                                      if (!valid8) {
+                                        const _errs62 = errors;
+                                        if (typeof data12 !== 'string') {
+                                          const err41 = {
+                                            instancePath:
+                                              instancePath + '/cardColor',
+                                            schemaPath:
+                                              '#/properties/cardColor/anyOf/3/type',
+                                            keyword: 'type',
+                                            params: { type: 'string' },
+                                            message: 'must be string',
+                                          };
+                                          if (vErrors === null) {
+                                            vErrors = [err41];
+                                          } else {
+                                            vErrors.push(err41);
+                                          }
+                                          errors++;
+                                        }
+                                        if ('emerald' !== data12) {
+                                          const err42 = {
+                                            instancePath:
+                                              instancePath + '/cardColor',
+                                            schemaPath:
+                                              '#/properties/cardColor/anyOf/3/const',
+                                            keyword: 'const',
+                                            params: { allowedValue: 'emerald' },
+                                            message:
+                                              'must be equal to constant',
+                                          };
+                                          if (vErrors === null) {
+                                            vErrors = [err42];
+                                          } else {
+                                            vErrors.push(err42);
+                                          }
+                                          errors++;
+                                        }
+                                        var _valid6 = _errs62 === errors;
+                                        valid8 = valid8 || _valid6;
+                                        if (!valid8) {
+                                          const _errs64 = errors;
+                                          if (typeof data12 !== 'string') {
+                                            const err43 = {
+                                              instancePath:
+                                                instancePath + '/cardColor',
+                                              schemaPath:
+                                                '#/properties/cardColor/anyOf/4/type',
+                                              keyword: 'type',
+                                              params: { type: 'string' },
+                                              message: 'must be string',
+                                            };
+                                            if (vErrors === null) {
+                                              vErrors = [err43];
+                                            } else {
+                                              vErrors.push(err43);
+                                            }
+                                            errors++;
+                                          }
+                                          if ('indigo' !== data12) {
+                                            const err44 = {
+                                              instancePath:
+                                                instancePath + '/cardColor',
+                                              schemaPath:
+                                                '#/properties/cardColor/anyOf/4/const',
+                                              keyword: 'const',
+                                              params: {
+                                                allowedValue: 'indigo',
+                                              },
+                                              message:
+                                                'must be equal to constant',
+                                            };
+                                            if (vErrors === null) {
+                                              vErrors = [err44];
+                                            } else {
+                                              vErrors.push(err44);
+                                            }
+                                            errors++;
+                                          }
+                                          var _valid6 = _errs64 === errors;
+                                          valid8 = valid8 || _valid6;
+                                          if (!valid8) {
+                                            const _errs66 = errors;
+                                            if (errors === _errs66) {
+                                              if (typeof data12 === 'string') {
+                                                if (func3(data12) > 7) {
+                                                  const err45 = {
+                                                    instancePath:
+                                                      instancePath +
+                                                      '/cardColor',
+                                                    schemaPath:
+                                                      '#/properties/cardColor/anyOf/5/maxLength',
+                                                    keyword: 'maxLength',
+                                                    params: { limit: 7 },
+                                                    message:
+                                                      'must NOT have more than 7 characters',
+                                                  };
+                                                  if (vErrors === null) {
+                                                    vErrors = [err45];
+                                                  } else {
+                                                    vErrors.push(err45);
+                                                  }
+                                                  errors++;
+                                                } else {
+                                                  if (func3(data12) < 7) {
+                                                    const err46 = {
+                                                      instancePath:
+                                                        instancePath +
+                                                        '/cardColor',
+                                                      schemaPath:
+                                                        '#/properties/cardColor/anyOf/5/minLength',
+                                                      keyword: 'minLength',
+                                                      params: { limit: 7 },
+                                                      message:
+                                                        'must NOT have fewer than 7 characters',
+                                                    };
+                                                    if (vErrors === null) {
+                                                      vErrors = [err46];
+                                                    } else {
+                                                      vErrors.push(err46);
+                                                    }
+                                                    errors++;
+                                                  } else {
+                                                    if (
+                                                      !pattern6.test(data12)
+                                                    ) {
+                                                      const err47 = {
+                                                        instancePath:
+                                                          instancePath +
+                                                          '/cardColor',
+                                                        schemaPath:
+                                                          '#/properties/cardColor/anyOf/5/pattern',
+                                                        keyword: 'pattern',
+                                                        params: {
+                                                          pattern:
+                                                            '^#[0-9a-fA-F]{6}$',
+                                                        },
+                                                        message:
+                                                          'must match pattern "' +
+                                                          '^#[0-9a-fA-F]{6}$' +
+                                                          '"',
+                                                      };
+                                                      if (vErrors === null) {
+                                                        vErrors = [err47];
+                                                      } else {
+                                                        vErrors.push(err47);
+                                                      }
+                                                      errors++;
+                                                    }
+                                                  }
+                                                }
+                                              } else {
+                                                const err48 = {
+                                                  instancePath:
+                                                    instancePath + '/cardColor',
+                                                  schemaPath:
+                                                    '#/properties/cardColor/anyOf/5/type',
+                                                  keyword: 'type',
+                                                  params: { type: 'string' },
+                                                  message: 'must be string',
+                                                };
+                                                if (vErrors === null) {
+                                                  vErrors = [err48];
+                                                } else {
+                                                  vErrors.push(err48);
+                                                }
+                                                errors++;
+                                              }
+                                            }
+                                            var _valid6 = _errs66 === errors;
+                                            valid8 = valid8 || _valid6;
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                  if (!valid8) {
+                                    const err49 = {
+                                      instancePath: instancePath + '/cardColor',
+                                      schemaPath:
+                                        '#/properties/cardColor/anyOf',
+                                      keyword: 'anyOf',
+                                      params: {},
+                                      message: 'must match a schema in anyOf',
+                                    };
+                                    if (vErrors === null) {
+                                      vErrors = [err49];
+                                    } else {
+                                      vErrors.push(err49);
+                                    }
+                                    errors++;
+                                    validate10.errors = vErrors;
+                                    return false;
+                                  } else {
+                                    errors = _errs55;
+                                    if (vErrors !== null) {
+                                      if (_errs55) {
+                                        vErrors.length = _errs55;
+                                      } else {
+                                        vErrors = null;
+                                      }
+                                    }
+                                  }
+                                  var valid0 = _errs54 === errors;
+                                } else {
+                                  var valid0 = true;
+                                }
+                                if (valid0) {
+                                  if (data.draft !== undefined) {
+                                    let data13 = data.draft;
+                                    const _errs68 = errors;
+                                    if (errors === _errs68) {
+                                      if (
+                                        data13 &&
+                                        typeof data13 == 'object' &&
+                                        !Array.isArray(data13)
+                                      ) {
+                                        let missing1;
+                                        if (
+                                          (data13.type === undefined &&
+                                            (missing1 = 'type')) ||
+                                          (data13.title === undefined &&
+                                            (missing1 = 'title')) ||
+                                          (data13.hindiTitle === undefined &&
+                                            (missing1 = 'hindiTitle')) ||
+                                          (data13.description === undefined &&
+                                            (missing1 = 'description')) ||
+                                          (data13.features === undefined &&
+                                            (missing1 = 'features')) ||
+                                          (data13.priceMinor === undefined &&
+                                            (missing1 = 'priceMinor')) ||
+                                          (data13.practitionerId ===
+                                            undefined &&
+                                            (missing1 = 'practitionerId')) ||
+                                          (data13.status === undefined &&
+                                            (missing1 = 'status')) ||
+                                          (data13.sortOrder === undefined &&
+                                            (missing1 = 'sortOrder'))
+                                        ) {
                                           validate10.errors = [
                                             {
                                               instancePath:
-                                                instancePath + '/updatedAt',
+                                                instancePath + '/draft',
                                               schemaPath:
-                                                '#/properties/updatedAt/minLength',
-                                              keyword: 'minLength',
-                                              params: { limit: 1 },
+                                                '#/properties/draft/required',
+                                              keyword: 'required',
+                                              params: {
+                                                missingProperty: missing1,
+                                              },
                                               message:
-                                                'must NOT have fewer than 1 characters',
+                                                "must have required property '" +
+                                                missing1 +
+                                                "'",
                                             },
                                           ];
                                           return false;
                                         } else {
-                                          if (!pattern1.test(data12)) {
+                                          const _errs70 = errors;
+                                          for (const key1 in data13) {
+                                            if (
+                                              !func2.call(
+                                                schema11.properties.draft
+                                                  .properties,
+                                                key1,
+                                              )
+                                            ) {
+                                              validate10.errors = [
+                                                {
+                                                  instancePath:
+                                                    instancePath + '/draft',
+                                                  schemaPath:
+                                                    '#/properties/draft/additionalProperties',
+                                                  keyword:
+                                                    'additionalProperties',
+                                                  params: {
+                                                    additionalProperty: key1,
+                                                  },
+                                                  message:
+                                                    'must NOT have additional properties',
+                                                },
+                                              ];
+                                              return false;
+                                              break;
+                                            }
+                                          }
+                                          if (_errs70 === errors) {
+                                            if (data13.type !== undefined) {
+                                              let data14 = data13.type;
+                                              const _errs71 = errors;
+                                              const _errs72 = errors;
+                                              let valid10 = false;
+                                              const _errs73 = errors;
+                                              if (typeof data14 !== 'string') {
+                                                const err50 = {
+                                                  instancePath:
+                                                    instancePath +
+                                                    '/draft/type',
+                                                  schemaPath:
+                                                    '#/properties/draft/properties/type/anyOf/0/type',
+                                                  keyword: 'type',
+                                                  params: { type: 'string' },
+                                                  message: 'must be string',
+                                                };
+                                                if (vErrors === null) {
+                                                  vErrors = [err50];
+                                                } else {
+                                                  vErrors.push(err50);
+                                                }
+                                                errors++;
+                                              }
+                                              if ('tarot' !== data14) {
+                                                const err51 = {
+                                                  instancePath:
+                                                    instancePath +
+                                                    '/draft/type',
+                                                  schemaPath:
+                                                    '#/properties/draft/properties/type/anyOf/0/const',
+                                                  keyword: 'const',
+                                                  params: {
+                                                    allowedValue: 'tarot',
+                                                  },
+                                                  message:
+                                                    'must be equal to constant',
+                                                };
+                                                if (vErrors === null) {
+                                                  vErrors = [err51];
+                                                } else {
+                                                  vErrors.push(err51);
+                                                }
+                                                errors++;
+                                              }
+                                              var _valid7 = _errs73 === errors;
+                                              valid10 = valid10 || _valid7;
+                                              if (!valid10) {
+                                                const _errs75 = errors;
+                                                if (
+                                                  typeof data14 !== 'string'
+                                                ) {
+                                                  const err52 = {
+                                                    instancePath:
+                                                      instancePath +
+                                                      '/draft/type',
+                                                    schemaPath:
+                                                      '#/properties/draft/properties/type/anyOf/1/type',
+                                                    keyword: 'type',
+                                                    params: { type: 'string' },
+                                                    message: 'must be string',
+                                                  };
+                                                  if (vErrors === null) {
+                                                    vErrors = [err52];
+                                                  } else {
+                                                    vErrors.push(err52);
+                                                  }
+                                                  errors++;
+                                                }
+                                                if ('astrology' !== data14) {
+                                                  const err53 = {
+                                                    instancePath:
+                                                      instancePath +
+                                                      '/draft/type',
+                                                    schemaPath:
+                                                      '#/properties/draft/properties/type/anyOf/1/const',
+                                                    keyword: 'const',
+                                                    params: {
+                                                      allowedValue: 'astrology',
+                                                    },
+                                                    message:
+                                                      'must be equal to constant',
+                                                  };
+                                                  if (vErrors === null) {
+                                                    vErrors = [err53];
+                                                  } else {
+                                                    vErrors.push(err53);
+                                                  }
+                                                  errors++;
+                                                }
+                                                var _valid7 =
+                                                  _errs75 === errors;
+                                                valid10 = valid10 || _valid7;
+                                              }
+                                              if (!valid10) {
+                                                const err54 = {
+                                                  instancePath:
+                                                    instancePath +
+                                                    '/draft/type',
+                                                  schemaPath:
+                                                    '#/properties/draft/properties/type/anyOf',
+                                                  keyword: 'anyOf',
+                                                  params: {},
+                                                  message:
+                                                    'must match a schema in anyOf',
+                                                };
+                                                if (vErrors === null) {
+                                                  vErrors = [err54];
+                                                } else {
+                                                  vErrors.push(err54);
+                                                }
+                                                errors++;
+                                                validate10.errors = vErrors;
+                                                return false;
+                                              } else {
+                                                errors = _errs72;
+                                                if (vErrors !== null) {
+                                                  if (_errs72) {
+                                                    vErrors.length = _errs72;
+                                                  } else {
+                                                    vErrors = null;
+                                                  }
+                                                }
+                                              }
+                                              var valid9 = _errs71 === errors;
+                                            } else {
+                                              var valid9 = true;
+                                            }
+                                            if (valid9) {
+                                              if (data13.title !== undefined) {
+                                                let data15 = data13.title;
+                                                const _errs77 = errors;
+                                                if (errors === _errs77) {
+                                                  if (
+                                                    typeof data15 === 'string'
+                                                  ) {
+                                                    if (func3(data15) > 120) {
+                                                      validate10.errors = [
+                                                        {
+                                                          instancePath:
+                                                            instancePath +
+                                                            '/draft/title',
+                                                          schemaPath:
+                                                            '#/properties/draft/properties/title/maxLength',
+                                                          keyword: 'maxLength',
+                                                          params: {
+                                                            limit: 120,
+                                                          },
+                                                          message:
+                                                            'must NOT have more than 120 characters',
+                                                        },
+                                                      ];
+                                                      return false;
+                                                    } else {
+                                                      if (func3(data15) < 1) {
+                                                        validate10.errors = [
+                                                          {
+                                                            instancePath:
+                                                              instancePath +
+                                                              '/draft/title',
+                                                            schemaPath:
+                                                              '#/properties/draft/properties/title/minLength',
+                                                            keyword:
+                                                              'minLength',
+                                                            params: {
+                                                              limit: 1,
+                                                            },
+                                                            message:
+                                                              'must NOT have fewer than 1 characters',
+                                                          },
+                                                        ];
+                                                        return false;
+                                                      } else {
+                                                        if (
+                                                          !pattern1.test(data15)
+                                                        ) {
+                                                          validate10.errors = [
+                                                            {
+                                                              instancePath:
+                                                                instancePath +
+                                                                '/draft/title',
+                                                              schemaPath:
+                                                                '#/properties/draft/properties/title/pattern',
+                                                              keyword:
+                                                                'pattern',
+                                                              params: {
+                                                                pattern: '\\S',
+                                                              },
+                                                              message:
+                                                                'must match pattern "' +
+                                                                '\\S' +
+                                                                '"',
+                                                            },
+                                                          ];
+                                                          return false;
+                                                        }
+                                                      }
+                                                    }
+                                                  } else {
+                                                    validate10.errors = [
+                                                      {
+                                                        instancePath:
+                                                          instancePath +
+                                                          '/draft/title',
+                                                        schemaPath:
+                                                          '#/properties/draft/properties/title/type',
+                                                        keyword: 'type',
+                                                        params: {
+                                                          type: 'string',
+                                                        },
+                                                        message:
+                                                          'must be string',
+                                                      },
+                                                    ];
+                                                    return false;
+                                                  }
+                                                }
+                                                var valid9 = _errs77 === errors;
+                                              } else {
+                                                var valid9 = true;
+                                              }
+                                              if (valid9) {
+                                                if (
+                                                  data13.hindiTitle !==
+                                                  undefined
+                                                ) {
+                                                  let data16 =
+                                                    data13.hindiTitle;
+                                                  const _errs79 = errors;
+                                                  const _errs80 = errors;
+                                                  let valid11 = false;
+                                                  const _errs81 = errors;
+                                                  if (data16 !== null) {
+                                                    const err55 = {
+                                                      instancePath:
+                                                        instancePath +
+                                                        '/draft/hindiTitle',
+                                                      schemaPath:
+                                                        '#/properties/draft/properties/hindiTitle/anyOf/0/type',
+                                                      keyword: 'type',
+                                                      params: { type: 'null' },
+                                                      message: 'must be null',
+                                                    };
+                                                    if (vErrors === null) {
+                                                      vErrors = [err55];
+                                                    } else {
+                                                      vErrors.push(err55);
+                                                    }
+                                                    errors++;
+                                                  }
+                                                  var _valid8 =
+                                                    _errs81 === errors;
+                                                  valid11 = valid11 || _valid8;
+                                                  if (!valid11) {
+                                                    const _errs83 = errors;
+                                                    if (errors === _errs83) {
+                                                      if (
+                                                        typeof data16 ===
+                                                        'string'
+                                                      ) {
+                                                        if (
+                                                          func3(data16) > 160
+                                                        ) {
+                                                          const err56 = {
+                                                            instancePath:
+                                                              instancePath +
+                                                              '/draft/hindiTitle',
+                                                            schemaPath:
+                                                              '#/properties/draft/properties/hindiTitle/anyOf/1/maxLength',
+                                                            keyword:
+                                                              'maxLength',
+                                                            params: {
+                                                              limit: 160,
+                                                            },
+                                                            message:
+                                                              'must NOT have more than 160 characters',
+                                                          };
+                                                          if (
+                                                            vErrors === null
+                                                          ) {
+                                                            vErrors = [err56];
+                                                          } else {
+                                                            vErrors.push(err56);
+                                                          }
+                                                          errors++;
+                                                        } else {
+                                                          if (
+                                                            func3(data16) < 1
+                                                          ) {
+                                                            const err57 = {
+                                                              instancePath:
+                                                                instancePath +
+                                                                '/draft/hindiTitle',
+                                                              schemaPath:
+                                                                '#/properties/draft/properties/hindiTitle/anyOf/1/minLength',
+                                                              keyword:
+                                                                'minLength',
+                                                              params: {
+                                                                limit: 1,
+                                                              },
+                                                              message:
+                                                                'must NOT have fewer than 1 characters',
+                                                            };
+                                                            if (
+                                                              vErrors === null
+                                                            ) {
+                                                              vErrors = [err57];
+                                                            } else {
+                                                              vErrors.push(
+                                                                err57,
+                                                              );
+                                                            }
+                                                            errors++;
+                                                          } else {
+                                                            if (
+                                                              !pattern1.test(
+                                                                data16,
+                                                              )
+                                                            ) {
+                                                              const err58 = {
+                                                                instancePath:
+                                                                  instancePath +
+                                                                  '/draft/hindiTitle',
+                                                                schemaPath:
+                                                                  '#/properties/draft/properties/hindiTitle/anyOf/1/pattern',
+                                                                keyword:
+                                                                  'pattern',
+                                                                params: {
+                                                                  pattern:
+                                                                    '\\S',
+                                                                },
+                                                                message:
+                                                                  'must match pattern "' +
+                                                                  '\\S' +
+                                                                  '"',
+                                                              };
+                                                              if (
+                                                                vErrors === null
+                                                              ) {
+                                                                vErrors = [
+                                                                  err58,
+                                                                ];
+                                                              } else {
+                                                                vErrors.push(
+                                                                  err58,
+                                                                );
+                                                              }
+                                                              errors++;
+                                                            }
+                                                          }
+                                                        }
+                                                      } else {
+                                                        const err59 = {
+                                                          instancePath:
+                                                            instancePath +
+                                                            '/draft/hindiTitle',
+                                                          schemaPath:
+                                                            '#/properties/draft/properties/hindiTitle/anyOf/1/type',
+                                                          keyword: 'type',
+                                                          params: {
+                                                            type: 'string',
+                                                          },
+                                                          message:
+                                                            'must be string',
+                                                        };
+                                                        if (vErrors === null) {
+                                                          vErrors = [err59];
+                                                        } else {
+                                                          vErrors.push(err59);
+                                                        }
+                                                        errors++;
+                                                      }
+                                                    }
+                                                    var _valid8 =
+                                                      _errs83 === errors;
+                                                    valid11 =
+                                                      valid11 || _valid8;
+                                                  }
+                                                  if (!valid11) {
+                                                    const err60 = {
+                                                      instancePath:
+                                                        instancePath +
+                                                        '/draft/hindiTitle',
+                                                      schemaPath:
+                                                        '#/properties/draft/properties/hindiTitle/anyOf',
+                                                      keyword: 'anyOf',
+                                                      params: {},
+                                                      message:
+                                                        'must match a schema in anyOf',
+                                                    };
+                                                    if (vErrors === null) {
+                                                      vErrors = [err60];
+                                                    } else {
+                                                      vErrors.push(err60);
+                                                    }
+                                                    errors++;
+                                                    validate10.errors = vErrors;
+                                                    return false;
+                                                  } else {
+                                                    errors = _errs80;
+                                                    if (vErrors !== null) {
+                                                      if (_errs80) {
+                                                        vErrors.length =
+                                                          _errs80;
+                                                      } else {
+                                                        vErrors = null;
+                                                      }
+                                                    }
+                                                  }
+                                                  var valid9 =
+                                                    _errs79 === errors;
+                                                } else {
+                                                  var valid9 = true;
+                                                }
+                                                if (valid9) {
+                                                  if (
+                                                    data13.description !==
+                                                    undefined
+                                                  ) {
+                                                    let data17 =
+                                                      data13.description;
+                                                    const _errs85 = errors;
+                                                    if (errors === _errs85) {
+                                                      if (
+                                                        typeof data17 ===
+                                                        'string'
+                                                      ) {
+                                                        if (
+                                                          func3(data17) > 600
+                                                        ) {
+                                                          validate10.errors = [
+                                                            {
+                                                              instancePath:
+                                                                instancePath +
+                                                                '/draft/description',
+                                                              schemaPath:
+                                                                '#/properties/draft/properties/description/maxLength',
+                                                              keyword:
+                                                                'maxLength',
+                                                              params: {
+                                                                limit: 600,
+                                                              },
+                                                              message:
+                                                                'must NOT have more than 600 characters',
+                                                            },
+                                                          ];
+                                                          return false;
+                                                        } else {
+                                                          if (
+                                                            func3(data17) < 1
+                                                          ) {
+                                                            validate10.errors =
+                                                              [
+                                                                {
+                                                                  instancePath:
+                                                                    instancePath +
+                                                                    '/draft/description',
+                                                                  schemaPath:
+                                                                    '#/properties/draft/properties/description/minLength',
+                                                                  keyword:
+                                                                    'minLength',
+                                                                  params: {
+                                                                    limit: 1,
+                                                                  },
+                                                                  message:
+                                                                    'must NOT have fewer than 1 characters',
+                                                                },
+                                                              ];
+                                                            return false;
+                                                          } else {
+                                                            if (
+                                                              !pattern1.test(
+                                                                data17,
+                                                              )
+                                                            ) {
+                                                              validate10.errors =
+                                                                [
+                                                                  {
+                                                                    instancePath:
+                                                                      instancePath +
+                                                                      '/draft/description',
+                                                                    schemaPath:
+                                                                      '#/properties/draft/properties/description/pattern',
+                                                                    keyword:
+                                                                      'pattern',
+                                                                    params: {
+                                                                      pattern:
+                                                                        '\\S',
+                                                                    },
+                                                                    message:
+                                                                      'must match pattern "' +
+                                                                      '\\S' +
+                                                                      '"',
+                                                                  },
+                                                                ];
+                                                              return false;
+                                                            }
+                                                          }
+                                                        }
+                                                      } else {
+                                                        validate10.errors = [
+                                                          {
+                                                            instancePath:
+                                                              instancePath +
+                                                              '/draft/description',
+                                                            schemaPath:
+                                                              '#/properties/draft/properties/description/type',
+                                                            keyword: 'type',
+                                                            params: {
+                                                              type: 'string',
+                                                            },
+                                                            message:
+                                                              'must be string',
+                                                          },
+                                                        ];
+                                                        return false;
+                                                      }
+                                                    }
+                                                    var valid9 =
+                                                      _errs85 === errors;
+                                                  } else {
+                                                    var valid9 = true;
+                                                  }
+                                                  if (valid9) {
+                                                    if (
+                                                      data13.features !==
+                                                      undefined
+                                                    ) {
+                                                      let data18 =
+                                                        data13.features;
+                                                      const _errs87 = errors;
+                                                      if (errors === _errs87) {
+                                                        if (
+                                                          Array.isArray(data18)
+                                                        ) {
+                                                          if (
+                                                            data18.length > 12
+                                                          ) {
+                                                            validate10.errors =
+                                                              [
+                                                                {
+                                                                  instancePath:
+                                                                    instancePath +
+                                                                    '/draft/features',
+                                                                  schemaPath:
+                                                                    '#/properties/draft/properties/features/maxItems',
+                                                                  keyword:
+                                                                    'maxItems',
+                                                                  params: {
+                                                                    limit: 12,
+                                                                  },
+                                                                  message:
+                                                                    'must NOT have more than 12 items',
+                                                                },
+                                                              ];
+                                                            return false;
+                                                          } else {
+                                                            if (
+                                                              data18.length < 1
+                                                            ) {
+                                                              validate10.errors =
+                                                                [
+                                                                  {
+                                                                    instancePath:
+                                                                      instancePath +
+                                                                      '/draft/features',
+                                                                    schemaPath:
+                                                                      '#/properties/draft/properties/features/minItems',
+                                                                    keyword:
+                                                                      'minItems',
+                                                                    params: {
+                                                                      limit: 1,
+                                                                    },
+                                                                    message:
+                                                                      'must NOT have fewer than 1 items',
+                                                                  },
+                                                                ];
+                                                              return false;
+                                                            } else {
+                                                              var valid12 = true;
+                                                              const len1 =
+                                                                data18.length;
+                                                              for (
+                                                                let i1 = 0;
+                                                                i1 < len1;
+                                                                i1++
+                                                              ) {
+                                                                let data19 =
+                                                                  data18[i1];
+                                                                const _errs89 =
+                                                                  errors;
+                                                                if (
+                                                                  errors ===
+                                                                  _errs89
+                                                                ) {
+                                                                  if (
+                                                                    typeof data19 ===
+                                                                    'string'
+                                                                  ) {
+                                                                    if (
+                                                                      func3(
+                                                                        data19,
+                                                                      ) > 240
+                                                                    ) {
+                                                                      validate10.errors =
+                                                                        [
+                                                                          {
+                                                                            instancePath:
+                                                                              instancePath +
+                                                                              '/draft/features/' +
+                                                                              i1,
+                                                                            schemaPath:
+                                                                              '#/properties/draft/properties/features/items/maxLength',
+                                                                            keyword:
+                                                                              'maxLength',
+                                                                            params:
+                                                                              {
+                                                                                limit: 240,
+                                                                              },
+                                                                            message:
+                                                                              'must NOT have more than 240 characters',
+                                                                          },
+                                                                        ];
+                                                                      return false;
+                                                                    } else {
+                                                                      if (
+                                                                        func3(
+                                                                          data19,
+                                                                        ) < 1
+                                                                      ) {
+                                                                        validate10.errors =
+                                                                          [
+                                                                            {
+                                                                              instancePath:
+                                                                                instancePath +
+                                                                                '/draft/features/' +
+                                                                                i1,
+                                                                              schemaPath:
+                                                                                '#/properties/draft/properties/features/items/minLength',
+                                                                              keyword:
+                                                                                'minLength',
+                                                                              params:
+                                                                                {
+                                                                                  limit: 1,
+                                                                                },
+                                                                              message:
+                                                                                'must NOT have fewer than 1 characters',
+                                                                            },
+                                                                          ];
+                                                                        return false;
+                                                                      } else {
+                                                                        if (
+                                                                          !pattern1.test(
+                                                                            data19,
+                                                                          )
+                                                                        ) {
+                                                                          validate10.errors =
+                                                                            [
+                                                                              {
+                                                                                instancePath:
+                                                                                  instancePath +
+                                                                                  '/draft/features/' +
+                                                                                  i1,
+                                                                                schemaPath:
+                                                                                  '#/properties/draft/properties/features/items/pattern',
+                                                                                keyword:
+                                                                                  'pattern',
+                                                                                params:
+                                                                                  {
+                                                                                    pattern:
+                                                                                      '\\S',
+                                                                                  },
+                                                                                message:
+                                                                                  'must match pattern "' +
+                                                                                  '\\S' +
+                                                                                  '"',
+                                                                              },
+                                                                            ];
+                                                                          return false;
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  } else {
+                                                                    validate10.errors =
+                                                                      [
+                                                                        {
+                                                                          instancePath:
+                                                                            instancePath +
+                                                                            '/draft/features/' +
+                                                                            i1,
+                                                                          schemaPath:
+                                                                            '#/properties/draft/properties/features/items/type',
+                                                                          keyword:
+                                                                            'type',
+                                                                          params:
+                                                                            {
+                                                                              type: 'string',
+                                                                            },
+                                                                          message:
+                                                                            'must be string',
+                                                                        },
+                                                                      ];
+                                                                    return false;
+                                                                  }
+                                                                }
+                                                                var valid12 =
+                                                                  _errs89 ===
+                                                                  errors;
+                                                                if (!valid12) {
+                                                                  break;
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        } else {
+                                                          validate10.errors = [
+                                                            {
+                                                              instancePath:
+                                                                instancePath +
+                                                                '/draft/features',
+                                                              schemaPath:
+                                                                '#/properties/draft/properties/features/type',
+                                                              keyword: 'type',
+                                                              params: {
+                                                                type: 'array',
+                                                              },
+                                                              message:
+                                                                'must be array',
+                                                            },
+                                                          ];
+                                                          return false;
+                                                        }
+                                                      }
+                                                      var valid9 =
+                                                        _errs87 === errors;
+                                                    } else {
+                                                      var valid9 = true;
+                                                    }
+                                                    if (valid9) {
+                                                      if (
+                                                        data13.priceMinor !==
+                                                        undefined
+                                                      ) {
+                                                        let data20 =
+                                                          data13.priceMinor;
+                                                        const _errs91 = errors;
+                                                        const _errs92 = errors;
+                                                        let valid13 = false;
+                                                        const _errs93 = errors;
+                                                        if (data20 !== null) {
+                                                          const err61 = {
+                                                            instancePath:
+                                                              instancePath +
+                                                              '/draft/priceMinor',
+                                                            schemaPath:
+                                                              '#/properties/draft/properties/priceMinor/anyOf/0/type',
+                                                            keyword: 'type',
+                                                            params: {
+                                                              type: 'null',
+                                                            },
+                                                            message:
+                                                              'must be null',
+                                                          };
+                                                          if (
+                                                            vErrors === null
+                                                          ) {
+                                                            vErrors = [err61];
+                                                          } else {
+                                                            vErrors.push(err61);
+                                                          }
+                                                          errors++;
+                                                        }
+                                                        var _valid9 =
+                                                          _errs93 === errors;
+                                                        valid13 =
+                                                          valid13 || _valid9;
+                                                        if (!valid13) {
+                                                          const _errs95 =
+                                                            errors;
+                                                          if (!(
+                                                            typeof data20 ==
+                                                              'number' &&
+                                                            !(data20 % 1) &&
+                                                            !isNaN(data20) &&
+                                                            isFinite(data20)
+                                                          )) {
+                                                            const err62 = {
+                                                              instancePath:
+                                                                instancePath +
+                                                                '/draft/priceMinor',
+                                                              schemaPath:
+                                                                '#/properties/draft/properties/priceMinor/anyOf/1/type',
+                                                              keyword: 'type',
+                                                              params: {
+                                                                type: 'integer',
+                                                              },
+                                                              message:
+                                                                'must be integer',
+                                                            };
+                                                            if (
+                                                              vErrors === null
+                                                            ) {
+                                                              vErrors = [err62];
+                                                            } else {
+                                                              vErrors.push(
+                                                                err62,
+                                                              );
+                                                            }
+                                                            errors++;
+                                                          }
+                                                          if (
+                                                            errors === _errs95
+                                                          ) {
+                                                            if (
+                                                              typeof data20 ==
+                                                                'number' &&
+                                                              isFinite(data20)
+                                                            ) {
+                                                              if (
+                                                                data20 >
+                                                                  1000000000 ||
+                                                                isNaN(data20)
+                                                              ) {
+                                                                const err63 = {
+                                                                  instancePath:
+                                                                    instancePath +
+                                                                    '/draft/priceMinor',
+                                                                  schemaPath:
+                                                                    '#/properties/draft/properties/priceMinor/anyOf/1/maximum',
+                                                                  keyword:
+                                                                    'maximum',
+                                                                  params: {
+                                                                    comparison:
+                                                                      '<=',
+                                                                    limit: 1000000000,
+                                                                  },
+                                                                  message:
+                                                                    'must be <= 1000000000',
+                                                                };
+                                                                if (
+                                                                  vErrors ===
+                                                                  null
+                                                                ) {
+                                                                  vErrors = [
+                                                                    err63,
+                                                                  ];
+                                                                } else {
+                                                                  vErrors.push(
+                                                                    err63,
+                                                                  );
+                                                                }
+                                                                errors++;
+                                                              } else {
+                                                                if (
+                                                                  data20 < 0 ||
+                                                                  isNaN(data20)
+                                                                ) {
+                                                                  const err64 =
+                                                                    {
+                                                                      instancePath:
+                                                                        instancePath +
+                                                                        '/draft/priceMinor',
+                                                                      schemaPath:
+                                                                        '#/properties/draft/properties/priceMinor/anyOf/1/minimum',
+                                                                      keyword:
+                                                                        'minimum',
+                                                                      params: {
+                                                                        comparison:
+                                                                          '>=',
+                                                                        limit: 0,
+                                                                      },
+                                                                      message:
+                                                                        'must be >= 0',
+                                                                    };
+                                                                  if (
+                                                                    vErrors ===
+                                                                    null
+                                                                  ) {
+                                                                    vErrors = [
+                                                                      err64,
+                                                                    ];
+                                                                  } else {
+                                                                    vErrors.push(
+                                                                      err64,
+                                                                    );
+                                                                  }
+                                                                  errors++;
+                                                                } else {
+                                                                  let res1;
+                                                                  if (
+                                                                    100 === 0 ||
+                                                                    ((res1 =
+                                                                      data20 /
+                                                                      100),
+                                                                    res1 !==
+                                                                      parseInt(
+                                                                        res1,
+                                                                      ))
+                                                                  ) {
+                                                                    const err65 =
+                                                                      {
+                                                                        instancePath:
+                                                                          instancePath +
+                                                                          '/draft/priceMinor',
+                                                                        schemaPath:
+                                                                          '#/properties/draft/properties/priceMinor/anyOf/1/multipleOf',
+                                                                        keyword:
+                                                                          'multipleOf',
+                                                                        params:
+                                                                          {
+                                                                            multipleOf: 100,
+                                                                          },
+                                                                        message:
+                                                                          'must be multiple of 100',
+                                                                      };
+                                                                    if (
+                                                                      vErrors ===
+                                                                      null
+                                                                    ) {
+                                                                      vErrors =
+                                                                        [err65];
+                                                                    } else {
+                                                                      vErrors.push(
+                                                                        err65,
+                                                                      );
+                                                                    }
+                                                                    errors++;
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                          var _valid9 =
+                                                            _errs95 === errors;
+                                                          valid13 =
+                                                            valid13 || _valid9;
+                                                        }
+                                                        if (!valid13) {
+                                                          const err66 = {
+                                                            instancePath:
+                                                              instancePath +
+                                                              '/draft/priceMinor',
+                                                            schemaPath:
+                                                              '#/properties/draft/properties/priceMinor/anyOf',
+                                                            keyword: 'anyOf',
+                                                            params: {},
+                                                            message:
+                                                              'must match a schema in anyOf',
+                                                          };
+                                                          if (
+                                                            vErrors === null
+                                                          ) {
+                                                            vErrors = [err66];
+                                                          } else {
+                                                            vErrors.push(err66);
+                                                          }
+                                                          errors++;
+                                                          validate10.errors =
+                                                            vErrors;
+                                                          return false;
+                                                        } else {
+                                                          errors = _errs92;
+                                                          if (
+                                                            vErrors !== null
+                                                          ) {
+                                                            if (_errs92) {
+                                                              vErrors.length =
+                                                                _errs92;
+                                                            } else {
+                                                              vErrors = null;
+                                                            }
+                                                          }
+                                                        }
+                                                        var valid9 =
+                                                          _errs91 === errors;
+                                                      } else {
+                                                        var valid9 = true;
+                                                      }
+                                                      if (valid9) {
+                                                        if (
+                                                          data13.practitionerId !==
+                                                          undefined
+                                                        ) {
+                                                          let data21 =
+                                                            data13.practitionerId;
+                                                          const _errs97 =
+                                                            errors;
+                                                          const _errs98 =
+                                                            errors;
+                                                          let valid14 = false;
+                                                          const _errs99 =
+                                                            errors;
+                                                          if (data21 !== null) {
+                                                            const err67 = {
+                                                              instancePath:
+                                                                instancePath +
+                                                                '/draft/practitionerId',
+                                                              schemaPath:
+                                                                '#/properties/draft/properties/practitionerId/anyOf/0/type',
+                                                              keyword: 'type',
+                                                              params: {
+                                                                type: 'null',
+                                                              },
+                                                              message:
+                                                                'must be null',
+                                                            };
+                                                            if (
+                                                              vErrors === null
+                                                            ) {
+                                                              vErrors = [err67];
+                                                            } else {
+                                                              vErrors.push(
+                                                                err67,
+                                                              );
+                                                            }
+                                                            errors++;
+                                                          }
+                                                          var _valid10 =
+                                                            _errs99 === errors;
+                                                          valid14 =
+                                                            valid14 || _valid10;
+                                                          if (!valid14) {
+                                                            const _errs101 =
+                                                              errors;
+                                                            if (
+                                                              errors ===
+                                                              _errs101
+                                                            ) {
+                                                              if (
+                                                                typeof data21 ===
+                                                                'string'
+                                                              ) {
+                                                                if (
+                                                                  !pattern5.test(
+                                                                    data21,
+                                                                  )
+                                                                ) {
+                                                                  const err68 =
+                                                                    {
+                                                                      instancePath:
+                                                                        instancePath +
+                                                                        '/draft/practitionerId',
+                                                                      schemaPath:
+                                                                        '#/properties/draft/properties/practitionerId/anyOf/1/pattern',
+                                                                      keyword:
+                                                                        'pattern',
+                                                                      params: {
+                                                                        pattern:
+                                                                          '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$',
+                                                                      },
+                                                                      message:
+                                                                        'must match pattern "' +
+                                                                        '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$' +
+                                                                        '"',
+                                                                    };
+                                                                  if (
+                                                                    vErrors ===
+                                                                    null
+                                                                  ) {
+                                                                    vErrors = [
+                                                                      err68,
+                                                                    ];
+                                                                  } else {
+                                                                    vErrors.push(
+                                                                      err68,
+                                                                    );
+                                                                  }
+                                                                  errors++;
+                                                                }
+                                                              } else {
+                                                                const err69 = {
+                                                                  instancePath:
+                                                                    instancePath +
+                                                                    '/draft/practitionerId',
+                                                                  schemaPath:
+                                                                    '#/properties/draft/properties/practitionerId/anyOf/1/type',
+                                                                  keyword:
+                                                                    'type',
+                                                                  params: {
+                                                                    type: 'string',
+                                                                  },
+                                                                  message:
+                                                                    'must be string',
+                                                                };
+                                                                if (
+                                                                  vErrors ===
+                                                                  null
+                                                                ) {
+                                                                  vErrors = [
+                                                                    err69,
+                                                                  ];
+                                                                } else {
+                                                                  vErrors.push(
+                                                                    err69,
+                                                                  );
+                                                                }
+                                                                errors++;
+                                                              }
+                                                            }
+                                                            var _valid10 =
+                                                              _errs101 ===
+                                                              errors;
+                                                            valid14 =
+                                                              valid14 ||
+                                                              _valid10;
+                                                          }
+                                                          if (!valid14) {
+                                                            const err70 = {
+                                                              instancePath:
+                                                                instancePath +
+                                                                '/draft/practitionerId',
+                                                              schemaPath:
+                                                                '#/properties/draft/properties/practitionerId/anyOf',
+                                                              keyword: 'anyOf',
+                                                              params: {},
+                                                              message:
+                                                                'must match a schema in anyOf',
+                                                            };
+                                                            if (
+                                                              vErrors === null
+                                                            ) {
+                                                              vErrors = [err70];
+                                                            } else {
+                                                              vErrors.push(
+                                                                err70,
+                                                              );
+                                                            }
+                                                            errors++;
+                                                            validate10.errors =
+                                                              vErrors;
+                                                            return false;
+                                                          } else {
+                                                            errors = _errs98;
+                                                            if (
+                                                              vErrors !== null
+                                                            ) {
+                                                              if (_errs98) {
+                                                                vErrors.length =
+                                                                  _errs98;
+                                                              } else {
+                                                                vErrors = null;
+                                                              }
+                                                            }
+                                                          }
+                                                          var valid9 =
+                                                            _errs97 === errors;
+                                                        } else {
+                                                          var valid9 = true;
+                                                        }
+                                                        if (valid9) {
+                                                          if (
+                                                            data13.status !==
+                                                            undefined
+                                                          ) {
+                                                            let data22 =
+                                                              data13.status;
+                                                            const _errs103 =
+                                                              errors;
+                                                            const _errs104 =
+                                                              errors;
+                                                            let valid15 = false;
+                                                            const _errs105 =
+                                                              errors;
+                                                            if (
+                                                              typeof data22 !==
+                                                              'string'
+                                                            ) {
+                                                              const err71 = {
+                                                                instancePath:
+                                                                  instancePath +
+                                                                  '/draft/status',
+                                                                schemaPath:
+                                                                  '#/properties/draft/properties/status/anyOf/0/type',
+                                                                keyword: 'type',
+                                                                params: {
+                                                                  type: 'string',
+                                                                },
+                                                                message:
+                                                                  'must be string',
+                                                              };
+                                                              if (
+                                                                vErrors === null
+                                                              ) {
+                                                                vErrors = [
+                                                                  err71,
+                                                                ];
+                                                              } else {
+                                                                vErrors.push(
+                                                                  err71,
+                                                                );
+                                                              }
+                                                              errors++;
+                                                            }
+                                                            if (
+                                                              'draft' !== data22
+                                                            ) {
+                                                              const err72 = {
+                                                                instancePath:
+                                                                  instancePath +
+                                                                  '/draft/status',
+                                                                schemaPath:
+                                                                  '#/properties/draft/properties/status/anyOf/0/const',
+                                                                keyword:
+                                                                  'const',
+                                                                params: {
+                                                                  allowedValue:
+                                                                    'draft',
+                                                                },
+                                                                message:
+                                                                  'must be equal to constant',
+                                                              };
+                                                              if (
+                                                                vErrors === null
+                                                              ) {
+                                                                vErrors = [
+                                                                  err72,
+                                                                ];
+                                                              } else {
+                                                                vErrors.push(
+                                                                  err72,
+                                                                );
+                                                              }
+                                                              errors++;
+                                                            }
+                                                            var _valid11 =
+                                                              _errs105 ===
+                                                              errors;
+                                                            valid15 =
+                                                              valid15 ||
+                                                              _valid11;
+                                                            if (!valid15) {
+                                                              const _errs107 =
+                                                                errors;
+                                                              if (
+                                                                typeof data22 !==
+                                                                'string'
+                                                              ) {
+                                                                const err73 = {
+                                                                  instancePath:
+                                                                    instancePath +
+                                                                    '/draft/status',
+                                                                  schemaPath:
+                                                                    '#/properties/draft/properties/status/anyOf/1/type',
+                                                                  keyword:
+                                                                    'type',
+                                                                  params: {
+                                                                    type: 'string',
+                                                                  },
+                                                                  message:
+                                                                    'must be string',
+                                                                };
+                                                                if (
+                                                                  vErrors ===
+                                                                  null
+                                                                ) {
+                                                                  vErrors = [
+                                                                    err73,
+                                                                  ];
+                                                                } else {
+                                                                  vErrors.push(
+                                                                    err73,
+                                                                  );
+                                                                }
+                                                                errors++;
+                                                              }
+                                                              if (
+                                                                'published' !==
+                                                                data22
+                                                              ) {
+                                                                const err74 = {
+                                                                  instancePath:
+                                                                    instancePath +
+                                                                    '/draft/status',
+                                                                  schemaPath:
+                                                                    '#/properties/draft/properties/status/anyOf/1/const',
+                                                                  keyword:
+                                                                    'const',
+                                                                  params: {
+                                                                    allowedValue:
+                                                                      'published',
+                                                                  },
+                                                                  message:
+                                                                    'must be equal to constant',
+                                                                };
+                                                                if (
+                                                                  vErrors ===
+                                                                  null
+                                                                ) {
+                                                                  vErrors = [
+                                                                    err74,
+                                                                  ];
+                                                                } else {
+                                                                  vErrors.push(
+                                                                    err74,
+                                                                  );
+                                                                }
+                                                                errors++;
+                                                              }
+                                                              var _valid11 =
+                                                                _errs107 ===
+                                                                errors;
+                                                              valid15 =
+                                                                valid15 ||
+                                                                _valid11;
+                                                              if (!valid15) {
+                                                                const _errs109 =
+                                                                  errors;
+                                                                if (
+                                                                  typeof data22 !==
+                                                                  'string'
+                                                                ) {
+                                                                  const err75 =
+                                                                    {
+                                                                      instancePath:
+                                                                        instancePath +
+                                                                        '/draft/status',
+                                                                      schemaPath:
+                                                                        '#/properties/draft/properties/status/anyOf/2/type',
+                                                                      keyword:
+                                                                        'type',
+                                                                      params: {
+                                                                        type: 'string',
+                                                                      },
+                                                                      message:
+                                                                        'must be string',
+                                                                    };
+                                                                  if (
+                                                                    vErrors ===
+                                                                    null
+                                                                  ) {
+                                                                    vErrors = [
+                                                                      err75,
+                                                                    ];
+                                                                  } else {
+                                                                    vErrors.push(
+                                                                      err75,
+                                                                    );
+                                                                  }
+                                                                  errors++;
+                                                                }
+                                                                if (
+                                                                  'archived' !==
+                                                                  data22
+                                                                ) {
+                                                                  const err76 =
+                                                                    {
+                                                                      instancePath:
+                                                                        instancePath +
+                                                                        '/draft/status',
+                                                                      schemaPath:
+                                                                        '#/properties/draft/properties/status/anyOf/2/const',
+                                                                      keyword:
+                                                                        'const',
+                                                                      params: {
+                                                                        allowedValue:
+                                                                          'archived',
+                                                                      },
+                                                                      message:
+                                                                        'must be equal to constant',
+                                                                    };
+                                                                  if (
+                                                                    vErrors ===
+                                                                    null
+                                                                  ) {
+                                                                    vErrors = [
+                                                                      err76,
+                                                                    ];
+                                                                  } else {
+                                                                    vErrors.push(
+                                                                      err76,
+                                                                    );
+                                                                  }
+                                                                  errors++;
+                                                                }
+                                                                var _valid11 =
+                                                                  _errs109 ===
+                                                                  errors;
+                                                                valid15 =
+                                                                  valid15 ||
+                                                                  _valid11;
+                                                              }
+                                                            }
+                                                            if (!valid15) {
+                                                              const err77 = {
+                                                                instancePath:
+                                                                  instancePath +
+                                                                  '/draft/status',
+                                                                schemaPath:
+                                                                  '#/properties/draft/properties/status/anyOf',
+                                                                keyword:
+                                                                  'anyOf',
+                                                                params: {},
+                                                                message:
+                                                                  'must match a schema in anyOf',
+                                                              };
+                                                              if (
+                                                                vErrors === null
+                                                              ) {
+                                                                vErrors = [
+                                                                  err77,
+                                                                ];
+                                                              } else {
+                                                                vErrors.push(
+                                                                  err77,
+                                                                );
+                                                              }
+                                                              errors++;
+                                                              validate10.errors =
+                                                                vErrors;
+                                                              return false;
+                                                            } else {
+                                                              errors = _errs104;
+                                                              if (
+                                                                vErrors !== null
+                                                              ) {
+                                                                if (_errs104) {
+                                                                  vErrors.length =
+                                                                    _errs104;
+                                                                } else {
+                                                                  vErrors =
+                                                                    null;
+                                                                }
+                                                              }
+                                                            }
+                                                            var valid9 =
+                                                              _errs103 ===
+                                                              errors;
+                                                          } else {
+                                                            var valid9 = true;
+                                                          }
+                                                          if (valid9) {
+                                                            if (
+                                                              data13.sortOrder !==
+                                                              undefined
+                                                            ) {
+                                                              let data23 =
+                                                                data13.sortOrder;
+                                                              const _errs111 =
+                                                                errors;
+                                                              if (!(
+                                                                typeof data23 ==
+                                                                  'number' &&
+                                                                !(data23 % 1) &&
+                                                                !isNaN(
+                                                                  data23,
+                                                                ) &&
+                                                                isFinite(data23)
+                                                              )) {
+                                                                validate10.errors =
+                                                                  [
+                                                                    {
+                                                                      instancePath:
+                                                                        instancePath +
+                                                                        '/draft/sortOrder',
+                                                                      schemaPath:
+                                                                        '#/properties/draft/properties/sortOrder/type',
+                                                                      keyword:
+                                                                        'type',
+                                                                      params: {
+                                                                        type: 'integer',
+                                                                      },
+                                                                      message:
+                                                                        'must be integer',
+                                                                    },
+                                                                  ];
+                                                                return false;
+                                                              }
+                                                              if (
+                                                                errors ===
+                                                                _errs111
+                                                              ) {
+                                                                if (
+                                                                  typeof data23 ==
+                                                                    'number' &&
+                                                                  isFinite(
+                                                                    data23,
+                                                                  )
+                                                                ) {
+                                                                  if (
+                                                                    data23 >
+                                                                      9999 ||
+                                                                    isNaN(
+                                                                      data23,
+                                                                    )
+                                                                  ) {
+                                                                    validate10.errors =
+                                                                      [
+                                                                        {
+                                                                          instancePath:
+                                                                            instancePath +
+                                                                            '/draft/sortOrder',
+                                                                          schemaPath:
+                                                                            '#/properties/draft/properties/sortOrder/maximum',
+                                                                          keyword:
+                                                                            'maximum',
+                                                                          params:
+                                                                            {
+                                                                              comparison:
+                                                                                '<=',
+                                                                              limit: 9999,
+                                                                            },
+                                                                          message:
+                                                                            'must be <= 9999',
+                                                                        },
+                                                                      ];
+                                                                    return false;
+                                                                  } else {
+                                                                    if (
+                                                                      data23 <
+                                                                        0 ||
+                                                                      isNaN(
+                                                                        data23,
+                                                                      )
+                                                                    ) {
+                                                                      validate10.errors =
+                                                                        [
+                                                                          {
+                                                                            instancePath:
+                                                                              instancePath +
+                                                                              '/draft/sortOrder',
+                                                                            schemaPath:
+                                                                              '#/properties/draft/properties/sortOrder/minimum',
+                                                                            keyword:
+                                                                              'minimum',
+                                                                            params:
+                                                                              {
+                                                                                comparison:
+                                                                                  '>=',
+                                                                                limit: 0,
+                                                                              },
+                                                                            message:
+                                                                              'must be >= 0',
+                                                                          },
+                                                                        ];
+                                                                      return false;
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                              var valid9 =
+                                                                _errs111 ===
+                                                                errors;
+                                                            } else {
+                                                              var valid9 = true;
+                                                            }
+                                                            if (valid9) {
+                                                              if (
+                                                                data13.cardSize !==
+                                                                undefined
+                                                              ) {
+                                                                let data24 =
+                                                                  data13.cardSize;
+                                                                const _errs113 =
+                                                                  errors;
+                                                                const _errs114 =
+                                                                  errors;
+                                                                let valid16 = false;
+                                                                const _errs115 =
+                                                                  errors;
+                                                                if (
+                                                                  typeof data24 !==
+                                                                  'string'
+                                                                ) {
+                                                                  const err78 =
+                                                                    {
+                                                                      instancePath:
+                                                                        instancePath +
+                                                                        '/draft/cardSize',
+                                                                      schemaPath:
+                                                                        '#/properties/draft/properties/cardSize/anyOf/0/type',
+                                                                      keyword:
+                                                                        'type',
+                                                                      params: {
+                                                                        type: 'string',
+                                                                      },
+                                                                      message:
+                                                                        'must be string',
+                                                                    };
+                                                                  if (
+                                                                    vErrors ===
+                                                                    null
+                                                                  ) {
+                                                                    vErrors = [
+                                                                      err78,
+                                                                    ];
+                                                                  } else {
+                                                                    vErrors.push(
+                                                                      err78,
+                                                                    );
+                                                                  }
+                                                                  errors++;
+                                                                }
+                                                                if (
+                                                                  'compact' !==
+                                                                  data24
+                                                                ) {
+                                                                  const err79 =
+                                                                    {
+                                                                      instancePath:
+                                                                        instancePath +
+                                                                        '/draft/cardSize',
+                                                                      schemaPath:
+                                                                        '#/properties/draft/properties/cardSize/anyOf/0/const',
+                                                                      keyword:
+                                                                        'const',
+                                                                      params: {
+                                                                        allowedValue:
+                                                                          'compact',
+                                                                      },
+                                                                      message:
+                                                                        'must be equal to constant',
+                                                                    };
+                                                                  if (
+                                                                    vErrors ===
+                                                                    null
+                                                                  ) {
+                                                                    vErrors = [
+                                                                      err79,
+                                                                    ];
+                                                                  } else {
+                                                                    vErrors.push(
+                                                                      err79,
+                                                                    );
+                                                                  }
+                                                                  errors++;
+                                                                }
+                                                                var _valid12 =
+                                                                  _errs115 ===
+                                                                  errors;
+                                                                valid16 =
+                                                                  valid16 ||
+                                                                  _valid12;
+                                                                if (!valid16) {
+                                                                  const _errs117 =
+                                                                    errors;
+                                                                  if (
+                                                                    typeof data24 !==
+                                                                    'string'
+                                                                  ) {
+                                                                    const err80 =
+                                                                      {
+                                                                        instancePath:
+                                                                          instancePath +
+                                                                          '/draft/cardSize',
+                                                                        schemaPath:
+                                                                          '#/properties/draft/properties/cardSize/anyOf/1/type',
+                                                                        keyword:
+                                                                          'type',
+                                                                        params:
+                                                                          {
+                                                                            type: 'string',
+                                                                          },
+                                                                        message:
+                                                                          'must be string',
+                                                                      };
+                                                                    if (
+                                                                      vErrors ===
+                                                                      null
+                                                                    ) {
+                                                                      vErrors =
+                                                                        [err80];
+                                                                    } else {
+                                                                      vErrors.push(
+                                                                        err80,
+                                                                      );
+                                                                    }
+                                                                    errors++;
+                                                                  }
+                                                                  if (
+                                                                    'standard' !==
+                                                                    data24
+                                                                  ) {
+                                                                    const err81 =
+                                                                      {
+                                                                        instancePath:
+                                                                          instancePath +
+                                                                          '/draft/cardSize',
+                                                                        schemaPath:
+                                                                          '#/properties/draft/properties/cardSize/anyOf/1/const',
+                                                                        keyword:
+                                                                          'const',
+                                                                        params:
+                                                                          {
+                                                                            allowedValue:
+                                                                              'standard',
+                                                                          },
+                                                                        message:
+                                                                          'must be equal to constant',
+                                                                      };
+                                                                    if (
+                                                                      vErrors ===
+                                                                      null
+                                                                    ) {
+                                                                      vErrors =
+                                                                        [err81];
+                                                                    } else {
+                                                                      vErrors.push(
+                                                                        err81,
+                                                                      );
+                                                                    }
+                                                                    errors++;
+                                                                  }
+                                                                  var _valid12 =
+                                                                    _errs117 ===
+                                                                    errors;
+                                                                  valid16 =
+                                                                    valid16 ||
+                                                                    _valid12;
+                                                                  if (
+                                                                    !valid16
+                                                                  ) {
+                                                                    const _errs119 =
+                                                                      errors;
+                                                                    if (
+                                                                      typeof data24 !==
+                                                                      'string'
+                                                                    ) {
+                                                                      const err82 =
+                                                                        {
+                                                                          instancePath:
+                                                                            instancePath +
+                                                                            '/draft/cardSize',
+                                                                          schemaPath:
+                                                                            '#/properties/draft/properties/cardSize/anyOf/2/type',
+                                                                          keyword:
+                                                                            'type',
+                                                                          params:
+                                                                            {
+                                                                              type: 'string',
+                                                                            },
+                                                                          message:
+                                                                            'must be string',
+                                                                        };
+                                                                      if (
+                                                                        vErrors ===
+                                                                        null
+                                                                      ) {
+                                                                        vErrors =
+                                                                          [
+                                                                            err82,
+                                                                          ];
+                                                                      } else {
+                                                                        vErrors.push(
+                                                                          err82,
+                                                                        );
+                                                                      }
+                                                                      errors++;
+                                                                    }
+                                                                    if (
+                                                                      'wide' !==
+                                                                      data24
+                                                                    ) {
+                                                                      const err83 =
+                                                                        {
+                                                                          instancePath:
+                                                                            instancePath +
+                                                                            '/draft/cardSize',
+                                                                          schemaPath:
+                                                                            '#/properties/draft/properties/cardSize/anyOf/2/const',
+                                                                          keyword:
+                                                                            'const',
+                                                                          params:
+                                                                            {
+                                                                              allowedValue:
+                                                                                'wide',
+                                                                            },
+                                                                          message:
+                                                                            'must be equal to constant',
+                                                                        };
+                                                                      if (
+                                                                        vErrors ===
+                                                                        null
+                                                                      ) {
+                                                                        vErrors =
+                                                                          [
+                                                                            err83,
+                                                                          ];
+                                                                      } else {
+                                                                        vErrors.push(
+                                                                          err83,
+                                                                        );
+                                                                      }
+                                                                      errors++;
+                                                                    }
+                                                                    var _valid12 =
+                                                                      _errs119 ===
+                                                                      errors;
+                                                                    valid16 =
+                                                                      valid16 ||
+                                                                      _valid12;
+                                                                  }
+                                                                }
+                                                                if (!valid16) {
+                                                                  const err84 =
+                                                                    {
+                                                                      instancePath:
+                                                                        instancePath +
+                                                                        '/draft/cardSize',
+                                                                      schemaPath:
+                                                                        '#/properties/draft/properties/cardSize/anyOf',
+                                                                      keyword:
+                                                                        'anyOf',
+                                                                      params:
+                                                                        {},
+                                                                      message:
+                                                                        'must match a schema in anyOf',
+                                                                    };
+                                                                  if (
+                                                                    vErrors ===
+                                                                    null
+                                                                  ) {
+                                                                    vErrors = [
+                                                                      err84,
+                                                                    ];
+                                                                  } else {
+                                                                    vErrors.push(
+                                                                      err84,
+                                                                    );
+                                                                  }
+                                                                  errors++;
+                                                                  validate10.errors =
+                                                                    vErrors;
+                                                                  return false;
+                                                                } else {
+                                                                  errors =
+                                                                    _errs114;
+                                                                  if (
+                                                                    vErrors !==
+                                                                    null
+                                                                  ) {
+                                                                    if (
+                                                                      _errs114
+                                                                    ) {
+                                                                      vErrors.length =
+                                                                        _errs114;
+                                                                    } else {
+                                                                      vErrors =
+                                                                        null;
+                                                                    }
+                                                                  }
+                                                                }
+                                                                var valid9 =
+                                                                  _errs113 ===
+                                                                  errors;
+                                                              } else {
+                                                                var valid9 = true;
+                                                              }
+                                                              if (valid9) {
+                                                                if (
+                                                                  data13.cardColor !==
+                                                                  undefined
+                                                                ) {
+                                                                  let data25 =
+                                                                    data13.cardColor;
+                                                                  const _errs121 =
+                                                                    errors;
+                                                                  const _errs122 =
+                                                                    errors;
+                                                                  let valid17 = false;
+                                                                  const _errs123 =
+                                                                    errors;
+                                                                  if (
+                                                                    typeof data25 !==
+                                                                    'string'
+                                                                  ) {
+                                                                    const err85 =
+                                                                      {
+                                                                        instancePath:
+                                                                          instancePath +
+                                                                          '/draft/cardColor',
+                                                                        schemaPath:
+                                                                          '#/properties/draft/properties/cardColor/anyOf/0/type',
+                                                                        keyword:
+                                                                          'type',
+                                                                        params:
+                                                                          {
+                                                                            type: 'string',
+                                                                          },
+                                                                        message:
+                                                                          'must be string',
+                                                                      };
+                                                                    if (
+                                                                      vErrors ===
+                                                                      null
+                                                                    ) {
+                                                                      vErrors =
+                                                                        [err85];
+                                                                    } else {
+                                                                      vErrors.push(
+                                                                        err85,
+                                                                      );
+                                                                    }
+                                                                    errors++;
+                                                                  }
+                                                                  if (
+                                                                    'default' !==
+                                                                    data25
+                                                                  ) {
+                                                                    const err86 =
+                                                                      {
+                                                                        instancePath:
+                                                                          instancePath +
+                                                                          '/draft/cardColor',
+                                                                        schemaPath:
+                                                                          '#/properties/draft/properties/cardColor/anyOf/0/const',
+                                                                        keyword:
+                                                                          'const',
+                                                                        params:
+                                                                          {
+                                                                            allowedValue:
+                                                                              'default',
+                                                                          },
+                                                                        message:
+                                                                          'must be equal to constant',
+                                                                      };
+                                                                    if (
+                                                                      vErrors ===
+                                                                      null
+                                                                    ) {
+                                                                      vErrors =
+                                                                        [err86];
+                                                                    } else {
+                                                                      vErrors.push(
+                                                                        err86,
+                                                                      );
+                                                                    }
+                                                                    errors++;
+                                                                  }
+                                                                  var _valid13 =
+                                                                    _errs123 ===
+                                                                    errors;
+                                                                  valid17 =
+                                                                    valid17 ||
+                                                                    _valid13;
+                                                                  if (
+                                                                    !valid17
+                                                                  ) {
+                                                                    const _errs125 =
+                                                                      errors;
+                                                                    if (
+                                                                      typeof data25 !==
+                                                                      'string'
+                                                                    ) {
+                                                                      const err87 =
+                                                                        {
+                                                                          instancePath:
+                                                                            instancePath +
+                                                                            '/draft/cardColor',
+                                                                          schemaPath:
+                                                                            '#/properties/draft/properties/cardColor/anyOf/1/type',
+                                                                          keyword:
+                                                                            'type',
+                                                                          params:
+                                                                            {
+                                                                              type: 'string',
+                                                                            },
+                                                                          message:
+                                                                            'must be string',
+                                                                        };
+                                                                      if (
+                                                                        vErrors ===
+                                                                        null
+                                                                      ) {
+                                                                        vErrors =
+                                                                          [
+                                                                            err87,
+                                                                          ];
+                                                                      } else {
+                                                                        vErrors.push(
+                                                                          err87,
+                                                                        );
+                                                                      }
+                                                                      errors++;
+                                                                    }
+                                                                    if (
+                                                                      'navy' !==
+                                                                      data25
+                                                                    ) {
+                                                                      const err88 =
+                                                                        {
+                                                                          instancePath:
+                                                                            instancePath +
+                                                                            '/draft/cardColor',
+                                                                          schemaPath:
+                                                                            '#/properties/draft/properties/cardColor/anyOf/1/const',
+                                                                          keyword:
+                                                                            'const',
+                                                                          params:
+                                                                            {
+                                                                              allowedValue:
+                                                                                'navy',
+                                                                            },
+                                                                          message:
+                                                                            'must be equal to constant',
+                                                                        };
+                                                                      if (
+                                                                        vErrors ===
+                                                                        null
+                                                                      ) {
+                                                                        vErrors =
+                                                                          [
+                                                                            err88,
+                                                                          ];
+                                                                      } else {
+                                                                        vErrors.push(
+                                                                          err88,
+                                                                        );
+                                                                      }
+                                                                      errors++;
+                                                                    }
+                                                                    var _valid13 =
+                                                                      _errs125 ===
+                                                                      errors;
+                                                                    valid17 =
+                                                                      valid17 ||
+                                                                      _valid13;
+                                                                    if (
+                                                                      !valid17
+                                                                    ) {
+                                                                      const _errs127 =
+                                                                        errors;
+                                                                      if (
+                                                                        typeof data25 !==
+                                                                        'string'
+                                                                      ) {
+                                                                        const err89 =
+                                                                          {
+                                                                            instancePath:
+                                                                              instancePath +
+                                                                              '/draft/cardColor',
+                                                                            schemaPath:
+                                                                              '#/properties/draft/properties/cardColor/anyOf/2/type',
+                                                                            keyword:
+                                                                              'type',
+                                                                            params:
+                                                                              {
+                                                                                type: 'string',
+                                                                              },
+                                                                            message:
+                                                                              'must be string',
+                                                                          };
+                                                                        if (
+                                                                          vErrors ===
+                                                                          null
+                                                                        ) {
+                                                                          vErrors =
+                                                                            [
+                                                                              err89,
+                                                                            ];
+                                                                        } else {
+                                                                          vErrors.push(
+                                                                            err89,
+                                                                          );
+                                                                        }
+                                                                        errors++;
+                                                                      }
+                                                                      if (
+                                                                        'burgundy' !==
+                                                                        data25
+                                                                      ) {
+                                                                        const err90 =
+                                                                          {
+                                                                            instancePath:
+                                                                              instancePath +
+                                                                              '/draft/cardColor',
+                                                                            schemaPath:
+                                                                              '#/properties/draft/properties/cardColor/anyOf/2/const',
+                                                                            keyword:
+                                                                              'const',
+                                                                            params:
+                                                                              {
+                                                                                allowedValue:
+                                                                                  'burgundy',
+                                                                              },
+                                                                            message:
+                                                                              'must be equal to constant',
+                                                                          };
+                                                                        if (
+                                                                          vErrors ===
+                                                                          null
+                                                                        ) {
+                                                                          vErrors =
+                                                                            [
+                                                                              err90,
+                                                                            ];
+                                                                        } else {
+                                                                          vErrors.push(
+                                                                            err90,
+                                                                          );
+                                                                        }
+                                                                        errors++;
+                                                                      }
+                                                                      var _valid13 =
+                                                                        _errs127 ===
+                                                                        errors;
+                                                                      valid17 =
+                                                                        valid17 ||
+                                                                        _valid13;
+                                                                      if (
+                                                                        !valid17
+                                                                      ) {
+                                                                        const _errs129 =
+                                                                          errors;
+                                                                        if (
+                                                                          typeof data25 !==
+                                                                          'string'
+                                                                        ) {
+                                                                          const err91 =
+                                                                            {
+                                                                              instancePath:
+                                                                                instancePath +
+                                                                                '/draft/cardColor',
+                                                                              schemaPath:
+                                                                                '#/properties/draft/properties/cardColor/anyOf/3/type',
+                                                                              keyword:
+                                                                                'type',
+                                                                              params:
+                                                                                {
+                                                                                  type: 'string',
+                                                                                },
+                                                                              message:
+                                                                                'must be string',
+                                                                            };
+                                                                          if (
+                                                                            vErrors ===
+                                                                            null
+                                                                          ) {
+                                                                            vErrors =
+                                                                              [
+                                                                                err91,
+                                                                              ];
+                                                                          } else {
+                                                                            vErrors.push(
+                                                                              err91,
+                                                                            );
+                                                                          }
+                                                                          errors++;
+                                                                        }
+                                                                        if (
+                                                                          'emerald' !==
+                                                                          data25
+                                                                        ) {
+                                                                          const err92 =
+                                                                            {
+                                                                              instancePath:
+                                                                                instancePath +
+                                                                                '/draft/cardColor',
+                                                                              schemaPath:
+                                                                                '#/properties/draft/properties/cardColor/anyOf/3/const',
+                                                                              keyword:
+                                                                                'const',
+                                                                              params:
+                                                                                {
+                                                                                  allowedValue:
+                                                                                    'emerald',
+                                                                                },
+                                                                              message:
+                                                                                'must be equal to constant',
+                                                                            };
+                                                                          if (
+                                                                            vErrors ===
+                                                                            null
+                                                                          ) {
+                                                                            vErrors =
+                                                                              [
+                                                                                err92,
+                                                                              ];
+                                                                          } else {
+                                                                            vErrors.push(
+                                                                              err92,
+                                                                            );
+                                                                          }
+                                                                          errors++;
+                                                                        }
+                                                                        var _valid13 =
+                                                                          _errs129 ===
+                                                                          errors;
+                                                                        valid17 =
+                                                                          valid17 ||
+                                                                          _valid13;
+                                                                        if (
+                                                                          !valid17
+                                                                        ) {
+                                                                          const _errs131 =
+                                                                            errors;
+                                                                          if (
+                                                                            typeof data25 !==
+                                                                            'string'
+                                                                          ) {
+                                                                            const err93 =
+                                                                              {
+                                                                                instancePath:
+                                                                                  instancePath +
+                                                                                  '/draft/cardColor',
+                                                                                schemaPath:
+                                                                                  '#/properties/draft/properties/cardColor/anyOf/4/type',
+                                                                                keyword:
+                                                                                  'type',
+                                                                                params:
+                                                                                  {
+                                                                                    type: 'string',
+                                                                                  },
+                                                                                message:
+                                                                                  'must be string',
+                                                                              };
+                                                                            if (
+                                                                              vErrors ===
+                                                                              null
+                                                                            ) {
+                                                                              vErrors =
+                                                                                [
+                                                                                  err93,
+                                                                                ];
+                                                                            } else {
+                                                                              vErrors.push(
+                                                                                err93,
+                                                                              );
+                                                                            }
+                                                                            errors++;
+                                                                          }
+                                                                          if (
+                                                                            'indigo' !==
+                                                                            data25
+                                                                          ) {
+                                                                            const err94 =
+                                                                              {
+                                                                                instancePath:
+                                                                                  instancePath +
+                                                                                  '/draft/cardColor',
+                                                                                schemaPath:
+                                                                                  '#/properties/draft/properties/cardColor/anyOf/4/const',
+                                                                                keyword:
+                                                                                  'const',
+                                                                                params:
+                                                                                  {
+                                                                                    allowedValue:
+                                                                                      'indigo',
+                                                                                  },
+                                                                                message:
+                                                                                  'must be equal to constant',
+                                                                              };
+                                                                            if (
+                                                                              vErrors ===
+                                                                              null
+                                                                            ) {
+                                                                              vErrors =
+                                                                                [
+                                                                                  err94,
+                                                                                ];
+                                                                            } else {
+                                                                              vErrors.push(
+                                                                                err94,
+                                                                              );
+                                                                            }
+                                                                            errors++;
+                                                                          }
+                                                                          var _valid13 =
+                                                                            _errs131 ===
+                                                                            errors;
+                                                                          valid17 =
+                                                                            valid17 ||
+                                                                            _valid13;
+                                                                          if (
+                                                                            !valid17
+                                                                          ) {
+                                                                            const _errs133 =
+                                                                              errors;
+                                                                            if (
+                                                                              errors ===
+                                                                              _errs133
+                                                                            ) {
+                                                                              if (
+                                                                                typeof data25 ===
+                                                                                'string'
+                                                                              ) {
+                                                                                if (
+                                                                                  func3(
+                                                                                    data25,
+                                                                                  ) >
+                                                                                  7
+                                                                                ) {
+                                                                                  const err95 =
+                                                                                    {
+                                                                                      instancePath:
+                                                                                        instancePath +
+                                                                                        '/draft/cardColor',
+                                                                                      schemaPath:
+                                                                                        '#/properties/draft/properties/cardColor/anyOf/5/maxLength',
+                                                                                      keyword:
+                                                                                        'maxLength',
+                                                                                      params:
+                                                                                        {
+                                                                                          limit: 7,
+                                                                                        },
+                                                                                      message:
+                                                                                        'must NOT have more than 7 characters',
+                                                                                    };
+                                                                                  if (
+                                                                                    vErrors ===
+                                                                                    null
+                                                                                  ) {
+                                                                                    vErrors =
+                                                                                      [
+                                                                                        err95,
+                                                                                      ];
+                                                                                  } else {
+                                                                                    vErrors.push(
+                                                                                      err95,
+                                                                                    );
+                                                                                  }
+                                                                                  errors++;
+                                                                                } else {
+                                                                                  if (
+                                                                                    func3(
+                                                                                      data25,
+                                                                                    ) <
+                                                                                    7
+                                                                                  ) {
+                                                                                    const err96 =
+                                                                                      {
+                                                                                        instancePath:
+                                                                                          instancePath +
+                                                                                          '/draft/cardColor',
+                                                                                        schemaPath:
+                                                                                          '#/properties/draft/properties/cardColor/anyOf/5/minLength',
+                                                                                        keyword:
+                                                                                          'minLength',
+                                                                                        params:
+                                                                                          {
+                                                                                            limit: 7,
+                                                                                          },
+                                                                                        message:
+                                                                                          'must NOT have fewer than 7 characters',
+                                                                                      };
+                                                                                    if (
+                                                                                      vErrors ===
+                                                                                      null
+                                                                                    ) {
+                                                                                      vErrors =
+                                                                                        [
+                                                                                          err96,
+                                                                                        ];
+                                                                                    } else {
+                                                                                      vErrors.push(
+                                                                                        err96,
+                                                                                      );
+                                                                                    }
+                                                                                    errors++;
+                                                                                  } else {
+                                                                                    if (
+                                                                                      !pattern6.test(
+                                                                                        data25,
+                                                                                      )
+                                                                                    ) {
+                                                                                      const err97 =
+                                                                                        {
+                                                                                          instancePath:
+                                                                                            instancePath +
+                                                                                            '/draft/cardColor',
+                                                                                          schemaPath:
+                                                                                            '#/properties/draft/properties/cardColor/anyOf/5/pattern',
+                                                                                          keyword:
+                                                                                            'pattern',
+                                                                                          params:
+                                                                                            {
+                                                                                              pattern:
+                                                                                                '^#[0-9a-fA-F]{6}$',
+                                                                                            },
+                                                                                          message:
+                                                                                            'must match pattern "' +
+                                                                                            '^#[0-9a-fA-F]{6}$' +
+                                                                                            '"',
+                                                                                        };
+                                                                                      if (
+                                                                                        vErrors ===
+                                                                                        null
+                                                                                      ) {
+                                                                                        vErrors =
+                                                                                          [
+                                                                                            err97,
+                                                                                          ];
+                                                                                      } else {
+                                                                                        vErrors.push(
+                                                                                          err97,
+                                                                                        );
+                                                                                      }
+                                                                                      errors++;
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              } else {
+                                                                                const err98 =
+                                                                                  {
+                                                                                    instancePath:
+                                                                                      instancePath +
+                                                                                      '/draft/cardColor',
+                                                                                    schemaPath:
+                                                                                      '#/properties/draft/properties/cardColor/anyOf/5/type',
+                                                                                    keyword:
+                                                                                      'type',
+                                                                                    params:
+                                                                                      {
+                                                                                        type: 'string',
+                                                                                      },
+                                                                                    message:
+                                                                                      'must be string',
+                                                                                  };
+                                                                                if (
+                                                                                  vErrors ===
+                                                                                  null
+                                                                                ) {
+                                                                                  vErrors =
+                                                                                    [
+                                                                                      err98,
+                                                                                    ];
+                                                                                } else {
+                                                                                  vErrors.push(
+                                                                                    err98,
+                                                                                  );
+                                                                                }
+                                                                                errors++;
+                                                                              }
+                                                                            }
+                                                                            var _valid13 =
+                                                                              _errs133 ===
+                                                                              errors;
+                                                                            valid17 =
+                                                                              valid17 ||
+                                                                              _valid13;
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                  if (
+                                                                    !valid17
+                                                                  ) {
+                                                                    const err99 =
+                                                                      {
+                                                                        instancePath:
+                                                                          instancePath +
+                                                                          '/draft/cardColor',
+                                                                        schemaPath:
+                                                                          '#/properties/draft/properties/cardColor/anyOf',
+                                                                        keyword:
+                                                                          'anyOf',
+                                                                        params:
+                                                                          {},
+                                                                        message:
+                                                                          'must match a schema in anyOf',
+                                                                      };
+                                                                    if (
+                                                                      vErrors ===
+                                                                      null
+                                                                    ) {
+                                                                      vErrors =
+                                                                        [err99];
+                                                                    } else {
+                                                                      vErrors.push(
+                                                                        err99,
+                                                                      );
+                                                                    }
+                                                                    errors++;
+                                                                    validate10.errors =
+                                                                      vErrors;
+                                                                    return false;
+                                                                  } else {
+                                                                    errors =
+                                                                      _errs122;
+                                                                    if (
+                                                                      vErrors !==
+                                                                      null
+                                                                    ) {
+                                                                      if (
+                                                                        _errs122
+                                                                      ) {
+                                                                        vErrors.length =
+                                                                          _errs122;
+                                                                      } else {
+                                                                        vErrors =
+                                                                          null;
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                  var valid9 =
+                                                                    _errs121 ===
+                                                                    errors;
+                                                                } else {
+                                                                  var valid9 = true;
+                                                                }
+                                                                if (valid9) {
+                                                                  if (
+                                                                    data13.placeBefore !==
+                                                                    undefined
+                                                                  ) {
+                                                                    let data26 =
+                                                                      data13.placeBefore;
+                                                                    const _errs135 =
+                                                                      errors;
+                                                                    const _errs136 =
+                                                                      errors;
+                                                                    let valid18 = false;
+                                                                    const _errs137 =
+                                                                      errors;
+                                                                    if (
+                                                                      data26 !==
+                                                                      null
+                                                                    ) {
+                                                                      const err100 =
+                                                                        {
+                                                                          instancePath:
+                                                                            instancePath +
+                                                                            '/draft/placeBefore',
+                                                                          schemaPath:
+                                                                            '#/properties/draft/properties/placeBefore/anyOf/0/type',
+                                                                          keyword:
+                                                                            'type',
+                                                                          params:
+                                                                            {
+                                                                              type: 'null',
+                                                                            },
+                                                                          message:
+                                                                            'must be null',
+                                                                        };
+                                                                      if (
+                                                                        vErrors ===
+                                                                        null
+                                                                      ) {
+                                                                        vErrors =
+                                                                          [
+                                                                            err100,
+                                                                          ];
+                                                                      } else {
+                                                                        vErrors.push(
+                                                                          err100,
+                                                                        );
+                                                                      }
+                                                                      errors++;
+                                                                    }
+                                                                    var _valid14 =
+                                                                      _errs137 ===
+                                                                      errors;
+                                                                    valid18 =
+                                                                      valid18 ||
+                                                                      _valid14;
+                                                                    if (
+                                                                      !valid18
+                                                                    ) {
+                                                                      const _errs139 =
+                                                                        errors;
+                                                                      if (
+                                                                        errors ===
+                                                                        _errs139
+                                                                      ) {
+                                                                        if (
+                                                                          typeof data26 ===
+                                                                          'string'
+                                                                        ) {
+                                                                          if (
+                                                                            func3(
+                                                                              data26,
+                                                                            ) >
+                                                                            48
+                                                                          ) {
+                                                                            const err101 =
+                                                                              {
+                                                                                instancePath:
+                                                                                  instancePath +
+                                                                                  '/draft/placeBefore',
+                                                                                schemaPath:
+                                                                                  '#/properties/draft/properties/placeBefore/anyOf/1/maxLength',
+                                                                                keyword:
+                                                                                  'maxLength',
+                                                                                params:
+                                                                                  {
+                                                                                    limit: 48,
+                                                                                  },
+                                                                                message:
+                                                                                  'must NOT have more than 48 characters',
+                                                                              };
+                                                                            if (
+                                                                              vErrors ===
+                                                                              null
+                                                                            ) {
+                                                                              vErrors =
+                                                                                [
+                                                                                  err101,
+                                                                                ];
+                                                                            } else {
+                                                                              vErrors.push(
+                                                                                err101,
+                                                                              );
+                                                                            }
+                                                                            errors++;
+                                                                          } else {
+                                                                            if (
+                                                                              !pattern0.test(
+                                                                                data26,
+                                                                              )
+                                                                            ) {
+                                                                              const err102 =
+                                                                                {
+                                                                                  instancePath:
+                                                                                    instancePath +
+                                                                                    '/draft/placeBefore',
+                                                                                  schemaPath:
+                                                                                    '#/properties/draft/properties/placeBefore/anyOf/1/pattern',
+                                                                                  keyword:
+                                                                                    'pattern',
+                                                                                  params:
+                                                                                    {
+                                                                                      pattern:
+                                                                                        '^[a-z][a-z0-9-]{0,47}$',
+                                                                                    },
+                                                                                  message:
+                                                                                    'must match pattern "' +
+                                                                                    '^[a-z][a-z0-9-]{0,47}$' +
+                                                                                    '"',
+                                                                                };
+                                                                              if (
+                                                                                vErrors ===
+                                                                                null
+                                                                              ) {
+                                                                                vErrors =
+                                                                                  [
+                                                                                    err102,
+                                                                                  ];
+                                                                              } else {
+                                                                                vErrors.push(
+                                                                                  err102,
+                                                                                );
+                                                                              }
+                                                                              errors++;
+                                                                            }
+                                                                          }
+                                                                        } else {
+                                                                          const err103 =
+                                                                            {
+                                                                              instancePath:
+                                                                                instancePath +
+                                                                                '/draft/placeBefore',
+                                                                              schemaPath:
+                                                                                '#/properties/draft/properties/placeBefore/anyOf/1/type',
+                                                                              keyword:
+                                                                                'type',
+                                                                              params:
+                                                                                {
+                                                                                  type: 'string',
+                                                                                },
+                                                                              message:
+                                                                                'must be string',
+                                                                            };
+                                                                          if (
+                                                                            vErrors ===
+                                                                            null
+                                                                          ) {
+                                                                            vErrors =
+                                                                              [
+                                                                                err103,
+                                                                              ];
+                                                                          } else {
+                                                                            vErrors.push(
+                                                                              err103,
+                                                                            );
+                                                                          }
+                                                                          errors++;
+                                                                        }
+                                                                      }
+                                                                      var _valid14 =
+                                                                        _errs139 ===
+                                                                        errors;
+                                                                      valid18 =
+                                                                        valid18 ||
+                                                                        _valid14;
+                                                                    }
+                                                                    if (
+                                                                      !valid18
+                                                                    ) {
+                                                                      const err104 =
+                                                                        {
+                                                                          instancePath:
+                                                                            instancePath +
+                                                                            '/draft/placeBefore',
+                                                                          schemaPath:
+                                                                            '#/properties/draft/properties/placeBefore/anyOf',
+                                                                          keyword:
+                                                                            'anyOf',
+                                                                          params:
+                                                                            {},
+                                                                          message:
+                                                                            'must match a schema in anyOf',
+                                                                        };
+                                                                      if (
+                                                                        vErrors ===
+                                                                        null
+                                                                      ) {
+                                                                        vErrors =
+                                                                          [
+                                                                            err104,
+                                                                          ];
+                                                                      } else {
+                                                                        vErrors.push(
+                                                                          err104,
+                                                                        );
+                                                                      }
+                                                                      errors++;
+                                                                      validate10.errors =
+                                                                        vErrors;
+                                                                      return false;
+                                                                    } else {
+                                                                      errors =
+                                                                        _errs136;
+                                                                      if (
+                                                                        vErrors !==
+                                                                        null
+                                                                      ) {
+                                                                        if (
+                                                                          _errs136
+                                                                        ) {
+                                                                          vErrors.length =
+                                                                            _errs136;
+                                                                        } else {
+                                                                          vErrors =
+                                                                            null;
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                    var valid9 =
+                                                                      _errs135 ===
+                                                                      errors;
+                                                                  } else {
+                                                                    var valid9 = true;
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      } else {
+                                        validate10.errors = [
+                                          {
+                                            instancePath:
+                                              instancePath + '/draft',
+                                            schemaPath:
+                                              '#/properties/draft/type',
+                                            keyword: 'type',
+                                            params: { type: 'object' },
+                                            message: 'must be object',
+                                          },
+                                        ];
+                                        return false;
+                                      }
+                                    }
+                                    var valid0 = _errs68 === errors;
+                                  } else {
+                                    var valid0 = true;
+                                  }
+                                  if (valid0) {
+                                    if (data.revision !== undefined) {
+                                      let data27 = data.revision;
+                                      const _errs141 = errors;
+                                      if (!(
+                                        typeof data27 == 'number' &&
+                                        !(data27 % 1) &&
+                                        !isNaN(data27) &&
+                                        isFinite(data27)
+                                      )) {
+                                        validate10.errors = [
+                                          {
+                                            instancePath:
+                                              instancePath + '/revision',
+                                            schemaPath:
+                                              '#/properties/revision/type',
+                                            keyword: 'type',
+                                            params: { type: 'integer' },
+                                            message: 'must be integer',
+                                          },
+                                        ];
+                                        return false;
+                                      }
+                                      if (errors === _errs141) {
+                                        if (
+                                          typeof data27 == 'number' &&
+                                          isFinite(data27)
+                                        ) {
+                                          if (data27 < 1 || isNaN(data27)) {
                                             validate10.errors = [
                                               {
                                                 instancePath:
-                                                  instancePath + '/updatedAt',
+                                                  instancePath + '/revision',
                                                 schemaPath:
-                                                  '#/properties/updatedAt/pattern',
-                                                keyword: 'pattern',
-                                                params: { pattern: '\\S' },
-                                                message:
-                                                  'must match pattern "' +
-                                                  '\\S' +
-                                                  '"',
+                                                  '#/properties/revision/minimum',
+                                                keyword: 'minimum',
+                                                params: {
+                                                  comparison: '>=',
+                                                  limit: 1,
+                                                },
+                                                message: 'must be >= 1',
                                               },
                                             ];
                                             return false;
                                           }
                                         }
                                       }
+                                      var valid0 = _errs141 === errors;
                                     } else {
-                                      validate10.errors = [
-                                        {
-                                          instancePath:
-                                            instancePath + '/updatedAt',
-                                          schemaPath:
-                                            '#/properties/updatedAt/type',
-                                          keyword: 'type',
-                                          params: { type: 'string' },
-                                          message: 'must be string',
-                                        },
-                                      ];
-                                      return false;
+                                      var valid0 = true;
+                                    }
+                                    if (valid0) {
+                                      if (data.updatedAt !== undefined) {
+                                        let data28 = data.updatedAt;
+                                        const _errs143 = errors;
+                                        if (errors === _errs143) {
+                                          if (typeof data28 === 'string') {
+                                            if (func3(data28) > 40) {
+                                              validate10.errors = [
+                                                {
+                                                  instancePath:
+                                                    instancePath + '/updatedAt',
+                                                  schemaPath:
+                                                    '#/properties/updatedAt/maxLength',
+                                                  keyword: 'maxLength',
+                                                  params: { limit: 40 },
+                                                  message:
+                                                    'must NOT have more than 40 characters',
+                                                },
+                                              ];
+                                              return false;
+                                            } else {
+                                              if (func3(data28) < 1) {
+                                                validate10.errors = [
+                                                  {
+                                                    instancePath:
+                                                      instancePath +
+                                                      '/updatedAt',
+                                                    schemaPath:
+                                                      '#/properties/updatedAt/minLength',
+                                                    keyword: 'minLength',
+                                                    params: { limit: 1 },
+                                                    message:
+                                                      'must NOT have fewer than 1 characters',
+                                                  },
+                                                ];
+                                                return false;
+                                              } else {
+                                                if (!pattern1.test(data28)) {
+                                                  validate10.errors = [
+                                                    {
+                                                      instancePath:
+                                                        instancePath +
+                                                        '/updatedAt',
+                                                      schemaPath:
+                                                        '#/properties/updatedAt/pattern',
+                                                      keyword: 'pattern',
+                                                      params: {
+                                                        pattern: '\\S',
+                                                      },
+                                                      message:
+                                                        'must match pattern "' +
+                                                        '\\S' +
+                                                        '"',
+                                                    },
+                                                  ];
+                                                  return false;
+                                                }
+                                              }
+                                            }
+                                          } else {
+                                            validate10.errors = [
+                                              {
+                                                instancePath:
+                                                  instancePath + '/updatedAt',
+                                                schemaPath:
+                                                  '#/properties/updatedAt/type',
+                                                keyword: 'type',
+                                                params: { type: 'string' },
+                                                message: 'must be string',
+                                              },
+                                            ];
+                                            return false;
+                                          }
+                                        }
+                                        var valid0 = _errs143 === errors;
+                                      } else {
+                                        var valid0 = true;
+                                      }
                                     }
                                   }
-                                  var valid0 = _errs48 === errors;
-                                } else {
-                                  var valid0 = true;
                                 }
                               }
                             }

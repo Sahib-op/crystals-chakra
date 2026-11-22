@@ -82,7 +82,7 @@ export function createDatabase(settings: DatabaseSettings) {
     async listPublished(): Promise<ReadingCatalogue> {
       return transaction('anon', null, async (client) => {
         const result =
-          await client.query(`select r.id,r.type,r.title,r.hindi_title,r.description,r.features,r.price_minor_units,r.contact_destination,p.name as practitioner_name
+          await client.query(`select r.id,r.type,r.title,r.hindi_title,r.description,r.features,r.price_minor_units,r.contact_destination,r.card_size,r.card_color,p.name as practitioner_name
           from catalog.readings r left join catalog.practitioners p on p.id=r.practitioner_id
           where r.status='published' order by r.sort_order,r.id limit 41`);
         const readings: unknown = result.rows.map((row) => ({
@@ -95,6 +95,10 @@ export function createDatabase(settings: DatabaseSettings) {
           price:
             row.price_minor_units === null ? null : row.price_minor_units / 100,
           contactDestination: row.contact_destination,
+          ...(row.card_size !== 'standard' ? { cardSize: row.card_size } : {}),
+          ...(row.card_color !== 'default'
+            ? { cardColor: row.card_color }
+            : {}),
           ...(row.practitioner_name
             ? { practitioner: { name: row.practitioner_name } }
             : {}),

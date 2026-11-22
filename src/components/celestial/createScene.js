@@ -136,14 +136,6 @@ function cardTexture(item) {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 4;
-  // Redraw in the brand serif once it has loaded, so names never fall back.
-  document.fonts
-    ?.load(`600 23px ${CARD_FONT}`)
-    .then(() => {
-      drawCard(ctx, item);
-      texture.needsUpdate = true;
-    })
-    .catch(() => {});
   return texture;
 }
 
@@ -162,7 +154,7 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
   canvas.setAttribute('aria-hidden', 'true');
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 50);
-  // Far enough back that the full sway stays inside the square.
+  // Keep the perspective distance constant as the desktop viewport widens.
   camera.position.set(0, 0.1, 6.7);
   const controls = new OrbitControls(camera, canvas);
   controls.enableZoom = false;
@@ -221,13 +213,11 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
       const item = SYMBOLS[i * 2 + j];
       const texture = cardTexture(item);
       textureResources.push(texture);
-      const face = new THREE.MeshStandardMaterial({
+      const face = new THREE.MeshBasicMaterial({
         map: texture,
-        metalness: 0.1,
-        roughness: 0.6,
-        emissive: 0x000000,
+        toneMapped: false,
       });
-      const geometry = new THREE.BoxGeometry(0.46, 0.69, 0.045);
+      const geometry = new THREE.BoxGeometry(0.52, 0.78, 0.045);
       const mesh = new THREE.Mesh(geometry, [
         gold,
         gold,
@@ -272,12 +262,16 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
     focused = null,
     timeScale = 1;
   const raycaster = new THREE.Raycaster();
+  const parentFacing = new THREE.Quaternion();
+  const cameraFacing = new THREE.Quaternion();
+  const cardLean = new THREE.Quaternion();
+  const lean = new THREE.Euler();
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   function highlight() {
     pickable.forEach((p) => {
       const id = p.mesh.userData.symbol.id;
-      p.face.emissive.setHex(
-        id === focused ? 0x4a3210 : id === hovered?.id ? 0x30200b : 0,
+      p.face.color.setHex(
+        id === focused || id === hovered?.id ? 0xffe0a0 : 0xffffff,
       );
     });
   }
@@ -299,6 +293,22 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
     );
   }
   function draw() {
+    // Keep the cards in their 3D orbits, with a small tilt towards the viewer.
+    // This makes the art readable even when the surrounding ring rolls away.
+    camera.getWorldQuaternion(cameraFacing);
+    for (const { group, markers } of ringGroups) {
+      group.getWorldQuaternion(parentFacing).invert().multiply(cameraFacing);
+      for (const { mesh, seed } of markers) {
+        lean.set(
+          0,
+          Math.sin(elapsed * 0.9 + seed) * 0.22,
+          Math.sin(elapsed * 0.7 + seed) * 0.2,
+        );
+        mesh.quaternion
+          .copy(parentFacing)
+          .multiply(cardLean.setFromEuler(lean));
+      }
+    }
     scene.updateMatrixWorld(true);
     renderer.render(scene, camera);
     if (pointer) setHover(pick(pointer));
@@ -313,14 +323,9 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
       group.rotation.z = config.tilt[2] + elapsed * config.speed * 0.6;
       markers.forEach(({ mesh, angle, seed }) => {
         const t = angle + elapsed * config.speed * 2.2;
-        // Each card drifts in and out from its ring and turns on its own.
+        // Each card drifts slightly in and out from its ring.
         const r = config.radius + Math.sin(elapsed * 1.1 + seed) * 0.07;
         mesh.position.set(r * Math.cos(t), r * Math.sin(t), 0);
-        mesh.rotation.set(
-          Math.sin(elapsed * 0.7 + seed) * 0.25,
-          Math.sin(elapsed * 0.9 + seed) * 0.7,
-          t + Math.PI / 2,
-        );
       });
     });
     core.rotation.y = elapsed * 0.6;
@@ -358,6 +363,8 @@ export function createCelestialScene(host, { onSelect, onHover, onError }) {
     if (!width || !height) return;
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
+    // A larger projection fills the landscape stage without scaling any axis.
+    camera.zoom = matchMedia('(min-width: 761px)').matches ? 1.15 : 1;
     camera.updateProjectionMatrix();
     draw();
   }

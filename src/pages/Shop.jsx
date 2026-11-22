@@ -17,7 +17,7 @@ import {
   saveCart,
   MAX_CART_LINES,
   MAX_LINE_QUANTITY,
-} from '../lib/cartStorage.js';
+} from '../lib/cartStorage.ts';
 import './shop-commerce.css';
 
 function formatPrice(amount, currency) {
@@ -151,15 +151,23 @@ function ProductCard({ product, live, cart, onAdd, onViewCart, busy }) {
 function ShopCart({
   panelRef,
   lines,
+  unresolvedCount,
+  hasMore,
+  clearUnresolved,
   updateQuantity,
   busy,
   error,
   onCheckout,
 }) {
   const summaryRef = useRef(null);
-  const itemCount = lines.reduce((count, line) => count + line.quantity, 0);
+  const hasSoldOut = lines.some(({ variant }) => !variant.available);
+  const itemCount = lines.reduce(
+    (count, line) => count + line.quantity,
+    unresolvedCount,
+  );
   const subtotals = new Map();
   for (const { variant, quantity } of lines) {
+    if (!variant.available) continue;
     const subtotal =
       (subtotals.get(variant.currency) ?? 0) +
       Number(variant.amount) * quantity;
@@ -177,6 +185,22 @@ function ShopCart({
         </span>
       </summary>
       <div className="shop-cart-content">
+        {unresolvedCount > 0 && (
+          <div>
+            <p>
+              {hasMore
+                ? 'Some saved cart items are on pages that haven’t loaded yet. Load more pieces to find them.'
+                : 'Some saved cart items are no longer in the collection.'}
+            </p>
+            <button
+              type="button"
+              className="shop-cart-remove"
+              onClick={clearUnresolved}
+            >
+              Remove missing items
+            </button>
+          </div>
+        )}
         {lines.length ? (
           <>
             <ul className="shop-cart-lines">
@@ -190,7 +214,9 @@ function ShopCart({
                         <span>{variant.title}</span>
                       )}
                       <span>
-                        {formatPrice(variant.amount, variant.currency)} each
+                        {variant.available
+                          ? `${formatPrice(variant.amount, variant.currency)} each`
+                          : 'Sold out · remove to continue'}
                       </span>
                     </div>
                     <div className="shop-cart-quantity">
@@ -210,7 +236,11 @@ function ShopCart({
                         onClick={() =>
                           updateQuantity(variant.id, quantity + 1, label)
                         }
-                        disabled={busy || quantity >= MAX_LINE_QUANTITY}
+                        disabled={
+                          busy ||
+                          !variant.available ||
+                          quantity >= MAX_LINE_QUANTITY
+                        }
                         aria-label={'Increase quantity of ' + label}
                       >
                         +
@@ -239,7 +269,7 @@ function ShopCart({
                   <strong>
                     {Array.from(subtotals, ([currency, total]) =>
                       formatPrice(total, currency),
-                    ).join(' + ')}
+                    ).join(' + ') || '—'}
                   </strong>
                 </p>
                 <p>Shipping and final total appear in Shopify checkout.</p>
@@ -252,7 +282,7 @@ function ShopCart({
               <button
                 type="button"
                 className="shop-checkout"
-                disabled={busy}
+                disabled={busy || unresolvedCount > 0 || hasSoldOut}
                 onClick={onCheckout}
               >
                 {busy ? 'Opening checkout…' : 'Continue to checkout'}{' '}
@@ -266,7 +296,7 @@ function ShopCart({
             )}
           </>
         ) : (
-          <p>Your cart is empty.</p>
+          unresolvedCount === 0 && <p>Your cart is empty.</p>
         )}
       </div>
     </details>
@@ -459,9 +489,20 @@ export default function Shop() {
           ),
         )
       : [];
+  const resolvedIds = new Set(cartLines.map(({ variant }) => variant.id));
+  const unresolvedCount = Object.entries(cart).reduce(
+    (total, [id, quantity]) => total + (resolvedIds.has(id) ? 0 : quantity),
+    0,
+  );
 
   async function checkout() {
-    if (!cartLines.length || checkoutRequest.current) return;
+    if (
+      !cartLines.length ||
+      unresolvedCount ||
+      cartLines.some(({ variant }) => !variant.available) ||
+      checkoutRequest.current
+    )
+      return;
     const controller = new AbortController();
     checkoutRequest.current = controller;
     setCheckingOut(true);
@@ -487,9 +528,6 @@ export default function Shop() {
       ) {
         throw new Error('Checkout could not open. Please try again.');
       }
-      // Shopify's checkout now holds these lines; clear the local copy so a
-      // completed order does not reappear here later.
-      saveCart({});
       // The API checks the exact merchant checkout host before returning the URL.
       window.location.assign(destination.href);
     } catch (error) {
@@ -529,7 +567,7 @@ export default function Shop() {
       <CosmicBackground />
       <div className="cosmic-page relative z-10">
         <div className="shop-return">
-          <Link to="/#collection">← Back to the studio</Link>
+          <Link to="/#collection">← Back to site</Link>
         </div>
         <section className="shop-heading">
           <AnimatedTitle
@@ -556,6 +594,15 @@ export default function Shop() {
           <ShopCart
             panelRef={cartPanel}
             lines={cartLines}
+            unresolvedCount={unresolvedCount}
+            hasMore={Boolean(catalog.nextCursor)}
+            clearUnresolved={() =>
+              setCart((current) =>
+                Object.fromEntries(
+                  Object.entries(current).filter(([id]) => resolvedIds.has(id)),
+                ),
+              )
+            }
             updateQuantity={updateQuantity}
             busy={checkingOut}
             error={checkoutError}

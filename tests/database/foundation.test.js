@@ -736,6 +736,84 @@ test('signed owner API enforces current sessions, MFA, RLS and safe publication'
     });
   try {
     await t.test(
+      'orders require owner MFA and page through recorded Shopify orders without exposing delivery data',
+      async () => {
+        const path = '/api/studio/orders';
+        assert.equal((await call(path, 'GET', undefined, '')).statusCode, 401);
+        const outsiderToken = await credential({
+          sub: outsider,
+          session_id: outsiderSession,
+        });
+        assert.equal(
+          (await call(path, 'GET', undefined, outsiderToken)).statusCode,
+          403,
+        );
+        const passwordOnly = await credential({ aal: 'aal1' });
+        assert.equal(
+          (await call(path, 'GET', undefined, passwordOnly)).json().code,
+          'MFA_REQUIRED',
+        );
+        assert.deepEqual((await call(path)).json(), {
+          items: [],
+          nextCursor: null,
+        });
+
+        const firstId = 9007199254741000n;
+        const createdAt = '2026-11-21T10:00:00.000Z';
+        for (let position = 0; position < 26; position++) {
+          const id = String(firstId + BigInt(position));
+          await db.recordShopifyDelivery(
+            {
+              webhookId: 'studio-order-' + id,
+              eventId: null,
+              topic: 'orders/paid',
+              payloadSha256: 'a'.repeat(64),
+            },
+            {
+              shopifyOrderId: id,
+              name: '#' + position,
+              financialStatus: 'paid',
+              fulfillmentStatus: null,
+              currency: 'INR',
+              totalMinor: 149900,
+              itemCount: 2,
+              cancelledAt: null,
+              createdAt,
+              updatedAt: createdAt,
+            },
+          );
+        }
+        const response = await call(path);
+        assert.equal(response.statusCode, 200);
+        assert.equal(response.headers['cache-control'], 'no-store');
+        const { items, nextCursor } = response.json();
+        assert.equal(items.length, 25);
+        assert.deepEqual(items[0], {
+          id: String(firstId + 25n),
+          name: '#25',
+          financialStatus: 'paid',
+          fulfillmentStatus: null,
+          currency: 'INR',
+          currencyDecimals: 2,
+          totalMinor: 149900,
+          itemCount: 2,
+          cancelledAt: null,
+          createdAt,
+        });
+        assert.equal(nextCursor, String(firstId + 1n));
+        const next = (await call(path + '?after=' + nextCursor)).json();
+        assert.deepEqual(
+          next.items.map((order) => order.id),
+          [String(firstId)],
+        );
+        assert.equal(next.nextCursor, null);
+        assert.equal(
+          (await call(path + '?after=9999999999999999999')).statusCode,
+          400,
+        );
+      },
+    );
+    await t.test(
       'unauthenticated and outsider callers cannot list or write studio content',
       async () => {
         assert.equal(
@@ -859,16 +937,20 @@ test('signed owner API enforces current sessions, MFA, RLS and safe publication'
           priceMinor: 69900,
           practitionerId: null,
           status: 'draft',
-          sortOrder: 10,
+          cardSize: 'wide',
+          cardColor: '#315a78',
         };
         const created = await call('/api/studio/readings', 'POST', draft);
         assert.equal(created.statusCode, 201);
         assert.equal(created.json().revision, 1);
+        assert.equal(created.json().sortOrder, 1000);
+        assert.equal(created.json().cardSize, 'wide');
         assert.equal(
           (await db.listPublished()).some((row) => row.id === draft.id),
           false,
         );
-        const { id, ...fields } = draft;
+        const { id, cardSize, cardColor, ...fields } = draft;
+        fields.sortOrder = created.json().sortOrder;
         const published = await call('/api/studio/readings/' + id, 'PATCH', {
           ...fields,
           status: 'published',
@@ -876,10 +958,15 @@ test('signed owner API enforces current sessions, MFA, RLS and safe publication'
         });
         assert.equal(published.statusCode, 200);
         assert.equal(published.json().revision, 2);
-        assert.equal(
-          (await db.listPublished()).find((row) => row.id === id).price,
-          699,
+        const publicReadings = await db.listPublished();
+        assert.ok(
+          publicReadings.findIndex((row) => row.id === id) >
+            publicReadings.findIndex((row) => row.id === 'parashara'),
         );
+        const publicReading = publicReadings.find((row) => row.id === id);
+        assert.equal(publicReading.price, 699);
+        assert.equal(publicReading.cardSize, cardSize);
+        assert.equal(publicReading.cardColor, cardColor);
         const stale = await call('/api/studio/readings/' + id, 'PATCH', {
           ...fields,
           title: 'Stale edit',
@@ -893,10 +980,62 @@ test('signed owner API enforces current sessions, MFA, RLS and safe publication'
           [2, 1],
         );
         assert.equal(history.headers['cache-control'], 'no-store');
+        const moved = await call('/api/studio/readings/' + id, 'PATCH', {
+          ...fields,
+          status: 'published',
+          revision: 2,
+          placeBefore: 'bhrigu',
+        });
+        assert.equal(moved.statusCode, 200);
+        const reordered = (await db.listPublished()).map((row) => row.id);
+        assert.equal(reordered.indexOf(id) + 1, reordered.indexOf('bhrigu'));
+        assert.equal(reordered.indexOf('birhaat') + 1, reordered.indexOf(id));
+        const stagedTitle = 'Private draft title';
+        const staged = await call('/api/studio/readings/' + id, 'PATCH', {
+          ...fields,
+          title: stagedTitle,
+          cardSize: 'compact',
+          revision: 3,
+          saveDraft: true,
+        });
+        assert.equal(staged.statusCode, 200);
+        assert.equal(staged.json().status, 'published');
+        assert.equal(staged.json().revision, 4);
+        assert.equal(staged.json().draft.title, stagedTitle);
+        assert.equal(
+          (await call('/api/studio/readings/' + id)).json().draft.cardSize,
+          'compact',
+        );
+        const stillLive = (await db.listPublished()).find(
+          (row) => row.id === id,
+        );
+        assert.equal(stillLive.title, draft.title);
+        assert.equal(stillLive.cardSize, 'wide');
+        await assert.rejects(
+          db.transaction('anon', null, (client) =>
+            client.query('select * from studio.reading_drafts'),
+          ),
+          { code: '42501' },
+        );
+        const publishedDraft = await call(
+          '/api/studio/readings/' + id,
+          'PATCH',
+          {
+            ...staged.json().draft,
+            status: 'published',
+            revision: 4,
+          },
+        );
+        assert.equal(publishedDraft.statusCode, 200);
+        assert.equal(publishedDraft.json().draft, undefined);
+        assert.equal(
+          (await db.listPublished()).find((row) => row.id === id).title,
+          stagedTitle,
+        );
         const archived = await call('/api/studio/readings/' + id, 'PATCH', {
           ...fields,
           status: 'archived',
-          revision: 2,
+          revision: 5,
         });
         assert.equal(archived.statusCode, 200);
         assert.equal(
@@ -938,6 +1077,12 @@ test('signed owner API enforces current sessions, MFA, RLS and safe publication'
           priceMinor: 699.5,
         });
         assert.equal(decimal.statusCode, 400);
+        const badColor = await call('/api/studio/readings', 'POST', {
+          ...base,
+          status: 'draft',
+          cardColor: '#xyz123',
+        });
+        assert.equal(badColor.statusCode, 400);
         assert.equal(
           (
             await root.query('select id from catalog.readings where id=$1', [

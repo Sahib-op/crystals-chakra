@@ -220,3 +220,19 @@
     display: none;
   }
 }
+
+/* These illustrated sections start just below the hanging lamps. */
+.journey-section:is(.tarot-section, .collection-invitation) {
+  padding-top: 108px;
+}
+.journey-section:is(.tarot-section, .collection-invitation) > .journey-content {
+  margin-top: 0;
+}
+.journey-section.collection-invitation {
+  padding-bottom: clamp(38px, 5vw, 70px);
+}
+@media (max-width: 760px) {
+  .journey-section:is(.tarot-section, .collection-invitation) {
+    padding-top: 84px;
+  }
+}

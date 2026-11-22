@@ -1,4 +1,5 @@
 import { Type, type Static } from 'typebox';
+import { ReadingCardColorSchema, ReadingCardSizeSchema } from './contracts.ts';
 const opts = { additionalProperties: false } as const;
 const text = (max: number) =>
   Type.String({ minLength: 1, maxLength: max, pattern: '\\S' });
@@ -31,19 +32,37 @@ const ReadingFields = {
   practitionerId: nullable(Uuid),
   status: ReadingState,
   sortOrder: Type.Integer({ minimum: 0, maximum: 9999 }),
+  cardSize: Type.Optional(ReadingCardSizeSchema),
+  cardColor: Type.Optional(ReadingCardColorSchema),
 };
 export const ReadingCreateSchema = Type.Object(
-  { id: Slug, ...ReadingFields },
+  {
+    id: Slug,
+    ...ReadingFields,
+    sortOrder: Type.Optional(ReadingFields.sortOrder),
+    placeBefore: Type.Optional(nullable(Slug)),
+  },
   opts,
 );
 export const ReadingUpdateSchema = Type.Object(
-  { ...ReadingFields, revision: Type.Integer({ minimum: 1 }) },
+  {
+    ...ReadingFields,
+    placeBefore: Type.Optional(nullable(Slug)),
+    saveDraft: Type.Optional(Type.Literal(true)),
+    revision: Type.Integer({ minimum: 1 }),
+  },
   opts,
 );
 export const StudioReadingSchema = Type.Object(
   {
     id: Slug,
     ...ReadingFields,
+    draft: Type.Optional(
+      Type.Object(
+        { ...ReadingFields, placeBefore: Type.Optional(nullable(Slug)) },
+        opts,
+      ),
+    ),
     revision: Type.Integer({ minimum: 1 }),
     updatedAt: text(40),
   },
@@ -58,6 +77,33 @@ export const StudioReadingPageSchema = Type.Object(
   {
     items: Type.Array(StudioReadingSchema, { maxItems: 50 }),
     nextCursor: nullable(Slug),
+  },
+  opts,
+);
+const OrderId = Type.String({ pattern: '^[1-9][0-9]{0,18}$' });
+export const StudioOrderListQuery = Type.Object(
+  { after: Type.Optional(OrderId) },
+  opts,
+);
+const StudioOrderSchema = Type.Object(
+  {
+    id: OrderId,
+    name: Type.String({ minLength: 1, maxLength: 40 }),
+    financialStatus: nullable(text(24)),
+    fulfillmentStatus: nullable(text(24)),
+    currency: Type.String({ pattern: '^[A-Z]{3}$' }),
+    currencyDecimals: Type.Integer({ minimum: 0, maximum: 3 }),
+    totalMinor: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }),
+    itemCount: Type.Integer({ minimum: 0, maximum: 10000 }),
+    cancelledAt: nullable(text(40)),
+    createdAt: text(40),
+  },
+  opts,
+);
+export const StudioOrderPageSchema = Type.Object(
+  {
+    items: Type.Array(StudioOrderSchema, { maxItems: 25 }),
+    nextCursor: nullable(OrderId),
   },
   opts,
 );
@@ -98,6 +144,8 @@ export type ReadingCreate = Static<typeof ReadingCreateSchema>;
 export type ReadingUpdate = Static<typeof ReadingUpdateSchema>;
 export type StudioReading = Static<typeof StudioReadingSchema>;
 export type StudioReadingPage = Static<typeof StudioReadingPageSchema>;
+export type StudioOrder = Static<typeof StudioOrderSchema>;
+export type StudioOrderPage = Static<typeof StudioOrderPageSchema>;
 export type ReadingFilters = Static<typeof ReadingListQuery>;
 export type StudioSession = Static<typeof OwnerSessionSchema>;
 export type StudioConfiguration = Static<typeof StudioConfigSchema>;

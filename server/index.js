@@ -2,7 +2,6 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { start } from './start.ts';
 export { createApp } from './app.ts';
-export { validBirthDate } from './validation.js';
 
 if (
   process.argv[1] &&

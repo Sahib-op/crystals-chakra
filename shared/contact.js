@@ -1,6 +1,7 @@
 import { CONTACT_DESTINATIONS } from './studio.js';
 const PHONE = /^[1-9]\d{6,14}$/;
 const MAX_MESSAGE_LENGTH = 600;
+export const MAX_READING_QUESTION_LENGTH = 400;
 
 function destination(key = 'studio') {
   if (!Object.hasOwn(CONTACT_DESTINATIONS, key))
@@ -16,6 +17,7 @@ function plainText(value, limit) {
   return Array.from(
     value
       .normalize('NFC')
+      .replace(/[\ud800-\udfff]/gu, '\ufffd')
       .replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim(),
@@ -33,20 +35,24 @@ export function whatsappHref(message = '', key = 'studio') {
 export function telephoneHref(key = 'studio') {
   return `tel:+${destination(key).telephone}`;
 }
-export function readingMessage(reading) {
+export function readingMessage(reading, question = '') {
   const title = plainText(reading?.title, 100);
-  if (!title)
-    return "Hi, I'd like to discuss a tarot or astrology reading. Could you help me choose?";
+  if (!title) {
+    const message =
+      "Hi, I'd like to discuss a tarot or astrology reading. Could you help me choose?";
+    const note = plainText(question, MAX_READING_QUESTION_LENGTH);
+    return note ? `${message} My question: ${note}` : message;
+  }
   const practitioner = plainText(reading?.practitioner?.name, 80);
   return `Hi, I'd like to ask about ${title}${practitioner ? ` with ${practitioner}` : ''}. Please let me know the price and available timings.`;
 }
-export function readingContact(reading) {
+export function readingContact(reading, question = '') {
   // A catalogue response cannot replace the business's approved destination.
   const key = Object.hasOwn(CONTACT_DESTINATIONS, reading?.contactDestination)
     ? reading.contactDestination
     : 'studio';
   const configured = destination(key);
-  const message = readingMessage(reading);
+  const message = readingMessage(reading, question);
   return {
     message,
     whatsapp: whatsappHref(message, key),

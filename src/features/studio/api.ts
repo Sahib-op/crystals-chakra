@@ -1,6 +1,7 @@
 import checkConfig from '../../../shared/generated/studio-config.js';
 import checkSession from '../../../shared/generated/studio-session.js';
 import checkPage from '../../../shared/generated/studio-reading-page.js';
+import checkOrders from '../../../shared/generated/studio-order-page.js';
 import checkReading from '../../../shared/generated/studio-reading.js';
 import checkPractitioners from '../../../shared/generated/studio-practitioners.js';
 import checkHistory from '../../../shared/generated/studio-history.js';
@@ -8,6 +9,7 @@ import type {
   StudioConfiguration,
   StudioSession,
   StudioReadingPage,
+  StudioOrderPage,
   StudioReading,
   ReadingCreate,
   ReadingUpdate,
@@ -80,6 +82,13 @@ export const studioApi = {
     }),
   session: (token: string, signal: AbortSignal) =>
     request<StudioSession>('studio/session', checkSession, token, { signal }),
+  orders: (token: string, after: string | null, signal: AbortSignal) =>
+    request<StudioOrderPage>(
+      'studio/orders' + (after ? '?' + new URLSearchParams({ after }) : ''),
+      checkOrders,
+      token,
+      { signal },
+    ),
   readings: (
     token: string,
     status: string,

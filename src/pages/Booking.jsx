@@ -3,13 +3,24 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight, Check, Copy, Phone } from 'lucide-react';
 import { useJourney } from '../components/JourneyContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
-import { readingContact } from '../../shared/contact.js';
+import {
+  MAX_READING_QUESTION_LENGTH,
+  readingContact,
+} from '../../shared/contact.js';
 import { fact } from '../../shared/business.js';
+
+const UNSURE = '__unsure';
 
 export default function Booking({ embedded = false }) {
   const Heading = embedded ? 'h2' : 'h1';
   const { services, selectedId, selectedService, selectService } = useJourney();
-  const contact = readingContact(selectedService);
+  const [unsure, setUnsure] = useState(false);
+  const [question, setQuestion] = useState('');
+  const choice = selectedId || (unsure ? UNSURE : '');
+  const contact = readingContact(
+    selectedService,
+    choice === UNSURE ? question : '',
+  );
   const hours = fact('hours'),
     responseTime = fact('responseTime');
   const [copyStatus, setCopyStatus] = useState('');
@@ -37,8 +48,7 @@ export default function Booking({ embedded = false }) {
           Book Your <span className="gold-gradient-text">Reading</span>
         </Heading>
         <p className="page-intro">
-          Speak directly with the studio on WhatsApp or by phone. There is no
-          form to fill in and nothing to pay on this website.
+          Ask the studio about a reading on WhatsApp or by phone.
         </p>
         <h3 className="booking-steps-title">How booking works</h3>
         <ol className="booking-steps">
@@ -47,22 +57,17 @@ export default function Booking({ embedded = false }) {
             <span>Or pick “I’m not sure yet” and tell us your question.</span>
           </li>
           <li>
-            <strong>Send the WhatsApp message</strong>
+            <strong>Message or call the studio</strong>
             <span>
-              It opens ready to send, and you can edit it first. Prefer to talk?
-              Call the studio.
+              You can edit the prepared WhatsApp message before sending.
             </span>
           </li>
           <li>
             <strong>The studio confirms the details</strong>
             <span>
-              Date, time, price and how to pay. Your reading is booked only once
-              the studio confirms.
+              Agree on timing and payment. Your reading is booked only once the
+              studio confirms.
             </span>
-          </li>
-          <li>
-            <strong>Have your reading</strong>
-            <span>At the time you agreed together.</span>
           </li>
         </ol>
         <Link className="booking-guide-link" to="/how-readings-work">
@@ -80,16 +85,39 @@ export default function Booking({ embedded = false }) {
         <select
           id="contact-reading"
           name="reading"
-          value={selectedId}
-          onChange={(event) => selectService(event.target.value)}
+          className={choice ? undefined : 'contact-placeholder'}
+          value={choice}
+          onChange={(event) => {
+            const value = event.target.value;
+            setUnsure(value === UNSURE);
+            selectService(value === UNSURE ? '' : value);
+          }}
         >
-          <option value="">I’m not sure yet</option>
+          <option value="" disabled>
+            Choose here
+          </option>
+          <option value={UNSURE}>I’m not sure yet</option>
           {services.map((service) => (
             <option key={service.id} value={service.id}>
               {service.title}
             </option>
           ))}
         </select>
+        {choice === UNSURE && (
+          <div className="contact-question">
+            <label htmlFor="contact-question">
+              What would you like to ask? (optional)
+            </label>
+            <textarea
+              id="contact-question"
+              rows={3}
+              maxLength={MAX_READING_QUESTION_LENGTH}
+              placeholder="Tell us what you’d like guidance on…"
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+            />
+          </div>
+        )}
         <div className="contact-hub-actions">
           <a
             className="contact-action contact-whatsapp"

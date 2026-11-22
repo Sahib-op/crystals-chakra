@@ -82,7 +82,14 @@ function proxy(req, res) {
 }
 
 createServer(async (req, res) => {
-  const { pathname } = new URL(req.url, 'http://preview.local');
+  let pathname;
+  try {
+    pathname = new URL(req.url, 'http://preview.local').pathname;
+    decodeURIComponent(pathname);
+  } catch {
+    res.writeHead(400, { 'content-type': 'text/plain; charset=utf-8' });
+    return res.end('Invalid request path');
+  }
   if (pathname === '/api' || pathname.startsWith('/api/'))
     return proxy(req, res);
   // Like the hosting platform: real files first, then the first matching rewrite.

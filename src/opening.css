@@ -92,9 +92,9 @@
   aspect-ratio: 1;
   overflow: hidden;
   contain: layout paint;
-  background: radial-gradient(ellipse, #f9e0a44d, transparent 70%);
+  background: radial-gradient(ellipse, #fffef84d, transparent 70%);
 }
-/* Both layers fill the reserved square, so swapping the illustration for the
+/* Both layers fill the reserved stage, so swapping the illustration for the
    WebGL canvas never changes layout (previously CLS 0.2–0.37). */
 .celestial-webgl canvas,
 .celestial-still {
@@ -187,7 +187,7 @@
   padding: 19px 20px;
   border: 1px solid #b28c45;
   border-radius: 8px;
-  background: #fbf4e3;
+  background: var(--ivory);
   box-shadow: 0 8px 25px #15375222;
   z-index: 5;
   animation: reading-arrive 0.18s ease-out;
@@ -580,6 +580,13 @@
   line-height: 1.25;
   text-align: center;
 }
+.celestial-card-art {
+  width: clamp(56px, 16vw, 96px);
+  height: auto;
+  flex-shrink: 0;
+  border: 1px solid #b28c45;
+  border-radius: 4px;
+}
 .tarot-fan-card:hover,
 .tarot-fan-card.is-hovered,
 .tarot-fan-card:focus-visible,
@@ -663,19 +670,60 @@
   }
 }
 
-/* Desktop: the 3D rings and the whole card row fit in the first screen.
-   The square sizes from the viewport height (header ~92px above, card row
-   ~120px below) so nothing is cut off on shorter laptop screens. */
+/* Budget for the transformed cards, the sticky header and a glimpse of the
+   next section's lamps. The canvas yields height before the cards or copy. */
 @media (min-width: 761px) {
   #home.opening-section {
-    padding-bottom: 20px;
+    --opening-top: 92px;
+    --opening-bottom: 26px;
+    --opening-fan: 116px;
+    --opening-lamps: clamp(26px, calc(16svh - 55px), 64px);
+    padding-top: var(--opening-top);
+    padding-bottom: var(--opening-bottom);
+  }
+  .opening-section .celestial-explorer {
+    --opening-opt-in: 0px;
+    container-type: inline-size;
+    max-width: 660px;
+  }
+  .opening-section .celestial-explorer:has(.celestial-load) {
+    --opening-opt-in: 32px;
   }
   .opening-section .celestial-webgl {
-    width: min(100%, max(340px, calc(100vh - 212px)));
-    width: min(100%, max(340px, calc(100svh - 212px)));
-    margin-inline: auto;
+    width: 100%;
+    height: min(
+      100cqw,
+      max(
+        96px,
+        calc(
+          100svh - var(--opening-top) - var(--opening-bottom) -
+            var(--opening-fan) - var(--opening-opt-in) - var(--opening-lamps)
+        )
+      )
+    );
+    aspect-ratio: auto;
+  }
+  .opening-section .celestial-still {
+    transform: scale(1.12);
   }
   .opening-section .tarot-fan {
     padding-top: 6px;
+  }
+  .opening-section .tarot-fan-card {
+    min-width: 0;
+  }
+}
+@media (min-width: 761px) and (max-height: 620px) {
+  .opening-section .welcome-copy h1 {
+    font-size: clamp(38px, 10svh, 62px);
+    margin-bottom: 14px;
+  }
+  .opening-section .journey-actions {
+    margin-top: 16px;
+  }
+}
+@media (min-width: 1200px) {
+  .opening-section .welcome-grid {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   }
 }

@@ -77,7 +77,7 @@ const ZERO_DECIMAL = new Set([
   'XOF',
 ]);
 const THREE_DECIMAL = new Set(['BHD', 'JOD', 'KWD', 'OMR', 'TND']);
-const exponentFor = (currency: string) =>
+export const exponentFor = (currency: string) =>
   ZERO_DECIMAL.has(currency) ? 0 : THREE_DECIMAL.has(currency) ? 3 : 2;
 
 export interface OrderProjection {

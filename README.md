@@ -64,14 +64,12 @@ After starting and provisioning the isolated PostgreSQL database, run `npm run d
 - Paid-reading actions open the configured studio WhatsApp number with a short package-specific message. The visitor sends it in WhatsApp. The persistent header offers Contact and Call; the contact section also exposes the number and a copy control.
 - The free tool needs only a date of birth. Calendar validation, conventional tropical zodiac ranges and digit-sum numerology run in the browser. It is not a Vedic chart or scientifically established prediction. Closing the tool clears the date.
 - The website loads the published reading catalogue and uses the bundled catalogue if the first request fails. General studio contact stays available while the catalogue loads.
-- Unconfigured commerce displays clearly labelled illustrative items and disables checkout. The cart keeps only variant IDs and quantities in the browser for up to seven days and clears once Shopify checkout opens.
+- Unconfigured commerce shows labelled illustrative items with checkout disabled. The browser cart keeps only variant IDs and quantities for up to seven days and keeps them when Shopify checkout opens so a customer can return. Sold-out lines have to be removed before checkout.
 
 - Slow loads hold the layout: every lazily loaded page shows a full-height loading panel in its own colours, so the footer never jumps up. Hovering, focusing or touching a shop link starts loading the shop and its catalogue early, and the shop says so plainly if a cold API host takes a few seconds to wake.
 - Phones: every control has a tap area of at least 44px, nothing relies on hover, and `src/lib/keyboardViewport.js` keeps the focused field and the reading dialog's buttons above the on-screen keyboard.
 
-### Design lab (hidden from visitors)
-
-Open any page with `?lab=1` to show a small panel for trying alternative colour palettes. The choice is stored only in that browser until `?lab=0` or “Close the lab”; visitors always get the default design, and the lab code loads as a separate chunk only when requested. The default scheme mixes royal blue (header, readings, booking), indigo (behind tarot) and emerald (the crystal collection) and lives in `src/refinements.css`; the alternatives live in `src/components/design-lab.css`. The section order is fixed: Readings → Collection → About Astrology.
+The site uses one fixed palette: royal blue, indigo for tarot, emerald for the crystal collection, and ivory for light surfaces, with gold accents. The palette lives in `src/journey.css` and `src/refinements.css`. The section order is fixed: Readings → Collection → About Astrology.
 
 ## Structure and boundaries
 

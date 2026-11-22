@@ -10,6 +10,8 @@ import {
   OwnerSessionSchema,
   ReadingListQuery,
   StudioReadingPageSchema,
+  StudioOrderListQuery,
+  StudioOrderPageSchema,
   PractitionerListSchema,
   ReadingCreateSchema,
   ReadingUpdateSchema,
@@ -84,6 +86,20 @@ export async function studioRoutes(
       const access = await repository!.access(identity);
       return { userId: identity.sub, mfaRequired: !access.mfa };
     },
+  );
+  app.get(
+    '/api/studio/orders',
+    {
+      config: routeConfig,
+      schema: {
+        ...common,
+        summary: 'List recorded Shopify orders',
+        querystring: StudioOrderListQuery,
+        response: { ...failure, 200: StudioOrderPageSchema },
+      },
+    },
+    async (request) =>
+      repository!.orders(request.studioIdentity!, request.query.after),
   );
   app.get(
     '/api/studio/readings',

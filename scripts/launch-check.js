@@ -8,7 +8,7 @@
 import { readFile, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { missingBusinessFacts } from '../shared/business.js';
-import { services } from '../shared/catalog.js';
+import { services } from '../shared/catalog.ts';
 
 const strict = process.argv.includes('--strict');
 const file = (path) => fileURLToPath(new URL(`../${path}`, import.meta.url));

@@ -149,7 +149,7 @@
 
 /* Both opening actions share the same edges and centre line. */
 #home.opening-section {
-  padding-top: 92px;
+  padding-top: var(--opening-top, 92px);
 }
 .opening-section .journey-actions {
   width: min(100%, 330px);
@@ -287,9 +287,41 @@
 }
 .collection-invitation h2 {
   margin-top: 0;
+  font-size: clamp(49px, 6.2vw, 79px);
+}
+.collection-invitation .royal-button {
+  font-size: 14px;
+  padding: 16px 26px;
 }
 .collection-invitation .collection-art {
-  height: 240px;
+  --center-gem: clamp(94px, 10vw, 120px);
+  --side-gem: clamp(72px, 8vw, 94px);
+  height: clamp(290px, 28vw, 370px);
+}
+.collection-invitation .gem-a {
+  width: var(--center-gem);
+  height: auto;
+  aspect-ratio: 90 / 175;
+}
+.collection-invitation :is(.gem-b, .gem-c) {
+  width: var(--side-gem);
+  height: auto;
+  aspect-ratio: 72 / 125;
+}
+.collection-invitation .gem-orbit {
+  width: min(100%, 330px);
+  height: auto;
+  aspect-ratio: 1;
+}
+@media (max-width: 760px) {
+  .collection-invitation .collection-art {
+    --center-gem: clamp(82px, 24vw, 96px);
+    --side-gem: clamp(65px, 19vw, 76px);
+    height: 252px;
+  }
+  .collection-invitation .gem-orbit {
+    width: min(88%, 230px);
+  }
 }
 
 /* The science section keeps the useful content, without repeated labels. */
@@ -418,6 +450,28 @@
   font-size: 16px;
   color-scheme: dark;
 }
+.contact-panel select.contact-placeholder {
+  color: #f5e8cba6;
+}
+.contact-panel select option {
+  color: #f5e8cb;
+}
+.contact-question {
+  margin-top: 12px;
+}
+.contact-question textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  padding: 10px 12px;
+  border: 1px solid #d3b06c55;
+  border-radius: 6px;
+  background: #071c30;
+  color: inherit;
+}
+.contact-question textarea::placeholder {
+  color: #f5e8cba6;
+}
 .contact-hub-actions {
   display: flex;
   flex-direction: column;
@@ -541,8 +595,8 @@
 }
 .cream-wash > span:first-child {
   background:
-    radial-gradient(ellipse at 24% 38%, #ac7e2520, transparent 46%),
-    radial-gradient(ellipse at 77% 68%, #fffdf4aa, transparent 48%);
+    radial-gradient(ellipse at 24% 38%, #b5aa9220, transparent 46%),
+    radial-gradient(ellipse at 77% 68%, #fffef8aa, transparent 48%);
 }
 .cream-wash > span:last-child {
   background-image: radial-gradient(circle, #b98a3e66 0.7px, transparent 1px);
@@ -895,12 +949,16 @@ html.custom-cursor :is(input, textarea, [contenteditable='true']) {
 
 /* Tarot portrait: slides in from the right once, the first time it is seen
    (PortraitReveal in Home.jsx). Slow and long by request. */
+.tarot-portrait-trigger {
+  display: grid;
+  min-width: 0;
+}
 .tarot-portrait {
   transition:
     opacity 1.8s ease-out,
     transform 2.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-html.js .tarot-portrait:not(.is-revealed) {
+html.js .tarot-portrait-trigger:not(.is-revealed) .tarot-portrait {
   opacity: 0;
   transform: translate3d(240px, 0, 0);
 }
@@ -908,7 +966,7 @@ html.js .tarot-portrait:not(.is-revealed) {
   .tarot-portrait {
     transition: none;
   }
-  html.js .tarot-portrait:not(.is-revealed) {
+  html.js .tarot-portrait-trigger:not(.is-revealed) .tarot-portrait {
     opacity: 1;
     transform: none;
   }
@@ -1000,6 +1058,36 @@ html.js .tarot-portrait:not(.is-revealed) {
 .services-section .reading-grid .service-price {
   margin-top: auto;
 }
+.reading-card-style[data-card-color='navy'] {
+  --reading-card-surface: linear-gradient(145deg, #103e60, #061e36);
+}
+.reading-card-style[data-card-color='burgundy'] {
+  --reading-card-surface: linear-gradient(140deg, #672a35, #401321);
+}
+.reading-card-style[data-card-color='emerald'] {
+  --reading-card-surface: linear-gradient(145deg, #19473f, #0b2a27);
+}
+.reading-card-style[data-card-color='indigo'] {
+  --reading-card-surface: linear-gradient(145deg, #373667, #211d45);
+}
+.services-section .reading-grid > .reading-card-style {
+  background: var(--reading-card-surface);
+}
+.services-section .reading-grid > [data-card-size='compact'] {
+  align-self: start;
+  padding: 16px;
+}
+.reading-grid [data-card-size='compact'] ul {
+  gap: 5px;
+  margin-block: 9px;
+  padding-top: 8px;
+}
+.services-section .reading-grid > [data-card-size='wide'] {
+  --span: min(2, var(--cols));
+  flex-basis: calc(
+    var(--span) * (100% + var(--gap)) / var(--cols) - var(--gap)
+  );
+}
 @media (max-width: 1050px) {
   .services-section .reading-grid {
     --cols: min(var(--count, 3), 2);
@@ -1020,11 +1108,12 @@ html.js .tarot-portrait:not(.is-revealed) {
   --accent: #996b23;
   --rule: #b88b4140;
   margin-top: 40px;
-  padding: clamp(24px, 4vw, 48px);
+  padding: clamp(16px, 3vw, 34px);
   border: 1px solid #d4af3766;
   border-radius: 16px;
   background:
-    radial-gradient(ellipse at 90% 0%, #f9e0a455, transparent 60%), #f8efd9;
+    radial-gradient(ellipse at 90% 0%, var(--ivory-paper), transparent 60%),
+    var(--ivory);
   color: var(--ink);
   box-shadow:
     0 0 0 6px #082c4b,
@@ -1036,6 +1125,41 @@ html.js .tarot-portrait:not(.is-revealed) {
   margin: 0;
   padding: 0;
   min-height: 0;
+}
+.booking-sheet .booking-page > div > h2 {
+  margin-bottom: 12px;
+  font-size: clamp(32px, 3.7vw, 48px);
+}
+.booking-sheet .page-intro {
+  line-height: 1.5;
+}
+.booking-sheet .booking-steps-title {
+  margin: 16px 0 8px;
+}
+.booking-sheet .booking-steps {
+  gap: 9px;
+}
+.booking-sheet .booking-steps li {
+  padding-left: 37px;
+  line-height: 1.4;
+}
+.booking-sheet .booking-steps li::before {
+  width: 27px;
+  height: 27px;
+}
+.booking-sheet .contact-panel {
+  padding: clamp(14px, 2vw, 24px);
+}
+.booking-sheet .contact-hub-actions,
+.booking-sheet .contact-phone-row {
+  margin-top: 12px;
+}
+.booking-sheet .contact-action {
+  min-height: 44px;
+  padding: 9px 12px;
+}
+.booking-sheet .contact-copy-status:empty {
+  margin: 0;
 }
 .tarot-actions {
   display: flex;
@@ -1282,11 +1406,11 @@ html.js .tarot-portrait:not(.is-revealed) {
   margin: 0;
 }
 .route-loading-ivory {
-  background: #f8efd9;
+  background: var(--ivory);
   color: #12314e;
 }
 .route-loading-parchment {
-  background: #f7eed7;
+  background: var(--ivory-shade);
   color: #17384e;
 }
 .route-loading-midnight {

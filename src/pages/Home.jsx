@@ -12,20 +12,41 @@ import { generateCosmicReading } from '../cosmicEngine';
 import { useJourney } from '../components/JourneyContext';
 import WhatsAppIcon from '../components/WhatsAppIcon';
 import { readingContact } from '../../shared/contact.js';
+import { isReadingHex, readingCardColor } from '../../shared/reading-layout.ts';
 // The portrait slides in once, the first time it scrolls into view
 // (.tarot-portrait in refinements.css).
 function PortraitReveal({ children }) {
   return (
-    <RevealOnce as="figure" className="tarot-portrait">
-      {children}
+    <RevealOnce className="tarot-portrait-trigger">
+      <figure className="tarot-portrait">{children}</figure>
     </RevealOnce>
   );
 }
 
-function ReadingPackageCard({ service, featured, livePrices, onSelect }) {
+export function ReadingPackageCard({
+  service,
+  livePrices,
+  onSelect = (_id) => {},
+  action = /** @type {import('react').ReactNode} */ (null),
+  previewCurrent = false,
+}) {
   const { id, hindiTitle, title, description, features, price } = service;
+  const color = readingCardColor(id, service.cardColor);
+  const custom = isReadingHex(color);
   return (
-    <article className={`royal-service${featured ? ' service-selected' : ''}`}>
+    <article
+      className="royal-service reading-card-style"
+      data-card-color={color}
+      style={
+        custom
+          ? {
+              '--reading-card-surface': `color-mix(in srgb,${color} 45%,#101a2b)`,
+            }
+          : undefined
+      }
+      data-card-size={service.cardSize ?? 'standard'}
+      data-preview-current={previewCurrent || undefined}
+    >
       {hindiTitle && (
         <span className="package-hindi-title" lang="hi" aria-hidden="true">
           {hindiTitle}
@@ -48,16 +69,18 @@ function ReadingPackageCard({ service, featured, livePrices, onSelect }) {
           : 'Ask for price'}
         {livePrices && price !== null && <span>confirm with the studio</span>}
       </div>
-      <a
-        href={readingContact(service).whatsapp}
-        target="_blank"
-        rel="noreferrer"
-        onClick={() => onSelect(id)}
-        className="royal-button"
-        aria-label={`Ask on WhatsApp about ${title}`}
-      >
-        Ask on WhatsApp <WhatsAppIcon size={17} />
-      </a>
+      {action ?? (
+        <a
+          href={readingContact(service).whatsapp}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => onSelect(id)}
+          className="royal-button"
+          aria-label={`Ask on WhatsApp about ${title}`}
+        >
+          Ask on WhatsApp <WhatsAppIcon size={17} />
+        </a>
+      )}
     </article>
   );
 }
@@ -72,10 +95,10 @@ export default function Home() {
     serviceError: error,
     retryServices,
   } = useJourney();
-  const [featuredTarot, ...moreTarot] = services.filter(
-    (service) => service.type === 'tarot',
+  const featuredTarot = services.find(
+    (service) => service.id === 'tarot' && service.type === 'tarot',
   );
-  const astrology = services.filter((service) => service.type === 'astrology');
+  const packages = services.filter((service) => service !== featuredTarot);
   const generalContact = readingContact(selectedService);
   const studioContact = readingContact();
   const readings = (
@@ -154,28 +177,16 @@ export default function Home() {
             />
           </PortraitReveal>
         </div>
-        {moreTarot.length > 0 && (
-          <div className="royal-services">
-            {moreTarot.map((service) => (
-              <ReadingPackageCard
-                key={service.id}
-                service={service}
-                livePrices={!error}
-                onSelect={selectService}
-              />
-            ))}
-          </div>
-        )}
       </ScrollSection>
       <ScrollSection id="services" theme="royal" className="services-section">
-        <h2 className="sr-only">Astrology readings</h2>
+        <h2 className="sr-only">Reading packages</h2>
         {error && (
           <div className="journey-error" role="alert">
             {error}
             <button onClick={retryServices}>Try again</button>
           </div>
         )}
-        {!astrology.length ? (
+        {!packages.length ? (
           <a
             className="royal-button"
             href={studioContact.whatsapp}
@@ -187,13 +198,12 @@ export default function Home() {
         ) : (
           <div
             className="royal-services reading-grid"
-            style={{ '--count': astrology.length }}
+            style={{ '--count': packages.length }}
           >
-            {astrology.map((service, index) => (
+            {packages.map((service) => (
               <ReadingPackageCard
                 key={service.id}
                 service={service}
-                featured={index === 1}
                 livePrices={!error}
                 onSelect={selectService}
               />

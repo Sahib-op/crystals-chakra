@@ -13,8 +13,8 @@ export default function RevealOnce({ as: Tag = 'div', className, children }) {
       return undefined;
     }
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.intersectionRatio >= 0.2) {
+      (entries) => {
+        if (entries.some((entry) => entry.intersectionRatio >= 0.2)) {
           setRevealed(true);
           observer.disconnect();
         }

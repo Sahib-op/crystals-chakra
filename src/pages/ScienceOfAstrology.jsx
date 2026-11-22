@@ -139,6 +139,15 @@ export default function ScienceOfAstrology({ embedded = false }) {
               </li>
             ))}
           </ul>
+          <p className="topic-readings">
+            Card art:{' '}
+            <a href="https://github.com/mixvlad/TarotCards/tree/main/tarot/soimoi">
+              Soimoi Tarot
+            </a>{' '}
+            by <a href="https://koz.tv/">Mike Koz</a>,{' '}
+            <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            . Resized and framed for this site.
+          </p>
         </section>
         <section id="birth-details" className="birth-details-section">
           <h3 className="section-title">

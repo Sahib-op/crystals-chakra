@@ -7,9 +7,7 @@ import {
   useLocation,
   matchPath,
 } from 'react-router-dom';
-import { MotionConfig } from 'motion/react';
 import { JourneyProvider } from './components/JourneyContext';
-import { AppearanceProvider } from './components/AppearanceContext';
 import ScrollHeader from './components/ScrollHeader';
 import RoyalMotion from './components/RoyalMotion';
 import SideNav from './components/SideNav';
@@ -32,20 +30,37 @@ function NavigationEffects() {
   }, [pathname, hash]);
   useEffect(() => {
     if (!hash) return undefined;
+    let id = hash.slice(1);
+    try {
+      id = decodeURIComponent(id);
+    } catch {
+      return undefined;
+    }
+    function scrollToTarget() {
+      const target = document.getElementById(id);
+      if (!target) return false;
+      if (target instanceof HTMLDetailsElement) target.open = true;
+      target.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'instant'
+          : 'smooth',
+        block: 'start',
+      });
+      return true;
+    }
+    const main = document.getElementById('main');
+    let observer;
     const frame = requestAnimationFrame(() => {
-      const disclosure = document.getElementById(hash.slice(1));
-      if (disclosure?.tagName === 'DETAILS') disclosure.open = true;
-      document
-        .getElementById(decodeURIComponent(hash.slice(1)))
-        ?.scrollIntoView({
-          behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
-            .matches
-            ? 'instant'
-            : 'smooth',
-          block: 'start',
-        });
+      if (scrollToTarget() || !main) return;
+      observer = new MutationObserver(() => {
+        if (scrollToTarget()) observer.disconnect();
+      });
+      observer.observe(main, { childList: true, subtree: true });
     });
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer?.disconnect();
+    };
   }, [pathname, hash]);
   return null;
 }
@@ -87,83 +102,78 @@ function CustomerNavigation() {
 // build prerenders public pages (src/entry-server.jsx).
 export function AppShell() {
   return (
-    <AppearanceProvider>
-      <JourneyProvider>
-        <NavigationEffects />
-        <ShopIntent />
-        <CustomerNavigation />
-        <nav aria-label="Skip link">
-          <a className="journey-skip" href="#main">
-            Skip to content
-          </a>
-        </nav>
-        <main id="main">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route
-              path="/shop"
-              element={
-                <Suspense
-                  fallback={
-                    <RouteLoading tone="midnight" label="Opening the shop…" />
-                  }
-                >
-                  <Shop />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/studio"
-              element={
-                <Suspense
-                  fallback={
-                    <RouteLoading
-                      tone="parchment"
-                      label="Opening the studio…"
-                    />
-                  }
-                >
-                  <StudioPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/services"
-              element={<Navigate replace to="/#services" />}
-            />
-            <Route
-              path="/science"
-              element={<Navigate replace to="/#information" />}
-            />
-            <Route path="/book" element={<LegacyBooking />} />
-            <Route
-              path="/policies"
-              element={
-                <Suspense fallback={<RouteLoading label="Opening policies…" />}>
-                  <Policies />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/how-readings-work"
-              element={
-                <Suspense
-                  fallback={<RouteLoading label="Opening the reading guide…" />}
-                >
-                  <HowReadingsWork />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/privacy"
-              element={<Navigate replace to="/policies#privacy" />}
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        <Footer />
-      </JourneyProvider>
-    </AppearanceProvider>
+    <JourneyProvider>
+      <NavigationEffects />
+      <ShopIntent />
+      <CustomerNavigation />
+      <nav aria-label="Skip link">
+        <a className="journey-skip" href="#main">
+          Skip to content
+        </a>
+      </nav>
+      <main id="main">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/shop"
+            element={
+              <Suspense
+                fallback={
+                  <RouteLoading tone="midnight" label="Opening the shop…" />
+                }
+              >
+                <Shop />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/studio"
+            element={
+              <Suspense
+                fallback={
+                  <RouteLoading tone="parchment" label="Opening the studio…" />
+                }
+              >
+                <StudioPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/services"
+            element={<Navigate replace to="/#services" />}
+          />
+          <Route
+            path="/science"
+            element={<Navigate replace to="/#information" />}
+          />
+          <Route path="/book" element={<LegacyBooking />} />
+          <Route
+            path="/policies"
+            element={
+              <Suspense fallback={<RouteLoading label="Opening policies…" />}>
+                <Policies />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/how-readings-work"
+            element={
+              <Suspense
+                fallback={<RouteLoading label="Opening the reading guide…" />}
+              >
+                <HowReadingsWork />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/privacy"
+            element={<Navigate replace to="/policies#privacy" />}
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      <Footer />
+    </JourneyProvider>
   );
 }
 export default function App() {

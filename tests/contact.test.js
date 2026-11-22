@@ -7,7 +7,7 @@ import {
   readingMessage,
   productEnquiryHref,
 } from '../shared/contact.js';
-import { services, isReadingCatalog } from '../shared/catalog.js';
+import { services, isReadingCatalog } from '../shared/catalog.ts';
 
 test('reading handoff targets only the configured studio and includes the chosen package', () => {
   for (const reading of services) {
@@ -26,6 +26,20 @@ test('plain Hindi and punctuation survive one URL encoding without adding query 
   assert.equal(url.searchParams.get('text'), text);
   assert.deepEqual([...url.searchParams.keys()], ['text']);
   assert.equal(url.hash, '');
+});
+test('an optional booking question is bounded and included only in the general enquiry', () => {
+  const note = 'नमस्ते! Career & family? 100% 🙂';
+  const drafted = new URL(readingContact(null, note).whatsapp);
+  assert.ok(drafted.searchParams.get('text').endsWith('My question: ' + note));
+  assert.deepEqual([...drafted.searchParams.keys()], ['text']);
+  assert.equal(readingContact(null, '  ').message, readingContact().message);
+  assert.equal(
+    readingContact(services[0], note).message,
+    readingContact(services[0]).message,
+  );
+  assert.ok(
+    readingContact(null, 'x'.repeat(500)).message.endsWith('x'.repeat(400)),
+  );
 });
 test('missing or untrusted reading fields cannot replace the destination or leak contact details', () => {
   const fallback = readingContact();

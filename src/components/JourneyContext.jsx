@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { loadReadingCatalogue } from '../lib/catalogue.ts';
-import { services as bundledServices } from '../../shared/catalog.js';
+import { services as bundledServices } from '../../shared/catalog.ts';
 export const SECTION_LABELS = {
   home: 'Welcome',
   tarot: 'Tarot Readings',

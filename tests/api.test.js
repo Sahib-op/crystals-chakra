@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createApp, validBirthDate } from '../server/index.js';
+import { createApp } from '../server/app.ts';
+import { validBirthDate } from '../src/lib/birthDate.js';
 import { createStore } from '../server/store.js';
 
 test('birth dates reject impossible, malformed and future dates', () => {

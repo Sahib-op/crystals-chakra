@@ -63,6 +63,28 @@ const schema11 = {
         minItems: 1,
         maxItems: 12,
       },
+      cardSize: {
+        anyOf: [
+          { type: 'string', const: 'compact' },
+          { type: 'string', const: 'standard' },
+          { type: 'string', const: 'wide' },
+        ],
+      },
+      cardColor: {
+        anyOf: [
+          { type: 'string', const: 'default' },
+          { type: 'string', const: 'navy' },
+          { type: 'string', const: 'burgundy' },
+          { type: 'string', const: 'emerald' },
+          { type: 'string', const: 'indigo' },
+          {
+            type: 'string',
+            pattern: '^#[0-9a-fA-F]{6}$',
+            minLength: 7,
+            maxLength: 7,
+          },
+        ],
+      },
     },
     additionalProperties: false,
   },
@@ -87,6 +109,7 @@ const func3 = function ucs2length(str) {
 };
 const pattern0 = new RegExp('^[a-z][a-z0-9-]{0,47}$', 'u');
 const pattern1 = new RegExp('\\S', 'u');
+const pattern6 = new RegExp('^#[0-9a-fA-F]{6}$', 'u');
 function validate10(
   data,
   { instancePath = '', parentData, parentDataProperty, rootData = data } = {},
@@ -1045,6 +1068,584 @@ function validate10(
                                     var valid1 = _errs31 === errors;
                                   } else {
                                     var valid1 = true;
+                                  }
+                                  if (valid1) {
+                                    if (data0.cardSize !== undefined) {
+                                      let data12 = data0.cardSize;
+                                      const _errs35 = errors;
+                                      const _errs36 = errors;
+                                      let valid6 = false;
+                                      const _errs37 = errors;
+                                      if (typeof data12 !== 'string') {
+                                        const err10 = {
+                                          instancePath:
+                                            instancePath +
+                                            '/' +
+                                            i0 +
+                                            '/cardSize',
+                                          schemaPath:
+                                            '#/items/properties/cardSize/anyOf/0/type',
+                                          keyword: 'type',
+                                          params: { type: 'string' },
+                                          message: 'must be string',
+                                        };
+                                        if (vErrors === null) {
+                                          vErrors = [err10];
+                                        } else {
+                                          vErrors.push(err10);
+                                        }
+                                        errors++;
+                                      }
+                                      if ('compact' !== data12) {
+                                        const err11 = {
+                                          instancePath:
+                                            instancePath +
+                                            '/' +
+                                            i0 +
+                                            '/cardSize',
+                                          schemaPath:
+                                            '#/items/properties/cardSize/anyOf/0/const',
+                                          keyword: 'const',
+                                          params: { allowedValue: 'compact' },
+                                          message: 'must be equal to constant',
+                                        };
+                                        if (vErrors === null) {
+                                          vErrors = [err11];
+                                        } else {
+                                          vErrors.push(err11);
+                                        }
+                                        errors++;
+                                      }
+                                      var _valid2 = _errs37 === errors;
+                                      valid6 = valid6 || _valid2;
+                                      if (!valid6) {
+                                        const _errs39 = errors;
+                                        if (typeof data12 !== 'string') {
+                                          const err12 = {
+                                            instancePath:
+                                              instancePath +
+                                              '/' +
+                                              i0 +
+                                              '/cardSize',
+                                            schemaPath:
+                                              '#/items/properties/cardSize/anyOf/1/type',
+                                            keyword: 'type',
+                                            params: { type: 'string' },
+                                            message: 'must be string',
+                                          };
+                                          if (vErrors === null) {
+                                            vErrors = [err12];
+                                          } else {
+                                            vErrors.push(err12);
+                                          }
+                                          errors++;
+                                        }
+                                        if ('standard' !== data12) {
+                                          const err13 = {
+                                            instancePath:
+                                              instancePath +
+                                              '/' +
+                                              i0 +
+                                              '/cardSize',
+                                            schemaPath:
+                                              '#/items/properties/cardSize/anyOf/1/const',
+                                            keyword: 'const',
+                                            params: {
+                                              allowedValue: 'standard',
+                                            },
+                                            message:
+                                              'must be equal to constant',
+                                          };
+                                          if (vErrors === null) {
+                                            vErrors = [err13];
+                                          } else {
+                                            vErrors.push(err13);
+                                          }
+                                          errors++;
+                                        }
+                                        var _valid2 = _errs39 === errors;
+                                        valid6 = valid6 || _valid2;
+                                        if (!valid6) {
+                                          const _errs41 = errors;
+                                          if (typeof data12 !== 'string') {
+                                            const err14 = {
+                                              instancePath:
+                                                instancePath +
+                                                '/' +
+                                                i0 +
+                                                '/cardSize',
+                                              schemaPath:
+                                                '#/items/properties/cardSize/anyOf/2/type',
+                                              keyword: 'type',
+                                              params: { type: 'string' },
+                                              message: 'must be string',
+                                            };
+                                            if (vErrors === null) {
+                                              vErrors = [err14];
+                                            } else {
+                                              vErrors.push(err14);
+                                            }
+                                            errors++;
+                                          }
+                                          if ('wide' !== data12) {
+                                            const err15 = {
+                                              instancePath:
+                                                instancePath +
+                                                '/' +
+                                                i0 +
+                                                '/cardSize',
+                                              schemaPath:
+                                                '#/items/properties/cardSize/anyOf/2/const',
+                                              keyword: 'const',
+                                              params: { allowedValue: 'wide' },
+                                              message:
+                                                'must be equal to constant',
+                                            };
+                                            if (vErrors === null) {
+                                              vErrors = [err15];
+                                            } else {
+                                              vErrors.push(err15);
+                                            }
+                                            errors++;
+                                          }
+                                          var _valid2 = _errs41 === errors;
+                                          valid6 = valid6 || _valid2;
+                                        }
+                                      }
+                                      if (!valid6) {
+                                        const err16 = {
+                                          instancePath:
+                                            instancePath +
+                                            '/' +
+                                            i0 +
+                                            '/cardSize',
+                                          schemaPath:
+                                            '#/items/properties/cardSize/anyOf',
+                                          keyword: 'anyOf',
+                                          params: {},
+                                          message:
+                                            'must match a schema in anyOf',
+                                        };
+                                        if (vErrors === null) {
+                                          vErrors = [err16];
+                                        } else {
+                                          vErrors.push(err16);
+                                        }
+                                        errors++;
+                                        validate10.errors = vErrors;
+                                        return false;
+                                      } else {
+                                        errors = _errs36;
+                                        if (vErrors !== null) {
+                                          if (_errs36) {
+                                            vErrors.length = _errs36;
+                                          } else {
+                                            vErrors = null;
+                                          }
+                                        }
+                                      }
+                                      var valid1 = _errs35 === errors;
+                                    } else {
+                                      var valid1 = true;
+                                    }
+                                    if (valid1) {
+                                      if (data0.cardColor !== undefined) {
+                                        let data13 = data0.cardColor;
+                                        const _errs43 = errors;
+                                        const _errs44 = errors;
+                                        let valid7 = false;
+                                        const _errs45 = errors;
+                                        if (typeof data13 !== 'string') {
+                                          const err17 = {
+                                            instancePath:
+                                              instancePath +
+                                              '/' +
+                                              i0 +
+                                              '/cardColor',
+                                            schemaPath:
+                                              '#/items/properties/cardColor/anyOf/0/type',
+                                            keyword: 'type',
+                                            params: { type: 'string' },
+                                            message: 'must be string',
+                                          };
+                                          if (vErrors === null) {
+                                            vErrors = [err17];
+                                          } else {
+                                            vErrors.push(err17);
+                                          }
+                                          errors++;
+                                        }
+                                        if ('default' !== data13) {
+                                          const err18 = {
+                                            instancePath:
+                                              instancePath +
+                                              '/' +
+                                              i0 +
+                                              '/cardColor',
+                                            schemaPath:
+                                              '#/items/properties/cardColor/anyOf/0/const',
+                                            keyword: 'const',
+                                            params: { allowedValue: 'default' },
+                                            message:
+                                              'must be equal to constant',
+                                          };
+                                          if (vErrors === null) {
+                                            vErrors = [err18];
+                                          } else {
+                                            vErrors.push(err18);
+                                          }
+                                          errors++;
+                                        }
+                                        var _valid3 = _errs45 === errors;
+                                        valid7 = valid7 || _valid3;
+                                        if (!valid7) {
+                                          const _errs47 = errors;
+                                          if (typeof data13 !== 'string') {
+                                            const err19 = {
+                                              instancePath:
+                                                instancePath +
+                                                '/' +
+                                                i0 +
+                                                '/cardColor',
+                                              schemaPath:
+                                                '#/items/properties/cardColor/anyOf/1/type',
+                                              keyword: 'type',
+                                              params: { type: 'string' },
+                                              message: 'must be string',
+                                            };
+                                            if (vErrors === null) {
+                                              vErrors = [err19];
+                                            } else {
+                                              vErrors.push(err19);
+                                            }
+                                            errors++;
+                                          }
+                                          if ('navy' !== data13) {
+                                            const err20 = {
+                                              instancePath:
+                                                instancePath +
+                                                '/' +
+                                                i0 +
+                                                '/cardColor',
+                                              schemaPath:
+                                                '#/items/properties/cardColor/anyOf/1/const',
+                                              keyword: 'const',
+                                              params: { allowedValue: 'navy' },
+                                              message:
+                                                'must be equal to constant',
+                                            };
+                                            if (vErrors === null) {
+                                              vErrors = [err20];
+                                            } else {
+                                              vErrors.push(err20);
+                                            }
+                                            errors++;
+                                          }
+                                          var _valid3 = _errs47 === errors;
+                                          valid7 = valid7 || _valid3;
+                                          if (!valid7) {
+                                            const _errs49 = errors;
+                                            if (typeof data13 !== 'string') {
+                                              const err21 = {
+                                                instancePath:
+                                                  instancePath +
+                                                  '/' +
+                                                  i0 +
+                                                  '/cardColor',
+                                                schemaPath:
+                                                  '#/items/properties/cardColor/anyOf/2/type',
+                                                keyword: 'type',
+                                                params: { type: 'string' },
+                                                message: 'must be string',
+                                              };
+                                              if (vErrors === null) {
+                                                vErrors = [err21];
+                                              } else {
+                                                vErrors.push(err21);
+                                              }
+                                              errors++;
+                                            }
+                                            if ('burgundy' !== data13) {
+                                              const err22 = {
+                                                instancePath:
+                                                  instancePath +
+                                                  '/' +
+                                                  i0 +
+                                                  '/cardColor',
+                                                schemaPath:
+                                                  '#/items/properties/cardColor/anyOf/2/const',
+                                                keyword: 'const',
+                                                params: {
+                                                  allowedValue: 'burgundy',
+                                                },
+                                                message:
+                                                  'must be equal to constant',
+                                              };
+                                              if (vErrors === null) {
+                                                vErrors = [err22];
+                                              } else {
+                                                vErrors.push(err22);
+                                              }
+                                              errors++;
+                                            }
+                                            var _valid3 = _errs49 === errors;
+                                            valid7 = valid7 || _valid3;
+                                            if (!valid7) {
+                                              const _errs51 = errors;
+                                              if (typeof data13 !== 'string') {
+                                                const err23 = {
+                                                  instancePath:
+                                                    instancePath +
+                                                    '/' +
+                                                    i0 +
+                                                    '/cardColor',
+                                                  schemaPath:
+                                                    '#/items/properties/cardColor/anyOf/3/type',
+                                                  keyword: 'type',
+                                                  params: { type: 'string' },
+                                                  message: 'must be string',
+                                                };
+                                                if (vErrors === null) {
+                                                  vErrors = [err23];
+                                                } else {
+                                                  vErrors.push(err23);
+                                                }
+                                                errors++;
+                                              }
+                                              if ('emerald' !== data13) {
+                                                const err24 = {
+                                                  instancePath:
+                                                    instancePath +
+                                                    '/' +
+                                                    i0 +
+                                                    '/cardColor',
+                                                  schemaPath:
+                                                    '#/items/properties/cardColor/anyOf/3/const',
+                                                  keyword: 'const',
+                                                  params: {
+                                                    allowedValue: 'emerald',
+                                                  },
+                                                  message:
+                                                    'must be equal to constant',
+                                                };
+                                                if (vErrors === null) {
+                                                  vErrors = [err24];
+                                                } else {
+                                                  vErrors.push(err24);
+                                                }
+                                                errors++;
+                                              }
+                                              var _valid3 = _errs51 === errors;
+                                              valid7 = valid7 || _valid3;
+                                              if (!valid7) {
+                                                const _errs53 = errors;
+                                                if (
+                                                  typeof data13 !== 'string'
+                                                ) {
+                                                  const err25 = {
+                                                    instancePath:
+                                                      instancePath +
+                                                      '/' +
+                                                      i0 +
+                                                      '/cardColor',
+                                                    schemaPath:
+                                                      '#/items/properties/cardColor/anyOf/4/type',
+                                                    keyword: 'type',
+                                                    params: { type: 'string' },
+                                                    message: 'must be string',
+                                                  };
+                                                  if (vErrors === null) {
+                                                    vErrors = [err25];
+                                                  } else {
+                                                    vErrors.push(err25);
+                                                  }
+                                                  errors++;
+                                                }
+                                                if ('indigo' !== data13) {
+                                                  const err26 = {
+                                                    instancePath:
+                                                      instancePath +
+                                                      '/' +
+                                                      i0 +
+                                                      '/cardColor',
+                                                    schemaPath:
+                                                      '#/items/properties/cardColor/anyOf/4/const',
+                                                    keyword: 'const',
+                                                    params: {
+                                                      allowedValue: 'indigo',
+                                                    },
+                                                    message:
+                                                      'must be equal to constant',
+                                                  };
+                                                  if (vErrors === null) {
+                                                    vErrors = [err26];
+                                                  } else {
+                                                    vErrors.push(err26);
+                                                  }
+                                                  errors++;
+                                                }
+                                                var _valid3 =
+                                                  _errs53 === errors;
+                                                valid7 = valid7 || _valid3;
+                                                if (!valid7) {
+                                                  const _errs55 = errors;
+                                                  if (errors === _errs55) {
+                                                    if (
+                                                      typeof data13 === 'string'
+                                                    ) {
+                                                      if (func3(data13) > 7) {
+                                                        const err27 = {
+                                                          instancePath:
+                                                            instancePath +
+                                                            '/' +
+                                                            i0 +
+                                                            '/cardColor',
+                                                          schemaPath:
+                                                            '#/items/properties/cardColor/anyOf/5/maxLength',
+                                                          keyword: 'maxLength',
+                                                          params: { limit: 7 },
+                                                          message:
+                                                            'must NOT have more than 7 characters',
+                                                        };
+                                                        if (vErrors === null) {
+                                                          vErrors = [err27];
+                                                        } else {
+                                                          vErrors.push(err27);
+                                                        }
+                                                        errors++;
+                                                      } else {
+                                                        if (func3(data13) < 7) {
+                                                          const err28 = {
+                                                            instancePath:
+                                                              instancePath +
+                                                              '/' +
+                                                              i0 +
+                                                              '/cardColor',
+                                                            schemaPath:
+                                                              '#/items/properties/cardColor/anyOf/5/minLength',
+                                                            keyword:
+                                                              'minLength',
+                                                            params: {
+                                                              limit: 7,
+                                                            },
+                                                            message:
+                                                              'must NOT have fewer than 7 characters',
+                                                          };
+                                                          if (
+                                                            vErrors === null
+                                                          ) {
+                                                            vErrors = [err28];
+                                                          } else {
+                                                            vErrors.push(err28);
+                                                          }
+                                                          errors++;
+                                                        } else {
+                                                          if (
+                                                            !pattern6.test(
+                                                              data13,
+                                                            )
+                                                          ) {
+                                                            const err29 = {
+                                                              instancePath:
+                                                                instancePath +
+                                                                '/' +
+                                                                i0 +
+                                                                '/cardColor',
+                                                              schemaPath:
+                                                                '#/items/properties/cardColor/anyOf/5/pattern',
+                                                              keyword:
+                                                                'pattern',
+                                                              params: {
+                                                                pattern:
+                                                                  '^#[0-9a-fA-F]{6}$',
+                                                              },
+                                                              message:
+                                                                'must match pattern "' +
+                                                                '^#[0-9a-fA-F]{6}$' +
+                                                                '"',
+                                                            };
+                                                            if (
+                                                              vErrors === null
+                                                            ) {
+                                                              vErrors = [err29];
+                                                            } else {
+                                                              vErrors.push(
+                                                                err29,
+                                                              );
+                                                            }
+                                                            errors++;
+                                                          }
+                                                        }
+                                                      }
+                                                    } else {
+                                                      const err30 = {
+                                                        instancePath:
+                                                          instancePath +
+                                                          '/' +
+                                                          i0 +
+                                                          '/cardColor',
+                                                        schemaPath:
+                                                          '#/items/properties/cardColor/anyOf/5/type',
+                                                        keyword: 'type',
+                                                        params: {
+                                                          type: 'string',
+                                                        },
+                                                        message:
+                                                          'must be string',
+                                                      };
+                                                      if (vErrors === null) {
+                                                        vErrors = [err30];
+                                                      } else {
+                                                        vErrors.push(err30);
+                                                      }
+                                                      errors++;
+                                                    }
+                                                  }
+                                                  var _valid3 =
+                                                    _errs55 === errors;
+                                                  valid7 = valid7 || _valid3;
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                        if (!valid7) {
+                                          const err31 = {
+                                            instancePath:
+                                              instancePath +
+                                              '/' +
+                                              i0 +
+                                              '/cardColor',
+                                            schemaPath:
+                                              '#/items/properties/cardColor/anyOf',
+                                            keyword: 'anyOf',
+                                            params: {},
+                                            message:
+                                              'must match a schema in anyOf',
+                                          };
+                                          if (vErrors === null) {
+                                            vErrors = [err31];
+                                          } else {
+                                            vErrors.push(err31);
+                                          }
+                                          errors++;
+                                          validate10.errors = vErrors;
+                                          return false;
+                                        } else {
+                                          errors = _errs44;
+                                          if (vErrors !== null) {
+                                            if (_errs44) {
+                                              vErrors.length = _errs44;
+                                            } else {
+                                              vErrors = null;
+                                            }
+                                          }
+                                        }
+                                        var valid1 = _errs43 === errors;
+                                      } else {
+                                        var valid1 = true;
+                                      }
+                                    }
                                   }
                                 }
                               }
